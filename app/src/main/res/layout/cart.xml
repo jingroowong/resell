@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -8,31 +9,49 @@
         android:id="@+id/checkout_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="64dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:text="PROCEED TO CHECKOUT"
-        tools:layout_editor_absoluteX="150dp"
-        tools:layout_editor_absoluteY="605dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/total_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Total"
-        tools:layout_editor_absoluteX="152dp"
-        tools:layout_editor_absoluteY="568dp" />
+        android:layout_marginStart="16dp"
+        android:text="Total : "
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/checkout_button"
+        app:layout_constraintHorizontal_bias="0.391"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="613dp" />
 
     <TextView
         android:id="@+id/totalAmount_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="64dp"
         android:text="RM 79.99"
-        tools:layout_editor_absoluteX="235dp"
-        tools:layout_editor_absoluteY="574dp" />
+        android:textColor="#FF5722"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/checkout_button"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/itemCount_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
         android:text="4 item(s) found in your cart."
-        tools:layout_editor_absoluteX="40dp"
-        tools:layout_editor_absoluteY="57dp" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
