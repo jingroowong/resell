@@ -27,4 +27,8 @@ class ProductViewModel(
     fun getAllProducts(): LiveData<List<Product>> {
         return database.getAll()
     }
+
+    fun clearAll() {
+         database.clear()
+    }
 }

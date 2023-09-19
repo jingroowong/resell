@@ -8,10 +8,13 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.resell.R
 import com.example.resell.database.AppDatabase
 import com.example.resell.database.Product
+import com.example.resell.database.ProductViewModel
+import com.example.resell.database.ProductViewModelFactory
 import java.util.Date
 
 // TODO: Rename parameter arguments, choose names that match
@@ -41,33 +44,43 @@ class AdminViewProduct : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-
-        val rootView = inflater.inflate(R.layout.fragment_admin_view_product, container, false)
-//        val binding: FragmentGameOverBinding = DataBindingUtil.inflate(
-//            inflater, R.layout.fragment_game_over, container, false)
-
-        val application = requireNotNull(this.activity).application
-        val productDao = AppDatabase.getInstance(application).productDao
         val date = Date().time.toLong()
         val product = Product(
-            productName = "product1",
-            productPrice = 11.00,
+            productName = "product3",
+            productPrice = 1.00,
             productDesc = "New Product",
-            productCondition = "New",
-            productImage = "Image.jpg",
+            productCondition = "Bad",
+            productImage = "Image3.jpg",
             dateUpload = date,
             productAvailability = true
         )
 
-        productDao.insert(product)
+        val rootView=inflater.inflate(R.layout.fragment_admin_view_product, container, false)
+        val application = requireNotNull(this.activity).application
+        val dataSource = AppDatabase.getInstance(application).productDao
+        val viewModelFactory = ProductViewModelFactory(dataSource, application)
+        val viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
 
-        val p2 = productDao.get(1)
+        viewModel.insertProduct(product)
 
-        val resultTextView = rootView.findViewById<TextView>(R.id.result)
+//        viewModel.clearAll()
+        viewModel.getAllProducts().observe(this, { products ->
+            if (products != null) {
+
+                val resultTextView = rootView.findViewById<TextView>(R.id.result)
+                resultTextView.text = products.toString()
+
+            }})
 
 
-        resultTextView.text = "Hi"
+
+//        viewModel.getProductById(1).observe(this, { product ->
+//            if (product != null) {
+//                val resultTextView = findViewById<TextView>(R.id.result2)
+//                resultTextView.text = product.toString()
+//            }
+//        }
+//        )
         return inflater.inflate(R.layout.fragment_admin_view_product, container, false)
     }
 
