@@ -20,11 +20,11 @@ class MainActivity : AppCompatActivity() {
 
         val date = Date().time.toLong()
         val product = Product(
-            productName = "product1",
-            productPrice = 11.00,
+            productName = "product3",
+            productPrice = 1.00,
             productDesc = "New Product",
-            productCondition = "New",
-            productImage = "Image.jpg",
+            productCondition = "Bad",
+            productImage = "Image3.jpg",
             dateUpload = date,
             productAvailability = true
         )
@@ -32,6 +32,8 @@ class MainActivity : AppCompatActivity() {
         val dataSource = AppDatabase.getInstance(application).productDao
         val viewModelFactory = ProductViewModelFactory(dataSource, application)
         val viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
+
+//        viewModel.insertProduct(product)
 
         viewModel.getAllProducts().observe(this, { products ->
             if (products != null) {
@@ -42,6 +44,7 @@ class MainActivity : AppCompatActivity() {
             }})
 
 
+
 //        viewModel.getProductById(1).observe(this, { product ->
 //            if (product != null) {
 //                val resultTextView = findViewById<TextView>(R.id.result2)
@@ -49,10 +52,6 @@ class MainActivity : AppCompatActivity() {
 //            }
 //        }
 //        )
-
-//
-//        val p2 = productDao.get(1)
-//
 
 
 //        val fragmentTransaction = supportFragmentManager.beginTransaction()
