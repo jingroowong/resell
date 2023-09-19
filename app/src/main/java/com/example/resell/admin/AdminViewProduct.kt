@@ -5,6 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.FragmentActivity
+import androidx.navigation.fragment.findNavController
 import com.example.resell.R
 import com.example.resell.database.AppDatabase
 import com.example.resell.database.Product
@@ -39,21 +43,31 @@ class AdminViewProduct : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
 
+        val rootView = inflater.inflate(R.layout.fragment_admin_view_product, container, false)
+//        val binding: FragmentGameOverBinding = DataBindingUtil.inflate(
+//            inflater, R.layout.fragment_game_over, container, false)
+
         val application = requireNotNull(this.activity).application
-        val dataSource = AppDatabase.getInstance(application).productDao
-        val date = Date()
+        val productDao = AppDatabase.getInstance(application).productDao
+        val date = Date().time.toLong()
         val product = Product(
             productName = "product1",
             productPrice = 11.00,
             productDesc = "New Product",
             productCondition = "New",
             productImage = "Image.jpg",
-            dateUpload =date,
+            dateUpload = date,
             productAvailability = true
         )
-//        val viewModelFactory = SleepTrackerViewModelFactory(dataSource, application)
+
+        productDao.insert(product)
+
+        val p2 = productDao.get(1)
+
+        val resultTextView = rootView.findViewById<TextView>(R.id.result)
 
 
+        resultTextView.text = "Hi"
         return inflater.inflate(R.layout.fragment_admin_view_product, container, false)
     }
 

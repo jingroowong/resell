@@ -13,6 +13,6 @@ data class Product(
     var productDesc: String,
     var productCondition: String,
     var productImage: String,
-    var dateUpload: Date,
+    var dateUpload: Long,
     var productAvailability: Boolean
 )

@@ -3,7 +3,6 @@ package com.example.resell.database
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import java.util.Date
 
 @Entity(
     tableName = "feedback_table",
@@ -17,7 +16,7 @@ import java.util.Date
 data class Feedback(
     @PrimaryKey(autoGenerate = true)
     var feedbackID: Int = 0,
-    var feedbackDate: Date,
+    var feedbackDate: Long,
     var content: String,
     var reply: String,
     var userID: Int
