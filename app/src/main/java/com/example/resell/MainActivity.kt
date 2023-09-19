@@ -55,12 +55,12 @@ class MainActivity : AppCompatActivity() {
 //        }
 //        )
 
-//
-//        val fragmentTransaction = supportFragmentManager.beginTransaction()
-//        val fragment = AdminViewProduct() // Replace with your fragment class
-//
-//        fragmentTransaction.replace(R.id.test, fragment)
-//        fragmentTransaction.commit()
+
+        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        val fragment = AdminViewProduct() // Replace with your fragment class
+
+        fragmentTransaction.replace(R.id.test, fragment)
+        fragmentTransaction.commit()
 
 
     }

@@ -44,34 +44,33 @@ class AdminViewProduct : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val date = Date().time.toLong()
-        val product = Product(
-            productName = "product3",
-            productPrice = 1.00,
-            productDesc = "New Product",
-            productCondition = "Bad",
-            productImage = "Image3.jpg",
-            dateUpload = date,
-            productAvailability = true
-        )
-
-        val rootView=inflater.inflate(R.layout.fragment_admin_view_product, container, false)
-        val application = requireNotNull(this.activity).application
-        val dataSource = AppDatabase.getInstance(application).productDao
-        val viewModelFactory = ProductViewModelFactory(dataSource, application)
-        val viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
-
-        viewModel.insertProduct(product)
+//        val date = Date().time.toLong()
+//        val product = Product(
+//            productName = "product3",
+//            productPrice = 1.00,
+//            productDesc = "New Product",
+//            productCondition = "Bad",
+//            productImage = "Image3.jpg",
+//            dateUpload = date,
+//            productAvailability = true
+//        )
+//
+        val rootView = inflater.inflate(R.layout.fragment_admin_view_product, container, false)
+//        val application = requireNotNull(this.activity).application
+//        val dataSource = AppDatabase.getInstance(application).productDao
+//        val viewModelFactory = ProductViewModelFactory(dataSource, application)
+//        val viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
+//
+//        viewModel.insertProduct(product)
 
 //        viewModel.clearAll()
-        viewModel.getAllProducts().observe(this, { products ->
-            if (products != null) {
-
-                val resultTextView = rootView.findViewById<TextView>(R.id.result)
-                resultTextView.text = products.toString()
-
-            }})
-
+//        viewModel.getAllProducts().observe(this, { products ->
+//            if (products != null) {
+//
+//                val resultTextView = rootView.findViewById<TextView>(R.id.result)
+//                resultTextView.text = products.toString()
+//
+//            }})
 
 
 //        viewModel.getProductById(1).observe(this, { product ->
@@ -82,6 +81,25 @@ class AdminViewProduct : Fragment() {
 //        }
 //        )
         return inflater.inflate(R.layout.fragment_admin_view_product, container, false)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val application = requireNotNull(this.activity).application
+        val dataSource = AppDatabase.getInstance(application).productDao
+        val viewModelFactory = ProductViewModelFactory(dataSource, application)
+        val viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
+
+
+
+        viewModel.getAllProducts().observe(this, { products ->
+            if (products != null) {
+
+                val resultTextView = requireView().findViewById<TextView>(R.id.result)
+                resultTextView.text = products.toString()
+
+            }
+        })
     }
 
     companion object {
