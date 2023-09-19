@@ -101,7 +101,18 @@ class AdminViewProduct : Fragment() {
             }
         })
     }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
+//        // Initialize the button by finding it in the fragment's layout
+//        myButton = view.findViewById(R.id.my_button)
+//
+//        // Set an onClickListener for the button
+//        myButton.setOnClickListener {
+//            // Handle the button click event here
+//            // You can perform actions or navigate to another fragment/activity
+//        }
+    }
     companion object {
         /**
          * Use this factory method to create a new instance of
