@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ProductViewModel(
     val database: ProductDao,
@@ -29,6 +30,12 @@ class ProductViewModel(
     }
 
     fun clearAll() {
-         database.clear()
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                database.clear()
+            }
+
+        }
+
     }
 }
