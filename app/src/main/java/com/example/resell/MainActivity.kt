@@ -1,6 +1,7 @@
 package com.example.resell
 
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
@@ -10,6 +11,7 @@ import com.example.resell.database.AppDatabase
 import com.example.resell.database.Product
 import com.example.resell.database.ProductViewModel
 import com.example.resell.database.ProductViewModelFactory
+import com.google.firebase.FirebaseApp
 import java.util.Date
 
 
@@ -55,7 +57,7 @@ class MainActivity : AppCompatActivity() {
 //        }
 //        )
 
-
+        FirebaseApp.initializeApp(this)
         val fragmentTransaction = supportFragmentManager.beginTransaction()
         val fragment = AdminViewProduct() // Replace with your fragment class
 

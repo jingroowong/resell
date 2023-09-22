@@ -1,6 +1,8 @@
 package com.example.resell.admin
 
+import android.content.ContentValues.TAG
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,6 +17,11 @@ import com.example.resell.database.AppDatabase
 import com.example.resell.database.Product
 import com.example.resell.database.ProductViewModel
 import com.example.resell.database.ProductViewModelFactory
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import java.sql.Timestamp
+
+
 import java.util.Date
 
 // TODO: Rename parameter arguments, choose names that match
@@ -31,6 +38,8 @@ class AdminViewProduct : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+
+    val db = Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,8 +99,27 @@ class AdminViewProduct : Fragment() {
         val viewModelFactory = ProductViewModelFactory(dataSource, application)
         val viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
 
+        //https://firebase.google.com/docs/firestore/quickstart#kotlin+ktx_2
+        val product = hashMapOf(
+            "productID" to "unique_product_id",
+            "productName" to "Product Name",
+            "productPrice" to 19.99,
+            "productDesc" to "Product description goes here",
+            "productCondition" to "New",
+            "productImage" to "product_image.jpg",
+            "dateUpload" to Timestamp.valueOf("2022-01-01 11:11:11"),
+            "productAvailability" to true
+        )
 
-
+        db.collection("product")
+            .add(product)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error adding document", e)
+            }
+        
         viewModel.getAllProducts().observe(this, { products ->
             if (products != null) {
 
