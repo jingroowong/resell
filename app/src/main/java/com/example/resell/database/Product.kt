@@ -8,11 +8,12 @@ import java.util.Date
 data class Product(
     @PrimaryKey(autoGenerate = true)
     var productID: Int = 0,
-    var productName: String,
-    var productPrice: Double,
-    var productDesc: String,
-    var productCondition: String,
-    var productImage: String,
-    var dateUpload: Date,
-    var productAvailability: Boolean
+    var key: String?=null,
+    var productName: String?=null,
+    var productPrice: Double?=null,
+    var productDesc: String?=null,
+    var productCondition: String?=null,
+    var productImage: String?=null,
+    var dateUpload: Date?=null,
+    var productAvailability: Boolean?=null
 )
