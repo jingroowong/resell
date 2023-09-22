@@ -6,8 +6,8 @@ import java.util.Date
 
 @Entity(tableName = "product_table")
 data class Product(
-    @PrimaryKey(autoGenerate = true)
-    var productID: Int = 0,
+    @PrimaryKey(autoGenerate = false)
+    var productID: Int,
     var productName: String,
     var productPrice: Double,
     var productDesc: String,

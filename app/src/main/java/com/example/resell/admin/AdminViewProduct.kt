@@ -17,12 +17,15 @@ import com.example.resell.database.AppDatabase
 import com.example.resell.database.Product
 import com.example.resell.database.ProductViewModel
 import com.example.resell.database.ProductViewModelFactory
+import com.google.firebase.FirebaseApp
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import java.sql.Timestamp
+import java.text.SimpleDateFormat
 
 
 import java.util.Date
+import java.util.Locale
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -39,7 +42,7 @@ class AdminViewProduct : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
-    val db = Firebase.firestore
+    private val db = Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,42 +96,88 @@ class AdminViewProduct : Fragment() {
     }
 
     override fun onResume() {
+
         super.onResume()
         val application = requireNotNull(this.activity).application
         val dataSource = AppDatabase.getInstance(application).productDao
         val viewModelFactory = ProductViewModelFactory(dataSource, application)
         val viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
-
+        val result = requireView().findViewById<TextView>(R.id.result)
         //https://firebase.google.com/docs/firestore/quickstart#kotlin+ktx_2
-        val product = hashMapOf(
-            "productID" to "unique_product_id",
-            "productName" to "Product Name",
-            "productPrice" to 19.99,
-            "productDesc" to "Product description goes here",
-            "productCondition" to "New",
-            "productImage" to "product_image.jpg",
-            "dateUpload" to Timestamp.valueOf("2022-01-01 11:11:11"),
-            "productAvailability" to true
-        )
+
+        var productCount: Int = 0
+
+
+//        db.collection("counters").document("product").get()
+//            .addOnSuccessListener { documentSnapshot ->
+//                if (documentSnapshot.exists()) {
+//                    val count = documentSnapshot.get("productCount").toString().toInt()
+//                    productCount = count + 1
+//                    val product = hashMapOf(
+//                        "productID" to productCount,
+//                        "productName" to "Product Name",
+//                        "productPrice" to 19.99,
+//                        "productDesc" to "Product description goes here",
+//                        "productCondition" to "New",
+//                        "productImage" to "product_image.jpg",
+//                        "dateUpload" to Timestamp.valueOf("2022-01-01 11:11:11"),
+//                        "productAvailability" to true
+//                    )
+//
+//                    db.collection("product")
+//                        .document(productCount.toString())
+//                        .set(product)
+//                        .addOnSuccessListener { documentReference ->
+//                            Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference}")
+//                            db.collection("counters").document("product")
+//                                .set(hashMapOf("productCount" to productCount))
+//
+//                        }
+//                        .addOnFailureListener { e ->
+//                            Log.w(TAG, "Error adding document", e)
+//                        }
+//
+//                }
+//            }
+
+
+        val productList: MutableList<Product> = mutableListOf()
+
+//        viewModel.clearAll()
 
         db.collection("product")
-            .add(product)
-            .addOnSuccessListener { documentReference ->
-                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+            .get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+
+                    val product = Product(
+                        productID = document.get("productID").toString().toInt(),
+                        productName = document.get("productName").toString(),
+                        productPrice = document.get("productPrice").toString().toDouble(),
+                        productDesc = document.get("productDesc").toString(),
+                        productCondition = document.get("productCondition").toString(),
+                        productImage = document.get("productImage").toString(),
+                        dateUpload = document.get("dateUpload").toString(),
+                        productAvailability = true
+                    )
+
+
+                    viewModel.insertProduct(product)
+
+                }
             }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error adding document", e)
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "Error getting documents.", exception)
             }
-        
+
+
         viewModel.getAllProducts().observe(this, { products ->
             if (products != null) {
-
-                val resultTextView = requireView().findViewById<TextView>(R.id.result)
-                resultTextView.text = products.toString()
-
+                result.text = products.toString()
             }
         })
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -141,6 +190,7 @@ class AdminViewProduct : Fragment() {
 //            // You can perform actions or navigate to another fragment/activity
 //        }
     }
+
     companion object {
         /**
          * Use this factory method to create a new instance of
