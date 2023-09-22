@@ -15,14 +15,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        replaceFrament(OrderHistory())
 
         binding.bottomNavigationView.setOnItemSelectedListener{
             when(it.itemId){
-//                R.id.home -> replaceFrament(Home())
-//                R.id.cart -> replaceFrament(Cart())
-                R.id.history -> replaceFrament(OrderHistory())
-//                R.id.profile -> replaceFrament(Profile())
+//                R.id.home -> replaceFragment(Home())
+//                R.id.cart -> replaceFragment(Cart())
+                R.id.history -> replaceFragment(OrderHistory())
+//                R.id.profile -> replaceFragment(Profile())
 
                 else ->{
 
@@ -32,17 +31,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun replaceFrament(fragment: Fragment){
+    private fun replaceFragment(fragment: Fragment){
         val fragmentManager = supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(R.id.frameLayout,fragment)
         fragmentTransaction.commit()
     }
-
-//    private  fun loadFragment(fragment: Fragment){
-//        val transaction = supportFragmentManager.beginTransaction()
-//        transaction.replace(R.id.fragment_container,fragment)
-//        transaction.commit()
-//    }
 
 }
