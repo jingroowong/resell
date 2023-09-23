@@ -18,24 +18,12 @@ import androidx.room.PrimaryKey
         onDelete = ForeignKey.CASCADE
     )]
 )
+
 data class Order(
-    @PrimaryKey(autoGenerate = true)
-    @ColumnInfo(name = "orderID")
-    var orderID: Int = 0,
-
-    @ColumnInfo(name = "orderDate")
-    var orderDate: Long,
-
-    @ColumnInfo(name = "orderAmount")
-    var orderAmount: Double,
-
-    @ColumnInfo(name = "orderStatus")
-    var orderStatus: String,
-
-
-    @ColumnInfo(name = "userID")
-    var userID: Int,
-
-    @ColumnInfo(name = "paymentID")
-    var paymentID: Int
+    var orderID : Int ?= null,
+    var orderDate: Long ?= null,
+    var orderAmount : Double ?= null,
+    var orderStatus : String ?= null,
+    var userID: Int ?= null,
+    var paymentID: Int ?= null
 )

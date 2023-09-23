@@ -3,6 +3,7 @@ package com.example.resell.database
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import java.util.Date
 
 @Entity(
     tableName = "order_detail_table",

@@ -5,6 +5,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.resell.Model.OrderViewModel
+import com.example.resell.adapter.MyOrderAdapter
 import com.google.firebase.ktx.Firebase
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -20,6 +26,11 @@ private const val ARG_PARAM2 = "param2"
  * Use the [OrderHistory.newInstance] factory method to
  * create an instance of this fragment.
  */
+
+private lateinit var viewModel : OrderViewModel
+private lateinit var orderRecyclerView: RecyclerView
+lateinit var adapter: MyOrderAdapter
+
 class OrderHistory : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -38,9 +49,8 @@ class OrderHistory : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.order_history, container, false)
+        return inflater.inflate(R.layout.fragment_order_history, container, false)
     }
-
 
     companion object {
         /**
@@ -60,5 +70,24 @@ class OrderHistory : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        orderRecyclerView = view.findViewById(R.id.recyclerView)
+        orderRecyclerView.layoutManager = LinearLayoutManager(context)
+        orderRecyclerView.setHasFixedSize(true)
+        adapter = MyOrderAdapter()
+        orderRecyclerView.adapter = adapter
+
+        viewModel = ViewModelProvider(this).get(OrderViewModel::class.java)
+
+        viewModel.allOrders.observe(viewLifecycleOwner, Observer {
+
+            adapter.updateOrderList(it)
+
+        })
+
     }
 }
