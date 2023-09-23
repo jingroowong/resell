@@ -25,7 +25,6 @@ class OrderHistory : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
-    private val db = Firebase.firestore
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -42,44 +41,7 @@ class OrderHistory : Fragment() {
         return inflater.inflate(R.layout.order_history, container, false)
     }
 
-    fun add(){
-        val currentDate = Date()
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        var productCount: Int = 0
 
-        db.collection("counters").document("orderHistory").get()
-            .addOnSuccessListener { documentSnapshot ->
-                if (documentSnapshot.exists()) {
-                    val count = documentSnapshot.get("productCount").toString().toInt()
-                    productCount = count + 1
-                    val product = hashMapOf(
-                        "productID" to productCount,
-                        "productName" to "Product Name",
-                        "productPrice" to 19.99,
-                        "productDesc" to "Product description goes here",
-                        "productCondition" to "New",
-                        "productImage" to "product_image.jpg",
-                        "dateUpload" to dateFormat.format(currentDate),
-                        "productAvailability" to true
-                    )
-
-                    db.collection("product")
-                        .document(productCount.toString())
-                        .set(product)
-                        .addOnSuccessListener { documentReference ->
-                            Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference}")
-                            db.collection("counters").document("product")
-                                .set(hashMapOf("productCount" to productCount))
-
-                        }
-                        .addOnFailureListener { e ->
-                            Log.w(TAG, "Error adding document", e)
-                        }
-
-                }
-            }
-
-    }
     companion object {
         /**
          * Use this factory method to create a new instance of
