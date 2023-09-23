@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "987148842563",
+    "firebase_url": "https://resell-e01b4-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "resell-e01b4",
+    "storage_bucket": "resell-e01b4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:987148842563:android:c0bfd58984512b179406f6",
+        "android_client_info": {
+          "package_name": "com.example.resell"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDwZJmz83uv-ua-TXUacsGJbp9mAm2xsp0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -14,6 +14,8 @@
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:text="PROCEED TO CHECKOUT"
+        android:background="#000000"
+        android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
