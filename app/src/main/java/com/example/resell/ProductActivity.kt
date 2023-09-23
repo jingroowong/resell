@@ -1,6 +1,7 @@
 package com.example.resell;
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
@@ -41,9 +42,11 @@ public class ProductActivity : AppCompatActivity(), IProductLoadListener {
                             productModels.add(productModel)
                         }
                         productLoadListener.onProductLoadSuccess(productModels)
-                    } else
+                        Log.d("FirebaseData", "Data retrieved successfully")
+                    } else {
                         productLoadListener.onProductLoadFailed("Product items not exist")
-
+                        Log.d("FirebaseData", "No data found")
+                    }
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -58,17 +61,15 @@ public class ProductActivity : AppCompatActivity(), IProductLoadListener {
 
         val gridLayoutManager = GridLayoutManager(this,2)
         recycler_product.addItemDecoration(SpaceItemDecoration())
+        recycler_product.layoutManager = gridLayoutManager
     }
 
     override fun onProductLoadSuccess(productModelList: List<Product>?) {
         val adapter  = MyProductAdapter(this,productModelList!!)
-
         recycler_product.adapter = adapter
     }
 
     override fun onProductLoadFailed(message: String?) {
-
         Snackbar.make(productLayout, message!!, Snackbar.LENGTH_LONG).show()
-
     }
 }
