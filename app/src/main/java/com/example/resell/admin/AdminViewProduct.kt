@@ -41,7 +41,7 @@ class AdminViewProduct : Fragment() {
 
         val application = requireNotNull(this.activity).application
         val dataSource = AppDatabase.getInstance(application).productDao
-        val date = Date()
+        val date = Date().toString()
         val product = Product(
             productName = "product1",
             productPrice = 11.00,
