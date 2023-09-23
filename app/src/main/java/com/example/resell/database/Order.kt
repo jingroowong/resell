@@ -24,7 +24,7 @@ data class Order(
     var orderID: Int = 0,
 
     @ColumnInfo(name = "orderDate")
-    var orderDate: Long,
+    var orderDate: String,
 
     @ColumnInfo(name = "orderAmount")
     var orderAmount: Double,

@@ -48,7 +48,7 @@ class AdminViewProduct : Fragment() {
             productDesc = "New Product",
             productCondition = "New",
             productImage = "Image.jpg",
-            dateUpload =date,
+            dateUpload = null,
             productAvailability = true
         )
 //        val viewModelFactory = SleepTrackerViewModelFactory(dataSource, application)
