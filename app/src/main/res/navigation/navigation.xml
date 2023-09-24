@@ -17,9 +17,6 @@
             <argument
                 android:name="product"
                 app:argType="com.example.resell.database.Product" />
-            <argument
-                android:name="cartListener"
-                app:argType="com.example.resell.listener.ICartLoadListener" />
         </action>
 
     </fragment>
@@ -30,5 +27,9 @@
     <fragment
         android:id="@+id/productDetailFragment"
         android:name="ProductDetailFragment"
-        android:label="ProductDetailFragment" />
+        android:label="ProductDetailFragment" >
+        <action
+            android:id="@+id/action_productDetailFragment_to_cartFragment"
+            app:destination="@id/cartFragment" />
+    </fragment>
 </navigation>

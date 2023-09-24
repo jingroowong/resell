@@ -1,4 +1,5 @@
 import android.os.Bundle
+import android.os.Parcel
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -106,4 +107,5 @@ class CartFragment : Fragment(), ICartLoadListener {
     override fun onLoadCartFailed(message: String?) {
         Snackbar.make(requireView(), message!!, Snackbar.LENGTH_LONG).show()
     }
+
 }

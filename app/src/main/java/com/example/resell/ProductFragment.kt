@@ -1,5 +1,7 @@
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcel
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -37,6 +39,7 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         // Inflate the layout for this fragment using View Binding
         binding = FragmentProductBinding.inflate(inflater, container, false)
         return binding.root
@@ -132,12 +135,12 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
     }
 
     override fun onProductLoadSuccess(productModelList: List<Product>?) {
-        val adapter = MyProductAdapter(requireContext(), productModelList!!, cartLoadListener,findNavController())
+        val adapter = MyProductAdapter(requireContext(), productModelList!!,findNavController())
         recyclerProduct.adapter = adapter
     }
 
     override fun onProductLoadFailed(message: String?) {
-        Snackbar.make(requireView(), message!!, Snackbar.LENGTH_LONG).show()
+        Snackbar.make(binding.productLayout, message!!, Snackbar.LENGTH_LONG).show()
     }
 
     override fun onLoadCartSuccess(cartList: List<Cart>) {
@@ -146,6 +149,10 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
     }
 
     override fun onLoadCartFailed(message: String?) {
-        Snackbar.make(requireView(), message!!, Snackbar.LENGTH_LONG).show()
-    }
+        Snackbar.make(requireView(), message ?: "An error occurred", Snackbar.LENGTH_SHORT).show()
+        }
+
+
+
+
 }

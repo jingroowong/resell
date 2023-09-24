@@ -2,6 +2,7 @@ package com.example.resell
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Parcel
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -105,4 +106,5 @@ class CartActivity : AppCompatActivity(), ICartLoadListener {
     override fun onLoadCartFailed(message: String?) {
         Snackbar.make(cartLayout, message!!, Snackbar.LENGTH_LONG).show()
     }
+
 }
