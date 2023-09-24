@@ -1,26 +1,26 @@
 package com.example.resell.admin
 
-import android.content.ContentValues.TAG
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.FragmentActivity
+import android.widget.Button
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.resell.R
 import com.example.resell.database.AppDatabase
 import com.example.resell.database.Product
 import com.example.resell.database.ProductViewModel
 import com.example.resell.database.ProductViewModelFactory
-import com.google.firebase.FirebaseApp
-import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import java.sql.Timestamp
 import java.text.SimpleDateFormat
 
 
@@ -42,7 +42,8 @@ class AdminViewProduct : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
-    private val db = Firebase.firestore
+    private val db = Firebase.database.getReference("Products")
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,33 +57,7 @@ class AdminViewProduct : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-//        val date = Date().time.toLong()
-//        val product = Product(
-//            productName = "product3",
-//            productPrice = 1.00,
-//            productDesc = "New Product",
-//            productCondition = "Bad",
-//            productImage = "Image3.jpg",
-//            dateUpload = date,
-//            productAvailability = true
-//        )
-//
         val rootView = inflater.inflate(R.layout.fragment_admin_view_product, container, false)
-//        val application = requireNotNull(this.activity).application
-//        val dataSource = AppDatabase.getInstance(application).productDao
-//        val viewModelFactory = ProductViewModelFactory(dataSource, application)
-//        val viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
-//
-//        viewModel.insertProduct(product)
-
-//        viewModel.clearAll()
-//        viewModel.getAllProducts().observe(this, { products ->
-//            if (products != null) {
-//
-//                val resultTextView = rootView.findViewById<TextView>(R.id.result)
-//                resultTextView.text = products.toString()
-//
-//            }})
 
 
 //        viewModel.getProductById(1).observe(this, { product ->
@@ -102,108 +77,104 @@ class AdminViewProduct : Fragment() {
         val dataSource = AppDatabase.getInstance(application).productDao
         val viewModelFactory = ProductViewModelFactory(dataSource, application)
         val viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
-        val result = requireView().findViewById<TextView>(R.id.result)
-        //https://firebase.google.com/docs/firestore/quickstart#kotlin+ktx_2
 
 
-
+        val date = Date().time
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
+        val product = Product(
+            productName = "product3",
+            productPrice = 1.00,
+            productDesc = "New Product",
+            productCondition = "Bad",
+            productImage = "Image3.jpg",
+            dateUpload = date,
+            productAvailability = true
+        )
 
-        val productList: MutableList<Product> = mutableListOf()
-
+//        writeNewProduct(product)
         viewModel.clearAll()
-
-
-        db.collection("product")
-            .get()
-            .addOnSuccessListener { result ->
-                for (document in result) {
-
-                    val date=dateFormat.parse( document.get("dateUpload").toString())
-                    val product = Product(
-                        productID = document.get("productID").toString().toInt(),
-                        productName = document.get("productName").toString(),
-                        productPrice = document.get("productPrice").toString().toDouble(),
-                        productDesc = document.get("productDesc").toString(),
-                        productCondition = document.get("productCondition").toString(),
-                        productImage = document.get("productImage").toString(),
-                        dateUpload = date.time,
-                        productAvailability = true
-                    )
-
-
-                    viewModel.insertProduct(product)
-
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.w(TAG, "Error getting documents.", exception)
-            }
-
-
-        viewModel.getAllProducts().observe(this, { products ->
-            if (products != null) {
-                result.text = products.toString()
-            }
-        })
-
-
-
+//        readFirebaseProduct(viewModel)
+//        val result = requireView().findViewById<TextView>(R.id.result)
+//        viewModel.getAllProducts().observe(this, { products ->
+//            if (products != null) {
+//                result.text = products.toString()
+//            }
+//        })
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        // Initialize the button by finding it in the fragment's layout
-//        myButton = view.findViewById(R.id.my_button)
-//
-//        // Set an onClickListener for the button
-//        myButton.setOnClickListener {
-//            // Handle the button click event here
-//            // You can perform actions or navigate to another fragment/activity
-//        }
+
+        val application = requireNotNull(this.activity).application
+        val dataSource = AppDatabase.getInstance(application).productDao
+        val viewModelFactory = ProductViewModelFactory(dataSource, application)
+        val viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
+
+        val layoutManager = GridLayoutManager(requireContext(),2)
+        recyclerView.layoutManager = layoutManager
+
+
+        viewModel.getAllProducts().observe(viewLifecycleOwner, { products ->
+            if (products != null) {
+                val adapter = ProductAdapter(products)
+                recyclerView.adapter=adapter
+            }
+        })
+
+
+        val insertBtn =view.findViewById<Button>(R.id.insertBtn)
+        insertBtn.setOnClickListener{
+            val naviagationController=findNavController().navigate(R.id.action_adminViewProduct_to_adminInsertProduct)
+
+        }
+
+
     }
 
-
-    fun add(){
-        val currentDate = Date()
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        var productCount: Int = 0
-
-        db.collection("counters").document("product").get()
-            .addOnSuccessListener { documentSnapshot ->
-                if (documentSnapshot.exists()) {
-                    val count = documentSnapshot.get("productCount").toString().toInt()
-                    productCount = count + 1
-                    val product = hashMapOf(
-                        "productID" to productCount,
-                        "productName" to "Product Name",
-                        "productPrice" to 19.99,
-                        "productDesc" to "Product description goes here",
-                        "productCondition" to "New",
-                        "productImage" to "product_image.jpg",
-                        "dateUpload" to dateFormat.format(currentDate),
-                        "productAvailability" to true
-                    )
-
-                    db.collection("product")
-                        .document(productCount.toString())
-                        .set(product)
-                        .addOnSuccessListener { documentReference ->
-                            Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference}")
-                            db.collection("counters").document("product")
-                                .set(hashMapOf("productCount" to productCount))
-
-                        }
-                        .addOnFailureListener { e ->
-                            Log.w(TAG, "Error adding document", e)
-                        }
-
-                }
+    fun writeNewProduct(product: Product) {
+        db.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                var count = dataSnapshot.childrenCount
+                count += 1
+                product.productID = count.toInt()
+                db.child(count.toString()).setValue(product)
             }
 
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle errors here if necessary
+            }
+        })
+
     }
+
+    fun readFirebaseProduct(viewModel: ProductViewModel) {
+
+        db.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+                for (productSnapshot in dataSnapshot.children) {
+                    val productData = productSnapshot.getValue(Product::class.java)
+
+                    if (productData != null) {
+                        viewModel.insertProduct(productData)
+                    }
+                }
+
+
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle errors here if necessary
+            }
+        })
+
+
+    }
+
+
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -223,7 +194,6 @@ class AdminViewProduct : Fragment() {
                 }
             }
     }
-
 
 
 }

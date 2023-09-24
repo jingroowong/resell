@@ -6,18 +6,23 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/result2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/test"
-        android:layout_width="409dp"
-        android:layout_height="710dp"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="20dp">
+        android:layout_width="392dp"
+        android:layout_height="698dp"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="29dp">
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <fragment
+        android:id="@+id/myNavHostFragment"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/navigation"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="29dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
