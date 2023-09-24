@@ -23,11 +23,11 @@ import org.greenrobot.eventbus.ThreadMode
 import java.lang.StringBuilder
 
 class CartActivity : AppCompatActivity(), ICartLoadListener {
-    var cartLoadListener:ICartLoadListener?=null
+    var cartLoadListener: ICartLoadListener? = null
     lateinit var recycler_cart: RecyclerView
     lateinit var btnBack: ImageView
     lateinit var txtTotal: TextView
-    lateinit var productLayout: RelativeLayout
+    lateinit var cartLayout: RelativeLayout
 
     override fun onStart() {
         super.onStart()
@@ -36,16 +36,15 @@ class CartActivity : AppCompatActivity(), ICartLoadListener {
 
     override fun onStop() {
         super.onStop()
-        if(EventBus.getDefault().hasSubscriberForEvent(UpdateCartEvent::class.java))
+        if (EventBus.getDefault().hasSubscriberForEvent(UpdateCartEvent::class.java))
             EventBus.getDefault().removeStickyEvent(UpdateCartEvent::class.java)
         EventBus.getDefault().unregister(this)
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
     public fun onUpdateCartEvent(event: UpdateCartEvent) {
-       loadCartFromFirebase()
+        loadCartFromFirebase()
     }
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +53,7 @@ class CartActivity : AppCompatActivity(), ICartLoadListener {
         recycler_cart = findViewById(R.id.recycler_cart)
         btnBack = findViewById(R.id.btnBack)
         txtTotal = findViewById(R.id.txtTotal)
-       productLayout = findViewById<RelativeLayout>(R.id.productLayout)
+        cartLayout = findViewById<RelativeLayout>(R.id.productLayout)
 
         init()
         loadCartFromFirebase()
@@ -87,7 +86,7 @@ class CartActivity : AppCompatActivity(), ICartLoadListener {
         cartLoadListener = this
         val layoutManager = LinearLayoutManager(this)
         recycler_cart.layoutManager = layoutManager
-        recycler_cart.addItemDecoration(DividerItemDecoration(this,layoutManager.orientation))
+        recycler_cart.addItemDecoration(DividerItemDecoration(this, layoutManager.orientation))
         btnBack!!.setOnClickListener {
             finish()
         }
@@ -95,15 +94,15 @@ class CartActivity : AppCompatActivity(), ICartLoadListener {
 
     override fun onLoadCartSuccess(cartList: List<Cart>) {
         var sum = 0.0
-        for (cartModel in cartList){
+        for (cartModel in cartList) {
             sum += cartModel.productPrice!!
         }
         txtTotal.text = StringBuilder("RM").append(sum)
-        val adapter  = MyCartAdapter(this, cartList)
+        val adapter = MyCartAdapter(this, cartList)
         recycler_cart.adapter = adapter
     }
 
     override fun onLoadCartFailed(message: String?) {
-        Snackbar.make(productLayout, message!!, Snackbar.LENGTH_LONG).show()
+        Snackbar.make(cartLayout, message!!, Snackbar.LENGTH_LONG).show()
     }
 }

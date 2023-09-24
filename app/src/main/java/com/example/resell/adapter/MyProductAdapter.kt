@@ -1,16 +1,16 @@
 package com.example.resell.adapter
 
+import android.app.Dialog
 import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.Update
 import com.bumptech.glide.Glide
-import com.bumptech.glide.disklrucache.DiskLruCache.Value
 import com.example.resell.R
 import com.example.resell.database.Cart
 import com.example.resell.database.Product
@@ -21,7 +21,6 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.google.firebase.ktx.Firebase
 import org.greenrobot.eventbus.EventBus
 
 class MyProductAdapter(
@@ -73,10 +72,34 @@ class MyProductAdapter(
         holder.txtPrice!!.text = StringBuilder("RM").append(list[position].productPrice)
         holder.setClickListener(object : IRecyclerClickListener {
             override fun onItemClickListener(view: View?, position: Int) {
-                addToCart(list[position])
+//                addToCart(list[position])
+                showProductDetails(list[position])
             }
 
         })
+    }
+
+    private fun showProductDetails(product: Product) {
+        val dialog = Dialog(context)
+        dialog.setContentView(R.layout.product_catalog)
+        val nameTextView = dialog.findViewById<TextView>(R.id.name_label)
+        val priceTextView = dialog.findViewById<TextView>(R.id.price_label)
+        val conditionTextView = dialog.findViewById<TextView>(R.id.condition_label2)
+        val descTextView = dialog.findViewById<TextView>(R.id.desc_label)
+        val addToCartButton = dialog.findViewById<Button>(R.id.add_to_cart_button)
+
+        nameTextView.text = product.productName
+        priceTextView.text = StringBuilder("RM").append(product.productPrice)
+        conditionTextView.text = product.productCondition
+        descTextView.text = product.productDesc
+        addToCartButton.setOnClickListener {
+            // Add the product to the cart
+            addToCart(product)
+            dialog.dismiss()
+        }
+
+        dialog.show()
+
     }
 
     private fun addToCart(product: Product) {

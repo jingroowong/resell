@@ -35,7 +35,6 @@ public class ProductActivity : AppCompatActivity(), IProductLoadListener, ICartL
     lateinit var productLayout: RelativeLayout
     lateinit var btnCart: FrameLayout
 
-
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)
@@ -43,21 +42,22 @@ public class ProductActivity : AppCompatActivity(), IProductLoadListener, ICartL
 
     override fun onStop() {
         super.onStop()
-        if(EventBus.getDefault().hasSubscriberForEvent(UpdateCartEvent::class.java))
+        if (EventBus.getDefault().hasSubscriberForEvent(UpdateCartEvent::class.java))
             EventBus.getDefault().removeStickyEvent(UpdateCartEvent::class.java)
         EventBus.getDefault().unregister(this)
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
-    public fun onUpdateCartEvent(event: UpdateCartEvent){
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
+    public fun onUpdateCartEvent(event: UpdateCartEvent) {
         countCartFromFirebase()
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.product_catalog_listing)
         recycler_product = findViewById(R.id.recycler_product)
         productLayout = findViewById<RelativeLayout>(R.id.productLayout)
-       btnCart = findViewById(R.id.btnCart)
+        btnCart = findViewById(R.id.btnCart)
         badge = findViewById(R.id.badge)
         init()
         loadProductFromFirebase()
@@ -123,13 +123,13 @@ public class ProductActivity : AppCompatActivity(), IProductLoadListener, ICartL
         recycler_product.layoutManager = gridLayoutManager
 
         btnCart.setOnClickListener {
-            startActivity(Intent(this,CartActivity::class.java))
+            startActivity(Intent(this, CartActivity::class.java))
         }
 
     }
 
     override fun onProductLoadSuccess(productModelList: List<Product>?) {
-        val adapter = MyProductAdapter(this, productModelList!!,cartLoadListener)
+        val adapter = MyProductAdapter(this, productModelList!!, cartLoadListener)
         recycler_product.adapter = adapter
     }
 
