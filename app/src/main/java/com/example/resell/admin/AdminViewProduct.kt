@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -59,14 +58,6 @@ class AdminViewProduct : Fragment() {
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_admin_view_product, container, false)
 
-
-//        viewModel.getProductById(1).observe(this, { product ->
-//            if (product != null) {
-//                val resultTextView = findViewById<TextView>(R.id.result2)
-//                resultTextView.text = product.toString()
-//            }
-//        }
-//        )
         return inflater.inflate(R.layout.fragment_admin_view_product, container, false)
     }
 
@@ -81,20 +72,20 @@ class AdminViewProduct : Fragment() {
 
         val date = Date().time
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        readFirebaseProduct(viewModel)
 
-        val product = Product(
-            productName = "product3",
-            productPrice = 1.00,
-            productDesc = "New Product",
-            productCondition = "Bad",
-            productImage = "Image3.jpg",
-            dateUpload = date,
-            productAvailability = true
-        )
+//        val product = Product(
+//            productName = "product3",
+//            productPrice = 1.00,
+//            productDesc = "New Product",
+//            productCondition = "Bad",
+//            productImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7-CSdvYB4GgTWbmqegbKDjDvFvrc5huD4eA&usqp=CAU",
+//            dateUpload = date,
+//            productAvailability = true
+//        )
 
 //        writeNewProduct(product)
-        viewModel.clearAll()
-//        readFirebaseProduct(viewModel)
+
 //        val result = requireView().findViewById<TextView>(R.id.result)
 //        viewModel.getAllProducts().observe(this, { products ->
 //            if (products != null) {
@@ -113,21 +104,24 @@ class AdminViewProduct : Fragment() {
         val viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
 
-        val layoutManager = GridLayoutManager(requireContext(),2)
+        val layoutManager = GridLayoutManager(requireContext(), 2)
         recyclerView.layoutManager = layoutManager
+
+
 
 
         viewModel.getAllProducts().observe(viewLifecycleOwner, { products ->
             if (products != null) {
                 val adapter = ProductAdapter(products)
-                recyclerView.adapter=adapter
+                recyclerView.adapter = adapter
             }
         })
 
 
-        val insertBtn =view.findViewById<Button>(R.id.insertBtn)
-        insertBtn.setOnClickListener{
-            val naviagationController=findNavController().navigate(R.id.action_adminViewProduct_to_adminInsertProduct)
+        val addBtn = view.findViewById<Button>(R.id.addBtn)
+        addBtn.setOnClickListener {
+            val naviagationController =
+                findNavController().navigate(R.id.action_adminViewProduct_to_adminInsertProduct)
 
         }
 
@@ -151,25 +145,27 @@ class AdminViewProduct : Fragment() {
     }
 
     fun readFirebaseProduct(viewModel: ProductViewModel) {
-
-        db.addValueEventListener(object : ValueEventListener {
+        viewModel.clearAll()
+        db.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-
+                // Iterate through the children (pID) under the "Products" node
                 for (productSnapshot in dataSnapshot.children) {
+                    // Convert the Firebase data to a Product object
                     val productData = productSnapshot.getValue(Product::class.java)
 
                     if (productData != null) {
+                        // Insert the Product object into your Room database
                         viewModel.insertProduct(productData)
                     }
                 }
-
-
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                // Handle errors here if necessary
+                // Handle any errors here
             }
         })
+
+
 
 
     }

@@ -1,11 +1,22 @@
 package com.example.resell.admin
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import androidx.navigation.fragment.findNavController
 import com.example.resell.R
+import com.example.resell.database.Product
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import java.util.Date
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -22,6 +33,8 @@ class AdminInsertProduct : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private val db = Firebase.database.getReference("Products")
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -36,6 +49,53 @@ class AdminInsertProduct : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_admin_insert_product, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
+        val insertBtn = view.findViewById<Button>(R.id.insertBtn)
+
+        insertBtn.setOnClickListener {
+            val productName = view.findViewById<EditText>(R.id.nameEdit).text.toString().trim()
+            val productPrice = view.findViewById<EditText>(R.id.priceEdit).text.toString().toDouble()
+            val productDesc = view.findViewById<EditText>(R.id.descriptionEdit).text.toString().trim()
+            val productCondition = view.findViewById<EditText>(R.id.conditionEdit).text.toString().trim()
+            val productImage = view.findViewById<EditText>(R.id.imageEdit).text.toString().trim()
+            val date = Date().time
+
+            val product = Product(
+                productName = productName,
+                productPrice = productPrice,
+                productDesc = productDesc,
+                productCondition = productCondition,
+                productImage = productImage,
+                dateUpload = date,
+                productAvailability = true
+            )
+            writeNewProduct(product)
+
+            findNavController().navigate(R.id.action_adminInsertProduct_to_adminViewProduct)
+
+        }
+
+    }
+
+    fun writeNewProduct(product: Product) {
+        db.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                var count = dataSnapshot.childrenCount
+                count += 1
+                product.productID = count.toInt()
+                db.child(count.toString()).setValue(product)
+
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle errors here if necessary
+
+            }
+        })
+
     }
 
     companion object {
