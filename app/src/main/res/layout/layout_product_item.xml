@@ -22,21 +22,23 @@
             android:layout_height="150dp"/>
 
         <TextView
-            android:id="@+id/txtPrice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start"
-            android:text="RM1.00"
-            android:textSize="30sp"
-            android:textStyle="bold" />
-
-        <TextView
             android:id="@+id/txtName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:text="T-Shirt"
-            android:textSize="18sp"
+            android:textSize="24sp"
             android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:text="RM1.00"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

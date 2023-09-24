@@ -51,7 +51,8 @@ class MyCartAdapter(
             .load(cartModelList[position].productImage)
             .into(holder.imageView!!)
         holder.txtName!!.text = StringBuilder().append(cartModelList[position].productName)
-        holder.txtPrice!!.text = StringBuilder("RM").append(cartModelList[position].productPrice)
+//        holder.txtPrice!!.text = StringBuilder("RM").append(cartModelList[position].productPrice)
+        holder.txtPrice!!.text = String.format("RM %.2f", cartModelList[position].productPrice)
 
         //Event
         holder.btnDelete!!.setOnClickListener { _ ->

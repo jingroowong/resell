@@ -1,55 +1,136 @@
-package com.example.resell
-
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
+import com.example.resell.R
+import com.example.resell.database.Cart
+import com.example.resell.database.Product
+import com.example.resell.eventbus.UpdateCartEvent
+import com.example.resell.listener.ICartLoadListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import org.greenrobot.eventbus.EventBus
 
-/**
- * A simple [Fragment] subclass.
- * Use the [ProductDetailFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class ProductDetailFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var cartListener: ICartLoadListener? = null
+    companion object {
+        private const val ARG_PRODUCT = "product"
+        private const val ARG_CART_LISTENER = "cartListener"
+        @JvmStatic
+        fun newInstance(product: Product, cartListener: ICartLoadListener) =
+            ProductDetailFragment().apply {
+                arguments = Bundle().apply {
+                    putParcelable(ARG_PRODUCT, product)
+                    putSerializable(ARG_CART_LISTENER, cartListener)
+                }
+            }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Extract cartListener from fragment arguments, if it's passed
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            cartListener = it.getSerializable(ARG_CART_LISTENER) as? ICartLoadListener
         }
     }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_product_detail, container, false)
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment ProductDetailFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic fun newInstance(param1: String, param2: String) =
-                ProductDetailFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(ARG_PARAM1, param1)
-                        putString(ARG_PARAM2, param2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Get the product data from arguments
+        val product = arguments?.getParcelable(ARG_PRODUCT) as Product?
+
+        // Update UI with product details
+        product?.let {
+            val nameTextView = view.findViewById<TextView>(R.id.name_label)
+            val priceTextView = view.findViewById<TextView>(R.id.price_label)
+            val conditionTextView = view.findViewById<TextView>(R.id.condition_label2)
+            val descTextView = view.findViewById<TextView>(R.id.desc_label)
+            val addToCartButton = view.findViewById<Button>(R.id.add_to_cart_button)
+
+            nameTextView.text = it.productName
+            priceTextView.text = getString(R.string.price_format, it.productPrice)
+            conditionTextView.text = it.productCondition
+            descTextView.text = it.productDesc
+
+            if (it.productCondition == "Good") {
+                conditionTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorGood))
+            } else if (it.productCondition == "Moderate") {
+                conditionTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorModerate))
+            }
+
+            addToCartButton.setOnClickListener {
+                addToCart(product)
+            }
+
+            val productImageView = view.findViewById<ImageView>(R.id.product_image)
+            Glide.with(requireContext())
+                .load(it.productImage)
+                .into(productImageView)
+        }
+    }
+
+    private fun addToCart(product: Product) {
+        val userCart = FirebaseDatabase.getInstance()
+            .getReference("Cart")
+            .child("UNIQUE_USER_ID")
+
+        userCart.child(product.key!!)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) { //If exist
+                        val cartModel = snapshot.getValue(Cart::class.java)
+                        val updateData: MutableMap<String, Any> = HashMap()
+
+                        userCart.child(cartModel!!.key!!)
+                            .updateChildren(updateData)
+                            .addOnSuccessListener {
+                                cartListener?.onLoadCartFailed("Item already added")
+                            }
+                            .addOnFailureListener { e -> cartListener?.onLoadCartFailed(e.message) }
+                        EventBus.getDefault().postSticky(UpdateCartEvent())
+                        Log.d("FirebaseData", "Cart Data retrieved successfully")
+
+                    } else { //If item not in cart, add new
+                        val cartModel = Cart()
+                        cartModel.key = product.key
+                        cartModel.productName = product.productName
+                        cartModel.productImage = product.productImage
+                        cartModel.productPrice = product.productPrice
+
+                        userCart.child(product.key!!)
+                            .setValue(cartModel)
+                            .addOnSuccessListener {
+                                EventBus.getDefault().postSticky(UpdateCartEvent())
+                                cartListener?.onLoadCartFailed("Success add to cart")
+                            }
+                            .addOnFailureListener { e ->
+                                cartListener?.onLoadCartFailed(e.message)
+                            }
+                        Log.d("FirebaseData", "No data found")
                     }
                 }
+
+                override fun onCancelled(error: DatabaseError) {
+                    cartListener?.onLoadCartFailed(error.message)
+                }
+
+            })
     }
 }

@@ -17,25 +17,25 @@
         <activity
             android:name=".CartActivity"
             android:exported="true" />
-        <!-- <activity -->
-        <!-- android:name=".MainActivity" -->
-        <!-- android:exported="true"> -->
-        <!-- <intent-filter> -->
-        <!-- <action android:name="android.intent.action.MAIN" /> -->
-        <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
-        <!-- </intent-filter> -->
-        <!-- </activity> -->
-        <activity
-            android:name=".ProductActivity"
-            android:exported="true">
+         <activity
+         android:name=".MainActivity"
+         android:exported="true">
+         <intent-filter>
+         <action android:name="android.intent.action.MAIN" />
+         <category android:name="android.intent.category.LAUNCHER" />
+         </intent-filter>
+         </activity>
+<!--        <activity-->
+<!--            android:name=".ProductActivity"-->
+<!--            android:exported="true">-->
 
-            <!-- ... other activity configuration ... -->
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+<!--            &lt;!&ndash; ... other activity configuration ... &ndash;&gt;-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
     </application>
 
 </manifest>

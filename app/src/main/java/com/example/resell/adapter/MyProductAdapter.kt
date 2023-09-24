@@ -9,6 +9,10 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
+import androidx.navigation.NavController
+import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.resell.R
@@ -26,7 +30,8 @@ import org.greenrobot.eventbus.EventBus
 class MyProductAdapter(
     private val context: Context,
     private val list: List<Product>,
-    private val cartListener: ICartLoadListener
+    private val cartListener: ICartLoadListener,
+    private val navController: NavController  // Add this parameter
 ) : RecyclerView.Adapter<MyProductAdapter.MyProductViewHolder>() {
     class MyProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
@@ -69,7 +74,8 @@ class MyProductAdapter(
             .load(list[position].productImage)
             .into(holder.imageView!!)
         holder.txtName!!.text = StringBuilder().append(list[position].productName)
-        holder.txtPrice!!.text = StringBuilder("RM").append(list[position].productPrice)
+//        holder.txtPrice!!.text = StringBuilder("RM").append(list[position].productPrice)
+        holder.txtPrice!!.text = String.format("RM %.2f", list[position].productPrice)
         holder.setClickListener(object : IRecyclerClickListener {
             override fun onItemClickListener(view: View?, position: Int) {
 //                addToCart(list[position])
@@ -79,75 +85,85 @@ class MyProductAdapter(
         })
     }
 
+//    private fun showProductDetails(product: Product) {
+//        val dialog = Dialog(context)
+//        dialog.setContentView(R.layout.product_catalog)
+//        val nameTextView = dialog.findViewById<TextView>(R.id.name_label)
+//        val priceTextView = dialog.findViewById<TextView>(R.id.price_label)
+//        val conditionTextView = dialog.findViewById<TextView>(R.id.condition_label2)
+//        val descTextView = dialog.findViewById<TextView>(R.id.desc_label)
+//        val addToCartButton = dialog.findViewById<Button>(R.id.add_to_cart_button)
+//
+//        nameTextView.text = product.productName
+//        priceTextView.text = StringBuilder("RM").append(product.productPrice)
+//        conditionTextView.text = product.productCondition
+//        descTextView.text = product.productDesc
+//        addToCartButton.setOnClickListener {
+//            // Add the product to the cart
+//            addToCart(product)
+//            dialog.dismiss()
+//        }
+//
+//        dialog.show()
+//
+//    }
+
     private fun showProductDetails(product: Product) {
-        val dialog = Dialog(context)
-        dialog.setContentView(R.layout.product_catalog)
-        val nameTextView = dialog.findViewById<TextView>(R.id.name_label)
-        val priceTextView = dialog.findViewById<TextView>(R.id.price_label)
-        val conditionTextView = dialog.findViewById<TextView>(R.id.condition_label2)
-        val descTextView = dialog.findViewById<TextView>(R.id.desc_label)
-        val addToCartButton = dialog.findViewById<Button>(R.id.add_to_cart_button)
 
-        nameTextView.text = product.productName
-        priceTextView.text = StringBuilder("RM").append(product.productPrice)
-        conditionTextView.text = product.productCondition
-        descTextView.text = product.productDesc
-        addToCartButton.setOnClickListener {
-            // Add the product to the cart
-            addToCart(product)
-            dialog.dismiss()
-        }
+            val action = ProductFragmentDirections.actionProductFragmentToProductDetailFragment(product, cartListener)
+        navController.navigate(action)
 
-        dialog.show()
+
 
     }
 
-    private fun addToCart(product: Product) {
-        val userCart = FirebaseDatabase.getInstance()
-            .getReference("Cart")
-            .child("UNIQUE_USER_ID")
 
-        userCart.child(product.key!!)
-            .addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) { //If exist
-                        val cartModel = snapshot.getValue(Cart::class.java)
-                        val updateData:MutableMap<String,Any> = HashMap()
-
-                        userCart.child(cartModel!!.key!!)
-                            .updateChildren(updateData)
-                            .addOnSuccessListener {
-                                cartListener.onLoadCartFailed("Item already added")
-                            }
-                            .addOnFailureListener {e-> cartListener.onLoadCartFailed(e.message)}
-                        EventBus.getDefault().postSticky(UpdateCartEvent())
-                        Log.d("FirebaseData", "Cart Data retrieved successfully")
-
-                    } else { //If item not in cart, add new
-                        val cartModel = Cart()
-                        cartModel.key = product.key
-                        cartModel.productName = product.productName
-                        cartModel.productImage = product.productImage
-                        cartModel.productPrice = product.productPrice
-
-                        userCart.child(product.key!!)
-                            .setValue(cartModel)
-                            .addOnSuccessListener {
-                                EventBus.getDefault().postSticky(UpdateCartEvent())
-                                cartListener.onLoadCartFailed("Success add to cart")
-                            }
-                            .addOnFailureListener { e ->
-                                cartListener.onLoadCartFailed(e.message)
-                            }
-                        Log.d("FirebaseData", "No data found")
-                    }
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    cartListener.onLoadCartFailed(error.message)
-                }
-
-            })
-
-    }
+//    private fun addToCart(product: Product) {
+//        val userCart = FirebaseDatabase.getInstance()
+//            .getReference("Cart")
+//            .child("UNIQUE_USER_ID")
+//
+//        userCart.child(product.key!!)
+//            .addListenerForSingleValueEvent(object : ValueEventListener {
+//                override fun onDataChange(snapshot: DataSnapshot) {
+//                    if (snapshot.exists()) { //If exist
+//                        val cartModel = snapshot.getValue(Cart::class.java)
+//                        val updateData:MutableMap<String,Any> = HashMap()
+//
+//                        userCart.child(cartModel!!.key!!)
+//                            .updateChildren(updateData)
+//                            .addOnSuccessListener {
+//                                cartListener.onLoadCartFailed("Item already added")
+//                            }
+//                            .addOnFailureListener {e-> cartListener.onLoadCartFailed(e.message)}
+//                        EventBus.getDefault().postSticky(UpdateCartEvent())
+//                        Log.d("FirebaseData", "Cart Data retrieved successfully")
+//
+//                    } else { //If item not in cart, add new
+//                        val cartModel = Cart()
+//                        cartModel.key = product.key
+//                        cartModel.productName = product.productName
+//                        cartModel.productImage = product.productImage
+//                        cartModel.productPrice = product.productPrice
+//
+//                        userCart.child(product.key!!)
+//                            .setValue(cartModel)
+//                            .addOnSuccessListener {
+//                                EventBus.getDefault().postSticky(UpdateCartEvent())
+//                                cartListener.onLoadCartFailed("Success add to cart")
+//                            }
+//                            .addOnFailureListener { e ->
+//                                cartListener.onLoadCartFailed(e.message)
+//                            }
+//                        Log.d("FirebaseData", "No data found")
+//                    }
+//                }
+//
+//                override fun onCancelled(error: DatabaseError) {
+//                    cartListener.onLoadCartFailed(error.message)
+//                }
+//
+//            })
+//
+//    }
 }

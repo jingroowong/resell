@@ -1,6 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/navigation">
+    android:id="@+id/navigation"
+    app:startDestination="@id/productFragment">
 
+    <fragment
+        android:id="@+id/productFragment"
+        android:name="ProductFragment"
+        android:label="ProductFragment" >
+        <action
+            android:id="@+id/action_productFragment_to_cartFragment"
+            app:destination="@id/cartFragment" />
+        <action
+            android:id="@+id/action_productFragment_to_productDetailFragment"
+            app:destination="@id/productDetailFragment">
+            <argument
+                android:name="product"
+                app:argType="com.example.resell.database.Product" />
+            <argument
+                android:name="cartListener"
+                app:argType="com.example.resell.listener.ICartLoadListener" />
+        </action>
+
+    </fragment>
+    <fragment
+        android:id="@+id/cartFragment"
+        android:name="CartFragment"
+        android:label="CartFragment" />
+    <fragment
+        android:id="@+id/productDetailFragment"
+        android:name="ProductDetailFragment"
+        android:label="ProductDetailFragment" />
 </navigation>
