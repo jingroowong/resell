@@ -49,7 +49,7 @@ class CartFragment : Fragment(), ICartLoadListener {
         super.onViewCreated(view, savedInstanceState)
 
         recyclerCart = binding.recyclerCart
-
+        checkExistingOrder()
         init()
         loadCartFromFirebase()
     }
@@ -98,10 +98,14 @@ class CartFragment : Fragment(), ICartLoadListener {
 
                         orderDetailsRef.addListenerForSingleValueEvent(object : ValueEventListener {
                             override fun onDataChange(orderDetailsSnapshot: DataSnapshot) {
-                                Log.d("Debug", "Number of Order Details: ${orderDetailsSnapshot.childrenCount}")
+                                Log.d(
+                                    "Debug",
+                                    "Number of Order Details: ${orderDetailsSnapshot.childrenCount}"
+                                )
 
                                 for (orderDetailData in orderDetailsSnapshot.children) {
-                                    val orderDetail = orderDetailData.getValue(OrderDetail::class.java)
+                                    val orderDetail =
+                                        orderDetailData.getValue(OrderDetail::class.java)
                                     if (orderDetail != null) {
                                         val productID = orderDetail.productID.toString()
 
@@ -110,11 +114,29 @@ class CartFragment : Fragment(), ICartLoadListener {
                                             .getReference("Product")
                                             .child(productID)
 
-                                        productRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                                        productRef.addListenerForSingleValueEvent(object :
+                                            ValueEventListener {
                                             override fun onDataChange(productSnapshot: DataSnapshot) {
-                                                // ... (rest of the code remains the same)
-                                            }
+                                                val product =
+                                                    productSnapshot.getValue(Product::class.java)
+                                                if (product != null) {
+                                                    // Convert OrderDetail to Cart
+                                                    val cartModel = Cart()
+                                                    cartModel.key = productID
+                                                    cartModel.productName = product.productName
+                                                    cartModel.productImage = product.productImage
+                                                    cartModel.productPrice = product.productPrice
 
+                                                    cartModels.add(cartModel)
+
+                                                    // Check if we've collected all the cart items
+                                                    if (cartModels.size == orderDetailsSnapshot.childrenCount.toInt()) {
+                                                        cartLoadListener?.onLoadCartSuccess(
+                                                            cartModels
+                                                        )
+                                                    }
+                                                }
+                                            }
                                             override fun onCancelled(productError: DatabaseError) {
                                                 cartLoadListener?.onLoadCartFailed(productError.message)
                                             }
@@ -122,7 +144,6 @@ class CartFragment : Fragment(), ICartLoadListener {
                                     }
                                 }
                             }
-
                             override fun onCancelled(orderDetailsError: DatabaseError) {
                                 cartLoadListener?.onLoadCartFailed(orderDetailsError.message)
                             }
@@ -193,14 +214,12 @@ class CartFragment : Fragment(), ICartLoadListener {
     }
 
 
-
     private fun getCurrentTimestampAsString(): String {
         val currentTimeMillis = System.currentTimeMillis()
         val date = Date(currentTimeMillis)
         val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
         return sdf.format(date)
     }
-
 
 
     private fun init() {

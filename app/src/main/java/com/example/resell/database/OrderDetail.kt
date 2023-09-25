@@ -25,8 +25,8 @@ data class OrderDetail(
     var orderID: Int,
 
     @ColumnInfo(name = "productID")
-    var productID: Int,
-
-    @ColumnInfo(name = "subtotal")
-    var subtotal: Double
-)
+    var productID: Int
+){
+    // Add a no-argument constructor required by Firebase
+    constructor() : this(0,  0)
+}
