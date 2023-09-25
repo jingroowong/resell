@@ -73,7 +73,6 @@ class MyCartAdapter(
                 }
                 .create()
             dialog.show()
-
         }
     }
 }

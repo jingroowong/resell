@@ -8,7 +8,7 @@ import java.util.Date
 
 @Entity(tableName = "product_table")
 data class Product(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = false)
     var productID: Int = 0,
     @PropertyName("productName")
     var productName: String? = null,
@@ -21,7 +21,7 @@ data class Product(
     @PropertyName("productImage")
     var productImage: String? = null,
     @PropertyName("dateUpload")
-    var dateUpload: String? = null,
+    var dateUpload: Long? = null,
     @PropertyName("productAvailability")
     var productAvailability: Boolean? = null,
     var key: String? = null // Add the key property
@@ -33,7 +33,7 @@ data class Product(
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
-        parcel.readString(),
+        parcel.readValue(Long::class.java.classLoader) as? Long,
         parcel.readValue(Boolean::class.java.classLoader) as? Boolean,
         parcel.readString()
     )
@@ -45,7 +45,7 @@ data class Product(
         parcel.writeString(productDesc)
         parcel.writeString(productCondition)
         parcel.writeString(productImage)
-        parcel.writeString(dateUpload)
+        dateUpload?.let { parcel.writeLong(it) }
         parcel.writeValue(productAvailability)
         parcel.writeString(key)
     }

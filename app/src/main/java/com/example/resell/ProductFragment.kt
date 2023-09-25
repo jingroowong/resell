@@ -96,7 +96,7 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
     private fun loadProductFromFirebase() {
         val productModels: MutableList<Product> = ArrayList()
         FirebaseDatabase.getInstance()
-            .getReference("Product")
+            .getReference("Products")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {

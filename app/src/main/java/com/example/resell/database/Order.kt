@@ -32,7 +32,6 @@ data class Order(
     @ColumnInfo(name = "orderStatus")
     var orderStatus: String,
 
-
     @ColumnInfo(name = "userID")
     var userID: Int,
 

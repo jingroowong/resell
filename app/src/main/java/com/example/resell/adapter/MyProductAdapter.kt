@@ -70,6 +70,5 @@ class MyProductAdapter(
     private fun showProductDetails(product: Product) {
         val action = ProductFragmentDirections.actionProductFragmentToProductDetailFragment(product)
         navController.navigate(action)
-
     }
 }

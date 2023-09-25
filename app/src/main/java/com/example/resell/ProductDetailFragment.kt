@@ -24,11 +24,12 @@ import org.greenrobot.eventbus.EventBus
 import com.google.android.material.snackbar.Snackbar
 import com.nex3z.notificationbadge.NotificationBadge
 
-class ProductDetailFragment : Fragment(), ICartLoadListener  {
+class ProductDetailFragment : Fragment(), ICartLoadListener {
     private lateinit var cartLoadListener: ICartLoadListener
     private lateinit var badge: NotificationBadge
     private lateinit var btnBack: ImageView
     private lateinit var btnCart: FrameLayout
+
     companion object {
         private const val ARG_PRODUCT = "product"
 
@@ -44,13 +45,14 @@ class ProductDetailFragment : Fragment(), ICartLoadListener  {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment using View Binding
 
-       return inflater.inflate(R.layout.fragment_product_detail, container, false)
+        return inflater.inflate(R.layout.fragment_product_detail, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -68,18 +70,28 @@ class ProductDetailFragment : Fragment(), ICartLoadListener  {
             val descTextView = view.findViewById<TextView>(R.id.desc_label)
             val addToCartButton = view.findViewById<Button>(R.id.add_to_cart_button)
 
-            badge =view.findViewById(R.id.badge)
-            btnCart =view.findViewById<FrameLayout>(R.id.btnCart)
-btnBack = view.findViewById(R.id.btnBack)
-                nameTextView.text = it.productName
+            badge = view.findViewById(R.id.badge)
+            btnCart = view.findViewById<FrameLayout>(R.id.btnCart)
+            btnBack = view.findViewById(R.id.btnBack)
+            nameTextView.text = it.productName
             priceTextView.text = getString(R.string.price_format, it.productPrice)
             conditionTextView.text = it.productCondition
             descTextView.text = it.productDesc
 
             if (it.productCondition == "Good") {
-                conditionTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorGood))
+                conditionTextView.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.colorGood
+                    )
+                )
             } else if (it.productCondition == "Moderate") {
-                conditionTextView.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorModerate))
+                conditionTextView.setTextColor(
+                    ContextCompat.getColor(
+                        requireContext(),
+                        R.color.colorModerate
+                    )
+                )
             }
 
             addToCartButton.setOnClickListener {
@@ -95,7 +107,8 @@ btnBack = view.findViewById(R.id.btnBack)
 
         btnCart.setOnClickListener {
             //Navigate to Cart
-            val navController = this.findNavController().navigate(R.id.action_productDetailFragment_to_cartFragment)
+            val navController =
+                this.findNavController().navigate(R.id.action_productDetailFragment_to_cartFragment)
         }
 
         btnBack.setOnClickListener {
@@ -153,7 +166,7 @@ btnBack = view.findViewById(R.id.btnBack)
                                 countCartFromFirebase()
                             }
                             .addOnFailureListener { e ->
-                               onLoadCartFailed(e.message)
+                                onLoadCartFailed(e.message)
                             }
                     }
                 }
