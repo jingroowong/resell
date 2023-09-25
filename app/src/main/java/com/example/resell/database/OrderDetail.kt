@@ -31,3 +31,12 @@ data class OrderDetail(
     @ColumnInfo(name = "subtotal")
     var subtotal: Double
 )
+
+data class OrderDetails(
+    var orderID : Int ?= null,
+    var orderDateTime: Long ?= null,
+    var paymentDateTime : Double ?= null,
+    var orderStatus : String ?= null,
+    var completedDateTime: Int ?= null,
+    var orderAmount: Int ?= null
+)

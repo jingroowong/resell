@@ -9,10 +9,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.resell.OrderHistoryDetails
 import com.example.resell.R
 import com.example.resell.database.Order
+import com.example.resell.database.OrderDetail
 
-class MyOrderAdapter : RecyclerView.Adapter<MyOrderAdapter.MyViewHolder>() {
+class MyOrderDetailsAdapter {
 
-    private val orderList = ArrayList<Order>()
+    private val orderDetailsList = ArrayList<OrderDetail>()
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
