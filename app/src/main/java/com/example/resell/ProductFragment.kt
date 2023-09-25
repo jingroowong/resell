@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.resell.R
 import com.example.resell.adapter.MyProductAdapter
 import com.example.resell.database.Cart
+import com.example.resell.database.Order
 import com.example.resell.database.Product
 import com.example.resell.eventbus.UpdateCartEvent
 import com.example.resell.listener.ICartLoadListener
@@ -26,6 +27,10 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import com.example.resell.databinding.FragmentProductBinding
+import com.google.firebase.database.ktx.getValue
+import java.lang.Boolean.TRUE
+
+
 
 class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
     private lateinit var binding: FragmentProductBinding
@@ -38,7 +43,6 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         // Inflate the layout for this fragment using View Binding
         binding = FragmentProductBinding.inflate(inflater, container, false)
         return binding.root
@@ -53,11 +57,12 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
         init()
         loadProductFromFirebase()
         countCartFromFirebase()
-    }
+        }
 
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)
+
     }
 
     override fun onStop() {
@@ -72,6 +77,7 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
         countCartFromFirebase()
     }
 
+
     private fun countCartFromFirebase() {
         val cartModels: MutableList<Cart> = ArrayList()
         FirebaseDatabase.getInstance()
@@ -81,8 +87,7 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for (cartSnapshot in snapshot.children) {
                         val cartModel = cartSnapshot.getValue(Cart::class.java)
-                        cartModel!!.key = cartSnapshot.key
-                        cartModels.add(cartModel)
+                        cartModels.add(cartModel!!)
                     }
                     cartLoadListener.onLoadCartSuccess(cartModels)
                 }
@@ -102,8 +107,9 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
                     if (snapshot.exists()) {
                         for (productSnapshot in snapshot.children) {
                             val productModel = productSnapshot.getValue(Product::class.java)
-                            productModel!!.key = productSnapshot.key
-                            productModels.add(productModel)
+                            if(productModel!!.productAvailability==TRUE){
+                            productModels.add(productModel!!)
+                            }
                         }
                         productLoadListener.onProductLoadSuccess(productModels)
                         Log.d("FirebaseData", "Data retrieved successfully")

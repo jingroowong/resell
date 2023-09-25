@@ -32,9 +32,15 @@ data class Order(
     @ColumnInfo(name = "orderStatus")
     var orderStatus: String,
 
+    @ColumnInfo(name = "orderDeal")
+    var deal: Boolean,
+
     @ColumnInfo(name = "userID")
     var userID: Int,
 
     @ColumnInfo(name = "paymentID")
     var paymentID: Int
-)
+) {
+    // Add a no-argument constructor required by Firebase
+    constructor() : this(0, "", 0.0, "", false, 0, 0)
+}

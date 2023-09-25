@@ -4,7 +4,6 @@ import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.firebase.database.PropertyName
-import java.util.Date
 
 @Entity(tableName = "product_table")
 data class Product(
@@ -24,7 +23,7 @@ data class Product(
     var dateUpload: Long? = null,
     @PropertyName("productAvailability")
     var productAvailability: Boolean? = null,
-    var key: String? = null // Add the key property
+
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
@@ -35,7 +34,6 @@ data class Product(
         parcel.readString(),
         parcel.readValue(Long::class.java.classLoader) as? Long,
         parcel.readValue(Boolean::class.java.classLoader) as? Boolean,
-        parcel.readString()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -47,7 +45,7 @@ data class Product(
         parcel.writeString(productImage)
         dateUpload?.let { parcel.writeLong(it) }
         parcel.writeValue(productAvailability)
-        parcel.writeString(key)
+
     }
 
     override fun describeContents(): Int {
