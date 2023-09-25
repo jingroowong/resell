@@ -5,6 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.example.resell.Model.OrderDetailsModel
+import com.example.resell.adapter.MyOrderDetailsAdapter
+import com.example.resell.database.Order
+import com.google.firebase.firestore.FirebaseFirestore
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -16,6 +21,11 @@ private const val ARG_PARAM2 = "param2"
  * Use the [OrderHistoryDetails.newInstance] factory method to
  * create an instance of this fragment.
  */
+
+private lateinit var viewModel: OrderDetailsModel
+private lateinit var orderDetailRecyclerView: RecyclerView
+lateinit var orderDetailsAdapter: MyOrderDetailsAdapter
+
 class OrderHistoryDetails : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -56,4 +66,48 @@ class OrderHistoryDetails : Fragment() {
                 }
             }
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+//        orderDetailRecyclerView = view.findViewById(R.id.recyclerView)
+//        orderDetailRecyclerView.layoutManager = LinearLayoutManager(context)
+//        orderDetailRecyclerView.setHasFixedSize(true)
+//        orderDetailsAdapter = MyOrderDetailsAdapter()
+//        orderDetailRecyclerView.adapter = adapter
+//
+//        viewModel = ViewModelProvider(this).get(OrderDetailsModel::class.java)
+//
+//        viewModel.allOrdersDetail.observe(viewLifecycleOwner, Observer {
+//
+//            orderDetailsAdapter.updateOrderList(it)
+//
+//        })
+
+        val firestore = FirebaseFirestore.getInstance()
+        val ordersCollection = firestore.collection("Order")
+        val orderIdToFind = "1"
+
+        ordersCollection.document(orderIdToFind)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    val orderData = documentSnapshot.toObject(Order::class.java)
+
+                    // Now 'orderData' contains the specific order data
+                    // You can use it as needed
+                    if (orderData != null) {
+                        // Update the RecyclerView adapter with the retrieved order
+                        orderDetailsAdapter.updateOrderList(listOf(orderData))
+                    }
+                } else {
+                    // The document with the specified orderId does not exist
+                    // Handle this case accordingly
+                }
+            }
+            .addOnFailureListener { exception ->
+                // Handle any errors that occurred while retrieving the document
+            }
+    }
+
 }

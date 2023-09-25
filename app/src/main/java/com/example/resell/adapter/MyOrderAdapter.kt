@@ -33,14 +33,6 @@ class MyOrderAdapter : RecyclerView.Adapter<MyOrderAdapter.MyViewHolder>() {
         holder.orderPrice.text = currentitem.orderAmount.toString()
         holder.orderDate.text = currentitem.orderDate.toString()
 
-//        holder.itemView.setOnClickListener(object :View.OnClickListener{
-//            override fun onClick(v: View?) {
-//                val activity = v!!.context as AppCompatActivity
-//                val orderHistoryDetailsFragment = OrderHistoryDetails()
-//                activity.supportFragmentManager.beginTransaction().replace(R.id.rec,orderHistoryDetailsFragment).addToBackStack(null).commit()
-//            }
-//        })
-
         holder.itemView.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {
                 val activity = v!!.context as AppCompatActivity
@@ -68,7 +60,6 @@ class MyOrderAdapter : RecyclerView.Adapter<MyOrderAdapter.MyViewHolder>() {
                 transaction.commit()
             }
         })
-
     }
 
     override fun getItemCount(): Int {
