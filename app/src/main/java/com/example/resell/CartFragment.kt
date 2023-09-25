@@ -1,12 +1,17 @@
+import android.app.AlertDialog
 import android.os.Bundle
 import android.os.Parcel
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.resell.R
 import com.example.resell.adapter.MyCartAdapter
 import com.example.resell.database.Cart
 import com.example.resell.eventbus.UpdateCartEvent
@@ -25,6 +30,8 @@ class CartFragment : Fragment(), ICartLoadListener {
     private lateinit var binding: FragmentCartBinding
     private var cartLoadListener: ICartLoadListener? = null
     private lateinit var recyclerCart: RecyclerView
+    private var cartModels: MutableList<Cart> = ArrayList()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,9 +44,7 @@ class CartFragment : Fragment(), ICartLoadListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         recyclerCart = binding.recyclerCart
-
         init()
         loadCartFromFirebase()
     }
@@ -62,7 +67,6 @@ class CartFragment : Fragment(), ICartLoadListener {
     }
 
     private fun loadCartFromFirebase() {
-        val cartModels: MutableList<Cart> = ArrayList()
         FirebaseDatabase.getInstance()
             .getReference("Cart")
             .child("UNIQUE_USER_ID") // Replace with your user ID
@@ -89,9 +93,58 @@ class CartFragment : Fragment(), ICartLoadListener {
         recyclerCart.addItemDecoration(DividerItemDecoration(requireContext(), layoutManager.orientation))
 
         binding.btnBack.setOnClickListener {
-            // Use the FragmentManager to pop the current fragment from the back stack
-            fragmentManager?.popBackStack()
+            val navController = this.findNavController().navigate(R.id.action_cartFragment_to_productFragment)
         }
+
+        binding.checkOutButton.setOnClickListener {
+               // Calculate the total amount
+            var totalAmount = 0.0
+            for (cartModel in cartModels) {
+                totalAmount += cartModel.productPrice ?: 0.0
+            }
+
+            // Create an AlertDialog to display cart items and total amount
+            val dialogBuilder = AlertDialog.Builder(requireContext())
+            dialogBuilder.setTitle("Check Out")
+
+            // Inflate the custom dialog layout
+            val dialogLayout = layoutInflater.inflate(R.layout.dialog_cart_summary, null)
+
+            // Reload cart items from Firebase
+            loadCartFromFirebase()
+
+            // Initialize RecyclerView to display cart items in the dialogLayout
+            val recyclerView = dialogLayout.findViewById<RecyclerView>(R.id.dialogRecyclerCart)
+            val layoutManager = LinearLayoutManager(requireContext())
+            recyclerView.layoutManager = layoutManager
+            val adapter = MyCartAdapter(requireContext(), cartModels)
+            recyclerView.adapter = adapter
+
+            // Set the total amount in the dialog
+            val totalTextView = dialogLayout.findViewById<TextView>(R.id.dialogTxtTotal)
+            totalTextView.text = String.format("RM %.2f", totalAmount)
+
+            dialogBuilder.setView(dialogLayout)
+
+            // Handle "Proceed to Payment" action
+            dialogBuilder.setPositiveButton("Proceed to Payment") { dialog, _ ->
+                // Handle the proceed to payment action here
+                // You can navigate to the payment gateway screen or perform payment processing
+
+                // Dismiss the dialog
+                dialog.dismiss()
+            }
+
+            // Handle "Cancel" action
+            dialogBuilder.setNegativeButton("Cancel") { dialog, _ ->
+                // Dismiss the dialog
+                dialog.dismiss()
+            }
+
+            // Create and show the AlertDialog
+            val dialog = dialogBuilder.create()
+            dialog.show() }
+
     }
 
     override fun onLoadCartSuccess(cartList: List<Cart>) {

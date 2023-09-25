@@ -23,7 +23,7 @@
             android:src="@drawable/baseline_navigate_before_24" />
 
         <TextView
-            android:id="@+id/txtTotal"
+            android:id="@+id/txtTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -33,13 +33,46 @@
             android:textSize="30sp"
             android:textStyle="bold" />
 
+
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_cart"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/panel"
         android:padding="8dp" />
 
+    <TextView
+        android:id="@+id/total_label"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/recycler_cart"
+        android:gravity="center"
+        android:text="Total : "
+        android:textSize="18sp"
+        android:textStyle="bold" />
+    <TextView
+        android:id="@+id/txtTotal"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/total_label"
+        android:gravity="center"
+        android:text="RM 90.00"
+        android:textSize="18sp"
+        android:textColor="#FF9800"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/check_out_button"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/recycler_cart"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="16dp"
+        android:layout_toRightOf="@id/txtTotal"
+        android:background="#000000"
+        android:text="Check Out"
+        android:textColor="#FFFFFF" />
 </RelativeLayout>

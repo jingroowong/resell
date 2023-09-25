@@ -11,7 +11,6 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.resell.CartActivity
 import com.example.resell.R
 import com.example.resell.adapter.MyProductAdapter
 import com.example.resell.database.Cart
