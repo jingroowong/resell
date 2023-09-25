@@ -12,6 +12,16 @@
         <action
             android:id="@+id/action_adminViewProduct_to_adminInsertProduct"
             app:destination="@id/adminInsertProduct" />
+        <action
+            android:id="@+id/action_adminViewProduct_to_adminSingleProduct"
+            app:destination="@id/adminSingleProduct" >
+
+<!--            <argument-->
+<!--                android:name="product"-->
+<!--                app:argType="com.example.resell.database.Product"/>-->
+        </action>
+
+
     </fragment>
     <fragment
         android:id="@+id/adminInsertProduct"
@@ -22,4 +32,9 @@
             android:id="@+id/action_adminInsertProduct_to_adminViewProduct"
             app:destination="@id/adminViewProduct" />
     </fragment>
+    <fragment
+        android:id="@+id/adminSingleProduct"
+        android:name="com.example.resell.admin.AdminSingleProduct"
+        android:label="fragment_admin_single_product"
+        tools:layout="@layout/fragment_admin_single_product" />
 </navigation>

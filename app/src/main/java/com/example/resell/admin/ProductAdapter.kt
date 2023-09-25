@@ -3,8 +3,10 @@ package com.example.resell.admin
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.resell.R
 import com.example.resell.database.Product
@@ -24,6 +26,7 @@ class ProductAdapter(private val productList: List<Product>) : RecyclerView.Adap
             val productPriceTextView = itemView.findViewById<TextView>(R.id.product_price)
             val productImageView = itemView.findViewById<ImageView>(R.id.product_image)
             val productDateTextView = itemView.findViewById<TextView>(R.id.product_date)
+            val editBtn=itemView.findViewById<Button>(R.id.editBtn)
 
             productNameTextView.text = product.productName
             productPriceTextView.text = "Price: RM${product.productPrice}"
@@ -34,6 +37,10 @@ class ProductAdapter(private val productList: List<Product>) : RecyclerView.Adap
                 val date = Date(timestamp)
                 val formattedDate = dateFormat.format(date)
                 productDateTextView.text = formattedDate
+            }
+            editBtn.setOnClickListener{
+                val action = AdminViewProductDirections.actionAdminViewProductToAdminSingleProduct()
+                itemView.findNavController().navigate(action)
             }
 
 
