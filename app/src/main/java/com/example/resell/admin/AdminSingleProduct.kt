@@ -1,11 +1,21 @@
 package com.example.resell.admin
 
+import android.media.Image
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModelProvider
 import com.example.resell.R
+import com.example.resell.database.AppDatabase
+import com.example.resell.database.Product
+import com.example.resell.database.ProductViewModel
+import com.example.resell.database.ProductViewModelFactory
+import com.squareup.picasso.Picasso
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -30,6 +40,45 @@ class AdminSingleProduct : Fragment() {
         }
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val application = requireNotNull(this.activity).application
+        val dataSource = AppDatabase.getInstance(application).productDao
+        val viewModelFactory = ProductViewModelFactory(dataSource, application)
+        val viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
+
+
+        val pName=view.findViewById<TextView>(R.id.pName)
+        val pPrice=view.findViewById<TextView>(R.id.pPrice)
+        val pImage=view.findViewById<ImageView>(R.id.pImage)
+
+        val productID = arguments?.getInt(ARG_PRODUCT_ID,-1)
+
+        if (productID != -1) {
+            if (productID != null) {
+                viewModel.getProductById(productID).observe(viewLifecycleOwner, { product ->
+                    if (product != null) {
+
+                        pName.text=product.productName
+                        pPrice.text=product.productPrice.toString()
+                        Picasso.get()
+                            .load(product.productImage) // Replace with your product's image URL field
+                            .placeholder(R.drawable.ic_launcher_foreground) // Optional placeholder while loading
+                            .error(R.drawable.ic_launcher_background) // Optional error image to display if loading fails
+                            .into(pImage)
+                    }
+                })
+            }
+
+        } else {
+            // Handle the case where the argument was not passed correctly
+        }
+
+
+
+
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -39,15 +88,7 @@ class AdminSingleProduct : Fragment() {
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment AdminSingleProduct.
-         */
-        // TODO: Rename and change types and number of parameters
+        const val ARG_PRODUCT_ID = "productID"
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             AdminSingleProduct().apply {

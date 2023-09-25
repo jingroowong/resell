@@ -16,9 +16,9 @@
             android:id="@+id/action_adminViewProduct_to_adminSingleProduct"
             app:destination="@id/adminSingleProduct" >
 
-<!--            <argument-->
-<!--                android:name="product"-->
-<!--                app:argType="com.example.resell.database.Product"/>-->
+            <argument
+                android:name="productID"
+                app:argType="integer" />
         </action>
 
 

@@ -1,5 +1,6 @@
 package com.example.resell.admin
 
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,9 +39,14 @@ class ProductAdapter(private val productList: List<Product>) : RecyclerView.Adap
                 val formattedDate = dateFormat.format(date)
                 productDateTextView.text = formattedDate
             }
+
             editBtn.setOnClickListener{
-                val action = AdminViewProductDirections.actionAdminViewProductToAdminSingleProduct()
-                itemView.findNavController().navigate(action)
+                val bundle = Bundle().apply {
+                    putInt("productID", product.productID)
+                }
+
+                itemView.findNavController().navigate(R.id.action_adminViewProduct_to_adminSingleProduct,bundle)
+
             }
 
 

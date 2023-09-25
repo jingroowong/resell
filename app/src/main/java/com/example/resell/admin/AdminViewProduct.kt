@@ -74,24 +74,7 @@ class AdminViewProduct : Fragment() {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         readFirebaseProduct(viewModel)
 
-//        val product = Product(
-//            productName = "product3",
-//            productPrice = 1.00,
-//            productDesc = "New Product",
-//            productCondition = "Bad",
-//            productImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR7-CSdvYB4GgTWbmqegbKDjDvFvrc5huD4eA&usqp=CAU",
-//            dateUpload = date,
-//            productAvailability = true
-//        )
 
-//        writeNewProduct(product)
-
-//        val result = requireView().findViewById<TextView>(R.id.result)
-//        viewModel.getAllProducts().observe(this, { products ->
-//            if (products != null) {
-//                result.text = products.toString()
-//            }
-//        })
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
