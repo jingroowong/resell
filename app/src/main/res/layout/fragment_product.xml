@@ -67,7 +67,6 @@
                 android:layout_marginLeft="10dp"
                 app:nbMaxTextLength="2"
                 >
-
             </com.nex3z.notificationbadge.NotificationBadge>
         </FrameLayout>
 

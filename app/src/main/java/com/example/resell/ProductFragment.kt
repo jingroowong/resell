@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
@@ -41,6 +42,9 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
     private lateinit var badge: NotificationBadge
     private lateinit var recyclerProduct: RecyclerView
 
+    private var originalProductList: List<Product> = ArrayList()
+    private var filteredProductList: List<Product> = ArrayList()
+
     // Add a variable to store the current orderID
     private var currentOrderID: Int? = 0
 
@@ -63,7 +67,42 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
         init()
         loadProductFromFirebase()
         countCartFromFirebase()
+        var searchView = binding.searchView
+        binding.searchButton.setOnClickListener {
+            // Toggle the visibility of the SearchView
+            if (searchView.visibility == View.VISIBLE) {
+                searchView.visibility = View.GONE
+            } else {
+                searchView.visibility = View.VISIBLE
+            }
         }
+
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                // Handle query submission if needed
+                if (!query.isNullOrEmpty()) {
+                    // User submitted a non-empty query
+                    filterProducts(query)
+                }
+                return true // Return true to indicate that you've handled the query submission
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                // This method is called when the text in the SearchView changes,
+                // you can use it for real-time filtering as the user types
+                if (!newText.isNullOrEmpty()) {
+                    filterProducts(newText)
+                } else {
+                    // If the query is empty, show the full product list
+                    filterProducts("") // Pass an empty query to show all products
+                }
+                return true
+            }
+        })
+
+        }
+
+
 
     override fun onStart() {
         super.onStart()
@@ -266,7 +305,25 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
     }
 
     override fun onProductLoadSuccess(productModelList: List<Product>?) {
-        val adapter = MyProductAdapter(requireContext(), productModelList!!,findNavController())
+        originalProductList = productModelList ?: emptyList()
+        filteredProductList = originalProductList
+        val adapter = MyProductAdapter(requireContext(), filteredProductList, findNavController())
+        recyclerProduct.adapter = adapter
+    }
+
+    private fun filterProducts(query: String?) {
+        if (query.isNullOrEmpty()) {
+            // If the query is empty, show the original product list
+            filteredProductList = originalProductList
+        } else {
+            // Filter the product list based on the query
+            filteredProductList = originalProductList.filter { product ->
+                product.productName!!.contains(query, ignoreCase = true)
+            }
+        }
+
+        // Update the RecyclerView with the filtered list
+        val adapter = MyProductAdapter(requireContext(), filteredProductList, findNavController())
         recyclerProduct.adapter = adapter
     }
 
