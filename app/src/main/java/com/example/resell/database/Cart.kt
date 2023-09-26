@@ -1,5 +1,6 @@
 package com.example.resell.database
 
+import androidx.room.ColumnInfo
 import com.google.firebase.database.PropertyName
 
 class Cart {
@@ -10,4 +11,6 @@ class Cart {
     var productImage: String?=null
     @PropertyName("productPrice")
     var productPrice:Double?=null
+    var orderID: Int?=null
+    var productID: Int?=null
 }
