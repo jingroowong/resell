@@ -9,16 +9,16 @@ import androidx.room.Update
 @Dao
 interface OrderDetailDao {
     @Insert
-    suspend fun insert(orderDetail: OrderDetail)
+    fun insert(orderDetail: OrderDetail)
 
     @Update
-    suspend fun update(orderDetail: OrderDetail)
+    fun update(orderDetail: OrderDetail)
 
     @Query("SELECT * FROM order_detail_table WHERE orderID = :orderID AND productID = :productID")
-    suspend fun get(orderID: Int, productID: Int): OrderDetail?
+    fun get(orderID: Int, productID: Int): OrderDetail?
 
     @Query("DELETE FROM order_detail_table")
-    suspend fun clear()
+     fun clear()
 
     @Query("SELECT * FROM order_detail_table WHERE orderID = :orderID")
     fun getOrderDetailsForOrder(orderID: Int): LiveData<List<OrderDetail>>

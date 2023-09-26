@@ -19,7 +19,7 @@ import androidx.room.PrimaryKey
     )]
 )
 data class Order(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "orderID")
     var orderID: Int = 0,
 
