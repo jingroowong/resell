@@ -21,7 +21,7 @@ import androidx.room.PrimaryKey
 
 data class Order(
     var orderID : Int ?= null,
-    var orderDate: Long ?= null,
+    var orderDate: String ?= null,
     var orderAmount : Double ?= null,
     var orderStatus : String ?= null,
     var userID: Int ?= null,

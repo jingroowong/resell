@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.example.resell.database.Order
 import com.example.resell.database.OrderDetail
+import com.example.resell.database.OrderDetails
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -23,28 +24,26 @@ class OrderDetailsRepository {
             INSTANCE = instance
             instance
         }
-
-
     }
 
 
-    fun loadOrderDetail(orderDetailList : MutableLiveData<List<OrderDetail>>){
+    fun loadOrderDetail(orderDetailList : MutableLiveData<List<OrderDetails>>){
 
         databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
 
                 try {
 
-                    val _orderDetailList : List<OrderDetail> = snapshot.children.map { dataSnapshot ->
+                    val _orderDetailList : List<OrderDetails> = snapshot.children.map { dataSnapshot ->
 
-                        dataSnapshot.getValue(OrderDetail::class.java)!!
+                        dataSnapshot.getValue(OrderDetails::class.java)!!
 
                     }
-                    Log.d("FirebaseData", "Data Found")
+                    Log.d("FirebaseData", "Data History Detail Found")
                     orderDetailList.postValue(_orderDetailList)
 
                 }catch (e : Exception){
-                    Log.d("FirebaseData", "No data found")
+                    Log.d("FirebaseData", "No data History Detail found")
 
 
                 }

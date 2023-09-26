@@ -7,11 +7,12 @@ import com.example.firebaservrealdbk.Repository.OrderRepository
 import com.example.resell.Repository.OrderDetailsRepository
 import com.example.resell.database.Order
 import com.example.resell.database.OrderDetail
+import com.example.resell.database.OrderDetails
 
 class OrderDetailsModel : ViewModel() {
     private val repository: OrderDetailsRepository
-    private val _allOrdersDetail = MutableLiveData<List<OrderDetail>>()
-    val allOrdersDetail: LiveData<List<OrderDetail>> = _allOrdersDetail
+    private val _allOrdersDetail = MutableLiveData<List<OrderDetails>>()
+    val allOrdersDetail: LiveData<List<OrderDetails>> = _allOrdersDetail
 
     init {
         repository = OrderDetailsRepository().getInstance()

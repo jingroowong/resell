@@ -7,12 +7,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.resell.R
 import com.example.resell.database.Order
-import com.example.resell.database.OrderDetail
+import com.example.resell.database.OrderDetails
 
-class MyOrderDetailsAdapter(private val orderToDisplay: Order?) :
+class MyOrderDetailsAdapter(private val orderToDisplay: Order? = null) :
     RecyclerView.Adapter<MyOrderDetailsAdapter.MyViewHolder>() {
 
-    private val orderDetailsList = ArrayList<OrderDetail>()
+    private val orderDetailsList = ArrayList<OrderDetails>()
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -28,7 +28,7 @@ class MyOrderDetailsAdapter(private val orderToDisplay: Order?) :
 
         val currentitem = orderDetailsList[position]
 
-        if (currentitem.orderID == orderToDisplay?.orderID) {
+        if (orderToDisplay != null && currentitem.orderID == orderToDisplay.orderID) {
             // Found a matching orderId, populate the views with the order details
             holder.orderID.text = currentitem.orderID.toString()
             holder.orderStatus.text = orderToDisplay.orderStatus
@@ -43,7 +43,7 @@ class MyOrderDetailsAdapter(private val orderToDisplay: Order?) :
         return orderDetailsList.size
     }
 
-    fun updateOrderList(orderDetailsList: List<Order>) {
+    fun updateOrderList(orderDetailsList: List<OrderDetails>) {
 
         this.orderDetailsList.clear()
         this.orderDetailsList.addAll(orderDetailsList)

@@ -31,7 +31,7 @@ class MyOrderAdapter : RecyclerView.Adapter<MyOrderAdapter.MyViewHolder>() {
         holder.orderID.text = currentitem.orderID.toString()
         holder.orderStatus.text = currentitem.orderStatus
         holder.orderPrice.text = currentitem.orderAmount.toString()
-        holder.orderDate.text = currentitem.orderDate.toString()
+        holder.orderDate.text = currentitem.orderDate
 
         holder.itemView.setOnClickListener(object : View.OnClickListener {
             override fun onClick(v: View?) {

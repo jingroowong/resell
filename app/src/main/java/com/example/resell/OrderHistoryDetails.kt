@@ -5,10 +5,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.resell.Model.OrderDetailsModel
 import com.example.resell.adapter.MyOrderDetailsAdapter
 import com.example.resell.database.Order
+import com.example.resell.database.OrderDetail
 import com.google.firebase.firestore.FirebaseFirestore
 
 // TODO: Rename parameter arguments, choose names that match
@@ -70,44 +74,44 @@ class OrderHistoryDetails : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        orderDetailRecyclerView = view.findViewById(R.id.recyclerView)
-//        orderDetailRecyclerView.layoutManager = LinearLayoutManager(context)
-//        orderDetailRecyclerView.setHasFixedSize(true)
-//        orderDetailsAdapter = MyOrderDetailsAdapter()
-//        orderDetailRecyclerView.adapter = adapter
-//
-//        viewModel = ViewModelProvider(this).get(OrderDetailsModel::class.java)
-//
-//        viewModel.allOrdersDetail.observe(viewLifecycleOwner, Observer {
-//
-//            orderDetailsAdapter.updateOrderList(it)
-//
-//        })
+        orderDetailRecyclerView = view.findViewById(R.id.recyclerViewHD)
+        orderDetailRecyclerView.layoutManager = LinearLayoutManager(context)
+        orderDetailRecyclerView.setHasFixedSize(true)
+        orderDetailsAdapter = MyOrderDetailsAdapter()
+        orderDetailRecyclerView.adapter = orderDetailsAdapter
 
-        val firestore = FirebaseFirestore.getInstance()
-        val ordersCollection = firestore.collection("Order")
-        val orderIdToFind = "1"
+        viewModel = ViewModelProvider(this).get(OrderDetailsModel::class.java)
 
-        ordersCollection.document(orderIdToFind)
-            .get()
-            .addOnSuccessListener { documentSnapshot ->
-                if (documentSnapshot.exists()) {
-                    val orderData = documentSnapshot.toObject(Order::class.java)
+        viewModel.allOrdersDetail.observe(viewLifecycleOwner, Observer {
 
-                    // Now 'orderData' contains the specific order data
-                    // You can use it as needed
-                    if (orderData != null) {
-                        // Update the RecyclerView adapter with the retrieved order
-                        orderDetailsAdapter.updateOrderList(listOf(orderData))
-                    }
-                } else {
-                    // The document with the specified orderId does not exist
-                    // Handle this case accordingly
-                }
-            }
-            .addOnFailureListener { exception ->
-                // Handle any errors that occurred while retrieving the document
-            }
+            orderDetailsAdapter.updateOrderList(it)
+
+        })
+
+//        val firestore = FirebaseFirestore.getInstance()
+//        val ordersCollection = firestore.collection("Order")
+//        val orderIdToFind = "1"
+//
+//        ordersCollection.document(orderIdToFind)
+//            .get()
+//            .addOnSuccessListener { documentSnapshot ->
+//                if (documentSnapshot.exists()) {
+//                    val orderData = documentSnapshot.toObject(OrderDetail::class.java)
+//
+//                    // Now 'orderData' contains the specific order data
+//                    // You can use it as needed
+//                    if (orderData != null) {
+//                        // Update the RecyclerView adapter with the retrieved order
+//                        orderDetailsAdapter.updateOrderList(listOf(orderData))
+//                    }
+//                } else {
+//                    // The document with the specified orderId does not exist
+//                    // Handle this case accordingly
+//                }
+//            }
+//            .addOnFailureListener { exception ->
+//                // Handle any errors that occurred while retrieving the document
+//            }
     }
 
 }

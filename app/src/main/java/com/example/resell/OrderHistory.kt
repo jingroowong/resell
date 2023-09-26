@@ -11,10 +11,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.resell.Model.OrderViewModel
 import com.example.resell.adapter.MyOrderAdapter
-import com.google.firebase.ktx.Firebase
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -27,7 +23,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 
-private lateinit var viewModel : OrderViewModel
+private lateinit var viewModel: OrderViewModel
 private lateinit var orderRecyclerView: RecyclerView
 lateinit var adapter: MyOrderAdapter
 
@@ -38,6 +34,8 @@ class OrderHistory : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
