@@ -15,13 +15,13 @@ interface OrderDao {
     fun update(order: Order)
 
     @Query("SELECT * FROM order_table WHERE orderID = :key")
-    fun get(key: Int): Order?
+    fun get(key: Int): LiveData<Order?>
 
     @Query("DELETE FROM order_table")
     fun clear()
 
     @Query("SELECT * FROM order_table ORDER BY orderID DESC LIMIT 1")
-    fun getLatestOrder(): Order?
+    fun getLatestOrder(): LiveData<Order?>
 
     @Query("SELECT * FROM order_table ORDER BY orderID DESC")
     fun getAllOrders(): LiveData<List<Order>>

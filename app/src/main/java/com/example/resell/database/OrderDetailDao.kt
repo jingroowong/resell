@@ -15,14 +15,12 @@ interface OrderDetailDao {
     fun update(orderDetail: OrderDetail)
 
     @Query("SELECT * FROM order_detail_table WHERE orderID = :orderID AND productID = :productID")
-    fun get(orderID: Int, productID: Int): OrderDetail?
+    fun get(orderID: Int, productID: Int): LiveData<OrderDetail?>
 
     @Query("DELETE FROM order_detail_table")
      fun clear()
 
-    @Query("SELECT * FROM order_detail_table WHERE orderID = :orderID")
-    fun getOrderDetailsForOrder(orderID: Int): LiveData<List<OrderDetail>>
+    @Query("SELECT * FROM order_detail_table")
+    fun getAllOrderDetails(): LiveData<List<OrderDetail>>
 
-    @Query("SELECT * FROM order_detail_table WHERE productID = :productID")
-    fun getOrderDetailsForProduct(productID: Int): LiveData<List<OrderDetail>>
 }
