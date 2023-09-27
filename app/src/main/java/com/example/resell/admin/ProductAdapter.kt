@@ -31,7 +31,7 @@ class ProductAdapter(private val productList: List<Product>) : RecyclerView.Adap
             val editBtn=itemView.findViewById<Button>(R.id.editBtn)
 
             productNameTextView.text = product.productName
-            productPriceTextView.text = "Price: RM${product.productPrice}"
+            productPriceTextView.text = "RM ${product.productPrice}"
 
             val dateFormat = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
             val timestamp = product.dateUpload

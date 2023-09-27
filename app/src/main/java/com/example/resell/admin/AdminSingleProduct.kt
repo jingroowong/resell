@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModelProvider
@@ -60,12 +61,13 @@ class AdminSingleProduct : Fragment() {
         val pName = view.findViewById<EditText>(R.id.pNameEdit)
         val pPrice = view.findViewById<EditText>(R.id.pPriceEdit)
         val pDesc = view.findViewById<EditText>(R.id.pDescEdit)
-        val pCondition = view.findViewById<EditText>(R.id.pConditionEdit)
+        val pRadioGroup = view.findViewById<RadioGroup>(R.id.radioGroup)
         val pImageUrl = view.findViewById<EditText>(R.id.pImageUrlEdit)
-
         val pImage = view.findViewById<ImageView>(R.id.pImage)
         val deleteBtn = view.findViewById<Button>(R.id.deleteBtn)
         val updateBtn = view.findViewById<Button>(R.id.updateBtn)
+
+        var productCondition=""
 
         val productID = arguments?.getInt(ARG_PRODUCT_ID, -1)
 
@@ -77,7 +79,13 @@ class AdminSingleProduct : Fragment() {
                         pName.setText(product.productName)
                         pPrice.setText(product.productPrice.toString())
                         pDesc.setText(product.productDesc)
-                        pCondition.setText(product.productCondition)
+
+                        if (product.productCondition == "Moderate") {
+                            pRadioGroup.check(R.id.moderateRB)
+                        } else {
+                            pRadioGroup.check(R.id.goodRB)
+                        }
+
                         pImageUrl.setText(product.productImage)
 
 
@@ -88,6 +96,18 @@ class AdminSingleProduct : Fragment() {
                             .error(R.drawable.ic_launcher_background) // Optional error image to display if loading fails
                             .into(pImage)
 
+
+                        pRadioGroup.setOnCheckedChangeListener { group, checkedId ->
+                            when (checkedId) {
+                                R.id.moderateRB -> {
+                                    productCondition = "Moderate"
+                                }
+                                R.id.goodRB -> {
+                                    productCondition = "Good"
+                                }
+                            }
+                        }
+
                         deleteBtn.setOnClickListener {
                             deleteProduct(product)
                         }
@@ -96,7 +116,7 @@ class AdminSingleProduct : Fragment() {
                             product.productName = pName.text.toString()
                             product.productPrice = pPrice.text.toString().toDouble()
                             product.productDesc = pDesc.text.toString()
-                            product.productCondition = pCondition.text.toString()
+                            product.productCondition = productCondition
                             product.productImage = pImageUrl.text.toString()
                             editProduct(product)
                         }
