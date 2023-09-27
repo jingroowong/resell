@@ -1,5 +1,6 @@
 package com.example.resell.adapter
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.util.Log
@@ -14,6 +15,7 @@ import com.example.resell.R
 import com.example.resell.database.Cart
 import com.example.resell.database.OrderDetail
 import com.example.resell.eventbus.UpdateCartEvent
+import com.example.resell.listener.ICartLoadListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
@@ -22,7 +24,9 @@ import org.greenrobot.eventbus.EventBus
 
 class MyCartAdapter(
     private val context: Context,
-    private val cartModelList: List<Cart>
+    private val cartModelList: List<Cart>,
+    private val cartLoadListener: ICartLoadListener // Add the listener as a parameter
+
 ) : RecyclerView.Adapter<MyCartAdapter.MyCartViewHolder>() {
 
     class MyCartViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -51,7 +55,7 @@ class MyCartAdapter(
         return cartModelList.size
     }
 
-    override fun onBindViewHolder(holder: MyCartViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: MyCartViewHolder, @SuppressLint("RecyclerView") position: Int) {
         Glide.with(context)
             .load(cartModelList[position].productImage)
             .into(holder.imageView!!)
@@ -66,34 +70,38 @@ class MyCartAdapter(
                 .setNegativeButton("CANCEL") { dialog, _ -> dialog.dismiss() }
                 .setPositiveButton("DELETE") { dialog, _ ->
 
-                    notifyItemRemoved(position)
+
                     // Make sure productKeyToDelete and orderIDToDelete are non-null
                     val productKeyToDelete = cartModelList.getOrNull(position)?.productID
                     val orderIDToDelete = cartModelList.getOrNull(position)?.orderID
 
                     if (productKeyToDelete != null && orderIDToDelete != null) {
                         val orderDetailRef = FirebaseDatabase.getInstance().getReference("OrderDetail")
-                    val query = orderDetailRef.orderByChild("productID").equalTo(productKeyToDelete!!.toDouble())
-                        .addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onDataChange(snapshot: DataSnapshot) {
-                                for (orderDetailSnapshot in snapshot.children) {
-                                    val orderDetail = orderDetailSnapshot.getValue(OrderDetail::class.java)
-                                    if (orderDetail != null && orderDetail.orderID == orderIDToDelete) {
-                                        // Found the item, now remove it
-                                        orderDetailSnapshot.ref.removeValue()
-                                            .addOnSuccessListener {
-                                                EventBus.getDefault().postSticky(UpdateCartEvent())
-                                            }
-                                        break // Exit the loop once the item is found and deleted
+                        val query = orderDetailRef.orderByChild("productID").equalTo(productKeyToDelete!!.toDouble())
+                            .addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onDataChange(snapshot: DataSnapshot) {
+                                    for (orderDetailSnapshot in snapshot.children) {
+                                        val orderDetail = orderDetailSnapshot.getValue(OrderDetail::class.java)
+                                        if (orderDetail != null && orderDetail.orderID == orderIDToDelete) {
+                                            // Found the item, now remove it
+                                            orderDetailSnapshot.ref.removeValue()
+                                                .addOnSuccessListener {
+                                                    EventBus.getDefault().postSticky(UpdateCartEvent())
+                                                    // Notify the listener (CartFragment) that an item is deleted
+                                                    cartLoadListener?.onCartItemDeleted(position)
+
+
+                                                }
+                                            break // Exit the loop once the item is found and deleted
+                                        }
                                     }
                                 }
-                            }
 
-                            override fun onCancelled(databaseError: DatabaseError) {
-                                // Handle the error here
-                            }
-                        })
-                }}
+                                override fun onCancelled(databaseError: DatabaseError) {
+                                    // Handle the error here
+                                }
+                            })
+                    }}
                 .create()
             dialog.show()
         }

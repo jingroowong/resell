@@ -5,6 +5,8 @@ plugins {
     id 'androidx.navigation.safeargs'
 }
 
+apply plugin: 'kotlin-kapt'
+
 android {
     namespace 'com.example.resell'
     compileSdk 34
@@ -33,6 +35,12 @@ android {
         jvmTarget = '1.8'
     }
 
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
+
     viewBinding {
         enabled = true
     }
@@ -53,7 +61,8 @@ dependencies {
     implementation 'androidx.room:room-runtime:2.5.2'
     implementation 'com.google.firebase:firebase-database:20.1.0'
     implementation 'com.google.firebase:firebase-database-ktx:20.2.2'
-    annotationProcessor "androidx.room:room-compiler:2.4.2"
+    annotationProcessor "androidx.room:room-compiler:2.5.2"
+    kapt "androidx.room:room-compiler:2.5.2"
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'

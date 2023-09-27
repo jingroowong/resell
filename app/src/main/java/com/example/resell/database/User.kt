@@ -10,7 +10,7 @@ data class User(
     var userID: Int = 0,
     var userName: String,
     var userEmail: String,
-    var userDOB: Date,
+    var userDOB: Long,
     var userPhone: String,
     var userAddress: String,
     var password: String,

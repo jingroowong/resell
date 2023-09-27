@@ -66,35 +66,6 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val application = requireNotNull(this.activity).application
-        val viewModelFactory = ProductViewModelFactory(application)
-
-        val productViewModel =
-            ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
-
-
-        // Observe the LiveData from the ViewModel
-        productViewModel.getAllProducts().observe(viewLifecycleOwner, Observer { products ->
-            if (products != null) {
-                // Data is available, set it to originalProductList
-                originalProductList = products
-                // Update the filteredProductList as well if needed
-                filteredProductList = originalProductList
-
-                // Update the RecyclerView adapter with the new data
-                val adapter =
-                    MyProductAdapter(requireContext(), filteredProductList, findNavController())
-                recyclerProduct.adapter = adapter
-            } else {
-                // Handle the case where there's no data
-                Snackbar.make(
-                    requireView(),
-                    "Oppsss... Please make sure you have connection",
-                    Snackbar.LENGTH_SHORT
-                ).show()
-            }
-        })
-
         checkExistingOrder()
         recyclerProduct = binding.recyclerProduct
         badge = binding.badge
@@ -102,6 +73,7 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
         init()
         loadProductFromFirebase()
         countCartFromFirebase()
+
         var searchView = binding.searchView
         binding.searchButton.setOnClickListener {
             // Toggle the visibility of the SearchView
@@ -134,14 +106,11 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
                 return true
             }
         })
-
     }
-
 
     override fun onStart() {
         super.onStart()
         EventBus.getDefault().register(this)
-
     }
 
     override fun onStop() {
@@ -155,7 +124,6 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
     public fun onUpdateCartEvent(event: UpdateCartEvent) {
         countCartFromFirebase()
     }
-
 
     private fun countCartFromFirebase() {
         cartModels.clear()
@@ -386,6 +354,10 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
 
     override fun onLoadCartFailed(message: String?) {
         Snackbar.make(requireView(), message ?: "An error occurred", Snackbar.LENGTH_SHORT).show()
+    }
+
+    override fun onCartItemDeleted(position: Int) {
+        TODO("Not yet implemented")
     }
 
 }

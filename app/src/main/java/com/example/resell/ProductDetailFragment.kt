@@ -27,6 +27,7 @@ import com.google.firebase.database.ValueEventListener
 import org.greenrobot.eventbus.EventBus
 import com.google.android.material.snackbar.Snackbar
 import com.nex3z.notificationbadge.NotificationBadge
+import java.lang.Boolean.TRUE
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -231,7 +232,7 @@ class ProductDetailFragment : Fragment(), ICartLoadListener {
                                         override fun onDataChange(productSnapshot: DataSnapshot) {
                                             val product =
                                                 productSnapshot.getValue(Product::class.java)
-                                            if (product != null) {
+                                            if (product != null && product.productAvailability == TRUE) {
                                                 // Convert OrderDetail to Cart
                                                 val cartModel = Cart()
                                                 cartModel.productID = product.productID
@@ -335,6 +336,10 @@ class ProductDetailFragment : Fragment(), ICartLoadListener {
 
     override fun onLoadCartFailed(message: String?) {
         Snackbar.make(requireView(), message ?: "An error occurred", Snackbar.LENGTH_SHORT).show()
+    }
+
+    override fun onCartItemDeleted(position: Int) {
+        TODO("Not yet implemented")
     }
 
 
