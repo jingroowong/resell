@@ -1,5 +1,7 @@
 package com.example.resell.database
 
+import android.os.Parcel
+import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -26,4 +28,37 @@ data class Order(
     var orderStatus : String ?= null,
     var userID: Int ?= null,
     var paymentID: Int ?= null
-)
+): Parcelable {
+    constructor(parcel: Parcel) : this(
+        parcel.readValue(Int::class.java.classLoader) as? Int,
+        parcel.readString(),
+        parcel.readValue(Double::class.java.classLoader) as? Double,
+        parcel.readString(),
+        parcel.readValue(Int::class.java.classLoader) as? Int,
+        parcel.readValue(Int::class.java.classLoader) as? Int
+    ) {
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeValue(orderID)
+        parcel.writeString(orderDate)
+        parcel.writeValue(orderAmount)
+        parcel.writeString(orderStatus)
+        parcel.writeValue(userID)
+        parcel.writeValue(paymentID)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<Order> {
+        override fun createFromParcel(parcel: Parcel): Order {
+            return Order(parcel)
+        }
+
+        override fun newArray(size: Int): Array<Order?> {
+            return arrayOfNulls(size)
+        }
+    }
+}

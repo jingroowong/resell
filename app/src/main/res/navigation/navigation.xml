@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/navigation">
+    android:id="@+id/navigation"
+    app:startDestination="@id/orderHistory">
 
+    <fragment
+        android:id="@+id/orderHistory"
+        android:name="com.example.resell.OrderHistory"
+        android:label="OrderHistory" >
+        <action
+            android:id="@+id/action_orderHistory_to_orderHistoryDetails"
+            app:destination="@id/orderHistoryDetails" >
+        <argument
+            android:name="order"
+            app:argType="com.example.resell.database.Order" />
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/orderHistoryDetails"
+        android:name="com.example.resell.OrderHistoryDetails"
+        android:label="OrderHistoryDetails" />
 </navigation>

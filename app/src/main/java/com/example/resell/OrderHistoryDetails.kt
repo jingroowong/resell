@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -52,66 +53,51 @@ class OrderHistoryDetails : Fragment() {
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment OrderHistoryDetails.
-         */
-        // TODO: Rename and change types and number of parameters
+        private const val ARG_ORDER = "order"
+
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            OrderHistoryDetails().apply {
+        fun newInstance(order: Order) =
+            OrderHistory().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+                    putParcelable(ARG_ORDER, order)
                 }
             }
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        orderDetailRecyclerView = view.findViewById(R.id.recyclerViewHD)
-        orderDetailRecyclerView.layoutManager = LinearLayoutManager(context)
-        orderDetailRecyclerView.setHasFixedSize(true)
-        orderDetailsAdapter = MyOrderDetailsAdapter()
-        orderDetailRecyclerView.adapter = orderDetailsAdapter
-
-        viewModel = ViewModelProvider(this).get(OrderDetailsModel::class.java)
-
-        viewModel.allOrdersDetail.observe(viewLifecycleOwner, Observer {
-
-            orderDetailsAdapter.updateOrderList(it)
-
-        })
-
-//        val firestore = FirebaseFirestore.getInstance()
-//        val ordersCollection = firestore.collection("Order")
-//        val orderIdToFind = "1"
+//        orderDetailRecyclerView = view.findViewById(R.id.recyclerViewHD)
+//        orderDetailRecyclerView.layoutManager = LinearLayoutManager(context)
+//        orderDetailRecyclerView.setHasFixedSize(true)
+//        orderDetailsAdapter = MyOrderDetailsAdapter()
+//        orderDetailRecyclerView.adapter = orderDetailsAdapter
 //
-//        ordersCollection.document(orderIdToFind)
-//            .get()
-//            .addOnSuccessListener { documentSnapshot ->
-//                if (documentSnapshot.exists()) {
-//                    val orderData = documentSnapshot.toObject(OrderDetail::class.java)
+//        viewModel = ViewModelProvider(this).get(OrderDetailsModel::class.java)
 //
-//                    // Now 'orderData' contains the specific order data
-//                    // You can use it as needed
-//                    if (orderData != null) {
-//                        // Update the RecyclerView adapter with the retrieved order
-//                        orderDetailsAdapter.updateOrderList(listOf(orderData))
-//                    }
-//                } else {
-//                    // The document with the specified orderId does not exist
-//                    // Handle this case accordingly
-//                }
-//            }
-//            .addOnFailureListener { exception ->
-//                // Handle any errors that occurred while retrieving the document
-//            }
+//        viewModel.allOrdersDetail.observe(viewLifecycleOwner, Observer {
+//
+//            orderDetailsAdapter.updateOrderList(it)
+//
+//        })
+
+        // Get the product data from arguments
+        val product = arguments?.getParcelable(ARG_ORDER) as Order?
+
+        // Update UI with product details
+        product?.let {
+            val orderID = view.findViewById<TextView>(R.id.orderID)
+            val orderPrice = view.findViewById<TextView>(R.id.orderPrice)
+            val orderStatus = view.findViewById<TextView>(R.id.orderStatus)
+            val orderDate = view.findViewById<TextView>(R.id.orderDate)
+
+            orderID.text = it.orderID.toString()
+            orderPrice.text = getString(R.string.price_format, it.orderAmount)
+            orderStatus.text = it.orderStatus
+            orderDate.text = it.orderDate.toString()
+
+        }
     }
 
 }
