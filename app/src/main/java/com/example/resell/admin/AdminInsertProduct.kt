@@ -1,5 +1,6 @@
 package com.example.resell.admin
 
+import android.content.ContentValues
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -57,9 +58,12 @@ class AdminInsertProduct : Fragment() {
 
         insertBtn.setOnClickListener {
             val productName = view.findViewById<EditText>(R.id.nameEdit).text.toString().trim()
-            val productPrice = view.findViewById<EditText>(R.id.priceEdit).text.toString().toDouble()
-            val productDesc = view.findViewById<EditText>(R.id.descriptionEdit).text.toString().trim()
-            val productCondition = view.findViewById<EditText>(R.id.conditionEdit).text.toString().trim()
+            val productPrice =
+                view.findViewById<EditText>(R.id.priceEdit).text.toString().toDouble()
+            val productDesc =
+                view.findViewById<EditText>(R.id.descriptionEdit).text.toString().trim()
+            val productCondition =
+                view.findViewById<EditText>(R.id.conditionEdit).text.toString().trim()
             val productImage = view.findViewById<EditText>(R.id.imageEdit).text.toString().trim()
             val date = Date().time
 
@@ -74,27 +78,56 @@ class AdminInsertProduct : Fragment() {
             )
             writeNewProduct(product)
 
-            findNavController().navigate(R.id.action_adminInsertProduct_to_adminViewProduct)
 
         }
 
     }
 
     fun writeNewProduct(product: Product) {
-        db.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                var count = dataSnapshot.childrenCount
-                count += 1
-                product.productID = count.toInt()
-                db.child(count.toString()).setValue(product)
+        val query = db.orderByKey().limitToLast(1)
 
+        query.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+
+                    val lastProductID = dataSnapshot.children.first().key
+                    if (lastProductID != null) {
+
+                        var lastProductIDInt = lastProductID.toInt()
+                        lastProductIDInt += 1
+                        product.productID = lastProductIDInt
+                        db.child(lastProductIDInt.toString()).setValue(product)
+                            .addOnSuccessListener {
+                                findNavController().navigate(R.id.action_adminInsertProduct_to_adminViewProduct)
+                            }.addOnFailureListener { error ->
+                                Log.e(ContentValues.TAG, "Error deleting product: ${error.message}")
+                            }
+
+
+                    }
+                } else {
+
+                }
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                // Handle errors here if necessary
-
+                // Handle any errors here
             }
         })
+//        db.addListenerForSingleValueEvent(object : ValueEventListener {
+//            override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                var count = dataSnapshot.childrenCount
+//                count += 1
+//                product.productID = count.toInt()
+//                db.child(count.toString()).setValue(product)
+//
+//            }
+//
+//            override fun onCancelled(databaseError: DatabaseError) {
+//                // Handle errors here if necessary
+//
+//            }
+//        })
 
     }
 

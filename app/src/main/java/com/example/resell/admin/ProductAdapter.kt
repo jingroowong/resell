@@ -27,6 +27,7 @@ class ProductAdapter(private val productList: List<Product>) : RecyclerView.Adap
             val productPriceTextView = itemView.findViewById<TextView>(R.id.product_price)
             val productImageView = itemView.findViewById<ImageView>(R.id.product_image)
             val productDateTextView = itemView.findViewById<TextView>(R.id.product_date)
+            val productAvailability=itemView.findViewById<TextView>(R.id.product_availability)
             val editBtn=itemView.findViewById<Button>(R.id.editBtn)
 
             productNameTextView.text = product.productName
@@ -40,6 +41,21 @@ class ProductAdapter(private val productList: List<Product>) : RecyclerView.Adap
                 productDateTextView.text = formattedDate
             }
 
+
+            Picasso.get()
+                .load(product.productImage) // Replace with your product's image URL field
+                .placeholder(R.drawable.ic_launcher_foreground) // Optional placeholder while loading
+                .error(R.drawable.ic_launcher_background) // Optional error image to display if loading fails
+                .into(productImageView)
+
+
+            if(product.productAvailability==false){
+                productAvailability.text="Sold"
+            }else{
+                productAvailability.text="On Sale"
+            }
+
+
             editBtn.setOnClickListener{
                 val bundle = Bundle().apply {
                     putInt("productID", product.productID)
@@ -49,12 +65,6 @@ class ProductAdapter(private val productList: List<Product>) : RecyclerView.Adap
 
             }
 
-
-            Picasso.get()
-                .load(product.productImage) // Replace with your product's image URL field
-                .placeholder(R.drawable.ic_launcher_foreground) // Optional placeholder while loading
-                .error(R.drawable.ic_launcher_background) // Optional error image to display if loading fails
-                .into(productImageView)
         }
     }
 

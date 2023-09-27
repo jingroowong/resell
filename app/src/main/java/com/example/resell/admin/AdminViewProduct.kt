@@ -1,6 +1,7 @@
 package com.example.resell.admin
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -64,15 +65,14 @@ class AdminViewProduct : Fragment() {
     override fun onResume() {
 
         super.onResume()
-        val application = requireNotNull(this.activity).application
-        val dataSource = AppDatabase.getInstance(application).productDao
-        val viewModelFactory = ProductViewModelFactory(dataSource, application)
-        val viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
-
-
-        val date = Date().time
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        readFirebaseProduct(viewModel)
+//        val application = requireNotNull(this.activity).application
+//        val dataSource = AppDatabase.getInstance(application).productDao
+//        val viewModelFactory = ProductViewModelFactory(dataSource, application)
+//        val viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
+//
+//
+//        val date = Date().time
+//        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
 
     }
@@ -90,7 +90,7 @@ class AdminViewProduct : Fragment() {
         val layoutManager = GridLayoutManager(requireContext(), 2)
         recyclerView.layoutManager = layoutManager
 
-
+        readFirebaseProduct(viewModel)
 
 
         viewModel.getAllProducts().observe(viewLifecycleOwner, { products ->
@@ -103,8 +103,8 @@ class AdminViewProduct : Fragment() {
 
         val addBtn = view.findViewById<Button>(R.id.addBtn)
         addBtn.setOnClickListener {
-            val naviagationController =
-                findNavController().navigate(R.id.action_adminViewProduct_to_adminInsertProduct)
+
+            findNavController().navigate(R.id.action_adminViewProduct_to_adminInsertProduct)
 
         }
 
@@ -128,7 +128,7 @@ class AdminViewProduct : Fragment() {
     }
 
     fun readFirebaseProduct(viewModel: ProductViewModel) {
-        viewModel.clearAll()
+//        viewModel.clearAll()
         db.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 // Iterate through the children (pID) under the "Products" node
@@ -137,8 +137,15 @@ class AdminViewProduct : Fragment() {
                     val productData = productSnapshot.getValue(Product::class.java)
 
                     if (productData != null) {
-                        // Insert the Product object into your Room database
-                        viewModel.insertProduct(productData)
+                        viewModel.getProductById(productData.productID)
+                            .observe(viewLifecycleOwner, { product ->
+                                if (product == null) {
+                                    viewModel.insertProduct(productData)
+                                }
+
+                            })
+
+
                     }
                 }
             }
@@ -147,8 +154,6 @@ class AdminViewProduct : Fragment() {
                 // Handle any errors here
             }
         })
-
-
 
 
     }
