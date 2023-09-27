@@ -66,6 +66,24 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val application = requireNotNull(this.activity).application
+        val dataSource = AppDatabase.getInstance(application).productDao
+        val viewModelFactory = ProductViewModelFactory(dataSource, application)
+        val viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
+
+        readFirebaseProduct(viewModel)
+
+        viewModel.getAllProducts().observe(viewLifecycleOwner, { products ->
+            if (products != null) {
+                originalProductList = products ?: emptyList()
+                filteredProductList = originalProductList
+                val adapter =
+                    MyProductAdapter(requireContext(), filteredProductList, findNavController())
+                recyclerProduct.adapter = adapter
+            }
+        })
+
+
         checkExistingOrder()
         recyclerProduct = binding.recyclerProduct
         badge = binding.badge
@@ -106,6 +124,43 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
                 return true
             }
         })
+    }
+
+    fun readFirebaseProduct(viewModel: ProductViewModel) {
+
+        FirebaseDatabase.getInstance()
+            .getReference("Products")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        for (productSnapshot in snapshot.children) {
+                            val productModel = productSnapshot.getValue(Product::class.java)
+                            if (productModel!!.productAvailability == TRUE) {
+                                // Convert the Firebase data to a Product object
+                                val productData = productSnapshot.getValue(Product::class.java)
+
+                                if (productData != null) {
+                                    viewModel.getProductById(productData.productID)
+                                        .observe(viewLifecycleOwner, { product ->
+                                            if (product == null) {
+                                                viewModel.insertProduct(productData)
+                                            }
+
+                                        })
+
+
+                                }
+                            }
+                        }
+                    }
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Handle any errors here
+                }
+            })
+
+
     }
 
     override fun onStart() {
