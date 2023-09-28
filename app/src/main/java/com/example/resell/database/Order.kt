@@ -22,24 +22,28 @@ import androidx.room.PrimaryKey
 )
 
 data class Order(
-    var orderID : Int ?= null,
-    var orderDate: String ?= null,
-    var orderAmount : Double ?= null,
-    var orderStatus : String ?= null,
-    var userID: Int ?= null,
-    var paymentID: Int ?= null
-): Parcelable {
+    //var deal: Boolean? = null,
+    var orderID: Int? = null,
+    var orderDate: String? = null,
+    var orderAmount: Double? = null,
+    var orderStatus: String? = null,
+    var userID: Int? = null,
+    var paymentID: Int? = null
+
+) : Parcelable {
     constructor(parcel: Parcel) : this(
+        //parcel.readValue(Boolean::class.java.classLoader) as? Boolean,
         parcel.readValue(Int::class.java.classLoader) as? Int,
         parcel.readString(),
         parcel.readValue(Double::class.java.classLoader) as? Double,
         parcel.readString(),
         parcel.readValue(Int::class.java.classLoader) as? Int,
-        parcel.readValue(Int::class.java.classLoader) as? Int
+        parcel.readValue(Int::class.java.classLoader) as? Int,
     ) {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
+       // parcel.writeValue(deal)
         parcel.writeValue(orderID)
         parcel.writeString(orderDate)
         parcel.writeValue(orderAmount)

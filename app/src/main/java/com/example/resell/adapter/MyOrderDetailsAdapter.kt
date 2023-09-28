@@ -1,5 +1,6 @@
 package com.example.resell.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +10,9 @@ import com.example.resell.R
 import com.example.resell.database.Order
 import com.example.resell.database.OrderDetails
 
-class MyOrderDetailsAdapter(private val orderToDisplay: Order? = null) :
+class MyOrderDetailsAdapter(
+    private val orderToDisplay: Order? = null
+) :
     RecyclerView.Adapter<MyOrderDetailsAdapter.MyViewHolder>() {
 
     private val orderDetailsList = ArrayList<OrderDetails>()

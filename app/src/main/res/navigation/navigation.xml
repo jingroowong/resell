@@ -7,17 +7,20 @@
     <fragment
         android:id="@+id/orderHistory"
         android:name="com.example.resell.OrderHistory"
-        android:label="OrderHistory" >
+        android:label="OrderHistory">
         <action
             android:id="@+id/action_orderHistory_to_orderHistoryDetails"
-            app:destination="@id/orderHistoryDetails" >
-        <argument
-            android:name="order"
-            app:argType="com.example.resell.database.Order" />
+            app:destination="@id/orderHistoryDetails">
+            <argument
+                android:name="order"
+                app:argType="com.example.resell.database.Order" />
         </action>
     </fragment>
     <fragment
         android:id="@+id/orderHistoryDetails"
         android:name="com.example.resell.OrderHistoryDetails"
         android:label="OrderHistoryDetails" />
+    <argument
+        android:name="product"
+        app:argType="com.example.resell.database.Product" />
 </navigation>

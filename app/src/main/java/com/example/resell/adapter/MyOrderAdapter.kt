@@ -33,72 +33,41 @@ class MyOrderAdapter(
         }
 
         init {
-            orderID = itemView.findViewById(R.id.orderID) as TextView
-            orderStatus = itemView.findViewById(R.id.orderStatus) as TextView
-            orderDate = itemView.findViewById(R.id.orderDate) as TextView
-            orderPrice = itemView.findViewById(R.id.orderPrice) as TextView
+//            orderID = itemView.findViewById(R.id.orderID) as TextView
+//            orderStatus = itemView.findViewById(R.id.orderStatus) as TextView
+//            orderDate = itemView.findViewById(R.id.orderDate) as TextView
+//            orderPrice = itemView.findViewById(R.id.orderPrice) as TextView
+//            orderButton = itemView.findViewById(R.id.orderButton) as Button
+
             orderButton = itemView.findViewById(R.id.orderButton) as Button
 
             itemView.setOnClickListener(this)
+
         }
 
         override fun onClick(v: View?) {
             clickListener!!.onItemClickListener(v, absoluteAdapterPosition)
         }
 
-        //private val orderList = ArrayList<Order>()
+        fun bind(order: Order, navController: NavController) {
+            orderID = itemView.findViewById(R.id.orderID) as TextView
+            orderStatus = itemView.findViewById(R.id.orderStatus) as TextView
+            orderDate = itemView.findViewById(R.id.orderDate) as TextView
+            orderPrice = itemView.findViewById(R.id.orderPrice) as TextView
 
-//        override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-//
-//            val currentitem = orderList[position]
-//
-//            holder.orderID.text = currentitem.orderID.toString()
-//            holder.orderStatus.text = currentitem.orderStatus
-//            holder.orderPrice.text = currentitem.orderAmount.toString()
-//            holder.orderDate.text = currentitem.orderDate
-//
-//            holder.itemView.setOnClickListener(object : View.OnClickListener {
-//                override fun onClick(v: View?) {
-//                    val activity = v!!.context as AppCompatActivity
-//                    val orderHistoryDetailsFragment = OrderHistoryDetails()
-//
-//                    // Get the FragmentManager
-//                    val fragmentManager = activity.supportFragmentManager
-//
-//                    // Begin a transaction
-//                    val transaction = fragmentManager.beginTransaction()
-//
-//                    // Remove the previous fragment (if any) from the FrameLayout
-//                    val previousFragment = fragmentManager.findFragmentById(R.id.frameLayout)
-//                    if (previousFragment != null) {
-//                        transaction.remove(previousFragment)
-//                    }
-//
-//                    // Replace the current fragment in the FrameLayout with the new one
-//                    transaction.replace(R.id.frameLayout, orderHistoryDetailsFragment)
-//
-//                    // Add the transaction to the back stack (optional)
-//                    transaction.addToBackStack(null)
-//
-//                    // Commit the transaction
-//                    transaction.commit()
-//                }
-//            })
-//        }
+            orderID!!.text = StringBuilder().append(order.orderID)
+            orderStatus!!.text = StringBuilder().append(order.orderStatus)
+            orderDate!!.text = StringBuilder().append(order.orderDate)
+            orderPrice!!.text = String.format("RM %.2f", order.orderAmount)
 
-//        fun updateOrderList(orderList: List<Order>) {
-//
-//            this.orderList.clear()
-//            this.orderList.addAll(orderList)
-//            notifyDataSetChanged()
-//
-//        }
+            orderButton!!.setOnClickListener {
+                showOrderDetails(order, navController)
+            }
+        }
 
-        class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-            val orderID: TextView = itemView.findViewById(R.id.orderID)
-            val orderStatus: TextView = itemView.findViewById(R.id.orderStatus)
-            val orderPrice: TextView = itemView.findViewById(R.id.orderPrice)
-            val orderDate: TextView = itemView.findViewById(R.id.orderDate)
+        private fun showOrderDetails(order: Order, navController: NavController) {
+            val action = OrderHistoryDirections.actionOrderHistoryToOrderHistoryDetails(order)
+            navController.navigate(action)
         }
 
     }
@@ -116,21 +85,19 @@ class MyOrderAdapter(
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
 
-        holder.orderID!!.text = StringBuilder().append(orderList[position].orderID)
-        holder.orderStatus!!.text = StringBuilder().append(orderList[position].orderStatus)
-        holder.orderDate!!.text = StringBuilder().append(orderList[position].orderDate)
-        holder.orderPrice!!.text = String.format("RM %.2f", orderList[position].orderAmount)
+//        holder.orderID!!.text = StringBuilder().append(orderList[position].orderID)
+//        holder.orderStatus!!.text = StringBuilder().append(orderList[position].orderStatus)
+//        holder.orderDate!!.text = StringBuilder().append(orderList[position].orderDate)
+//        holder.orderPrice!!.text = String.format("RM %.2f", orderList[position].orderAmount)
+//
+//        holder.orderButton!!.setOnClickListener {
+//            showOrderDetails(order, navController)
+//        }
 
-        holder.setClickListener(object : IRecyclerClicklistener {
-            override fun onItemClickListener(view: View?, position: Int) {
-                showOrderDetails(orderList[position])
-            }
-        })
+        holder.bind(orderList[position], navController)
+
     }
 
-    private fun showOrderDetails(order: Order) {
-        val action = OrderHistoryDirections.actionOrderHistoryToOrderHistoryDetails(order)
-        navController.navigate(action)
-    }
+
 
 }

@@ -37,6 +37,12 @@ private var orderLoadListener: IOrderHistoryListener? = null
 val orderModels: MutableList<Order> = ArrayList()
 
 class OrderHistory : Fragment(), IOrderHistoryListener {
+    override fun onResume() {
+        super.onResume()
+        // Clear the orderDetailModels list when the fragment is resumed
+        orderModels.clear()
+    }
+
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -81,8 +87,6 @@ class OrderHistory : Fragment(), IOrderHistoryListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val application = requireNotNull(this.activity).application
-
         orderRecyclerView = binding.recyclerView
 
         init()
@@ -99,21 +103,6 @@ class OrderHistory : Fragment(), IOrderHistoryListener {
     }
 
 
-//        orderRecyclerView = view.findViewById(R.id.recyclerView)
-//        orderRecyclerView.layoutManager = LinearLayoutManager(context)
-//        orderRecyclerView.setHasFixedSize(true)
-//        adapter = MyOrderAdapter()
-//        orderRecyclerView.adapter = adapter
-//
-//        viewModel = ViewModelProvider(this).get(OrderViewModel::class.java)
-//
-//        viewModel.allOrders.observe(viewLifecycleOwner, Observer {
-//
-//            adapter.updateOrderList(it)
-//
-//        })
-
-
     private fun loadOrderFromFirebase() {
         FirebaseDatabase.getInstance()
             .getReference("Order")
@@ -123,7 +112,6 @@ class OrderHistory : Fragment(), IOrderHistoryListener {
                         for (orderSnapshot in snapshot.children) {
                             val orderModel = orderSnapshot.getValue(Order::class.java)
                             orderModels.add(orderModel!!)
-
                         }
                         orderLoadListener?.onOrderLoadSuccess(orderModels)
                         Log.d("FirebaseData", "Data retrieved successfully")
