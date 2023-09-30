@@ -70,7 +70,7 @@ class AdminSingleProduct : Fragment() {
         val pDesc = view.findViewById<EditText>(R.id.pDescEdit)
         val pRadioGroup = view.findViewById<RadioGroup>(R.id.radioGroup)
         val pImage = view.findViewById<ImageView>(R.id.pImage)
-        val pAvailability=view.findViewById<TextView>(R.id.availabilityTextView)
+        val pAvailability = view.findViewById<TextView>(R.id.availabilityTextView)
         val deleteBtn = view.findViewById<Button>(R.id.deleteBtn)
         val updateBtn = view.findViewById<Button>(R.id.updateBtn)
         val uploadBtn = view.findViewById<Button>(R.id.pUploadBtn)
@@ -105,10 +105,20 @@ class AdminSingleProduct : Fragment() {
 
                         if (product.productAvailability == false) {
                             pAvailability.text = "Sold"
-                            pAvailability.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_red_dark))
+                            pAvailability.setTextColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    android.R.color.holo_red_dark
+                                )
+                            )
                         } else {
                             pAvailability.text = "On Sale"
-                            pAvailability.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_green_light))
+                            pAvailability.setTextColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    android.R.color.holo_green_light
+                                )
+                            )
                         }
 
                         if (productCondition == "Moderate") {
@@ -202,16 +212,32 @@ class AdminSingleProduct : Fragment() {
                             if (pRadioGroup.checkedRadioButtonId == -1) {
                                 errorMessages["condition"] = "Please select a product condition."
                             }
+                            if (errorMessages.isEmpty()) {
+                                product.productName = productNameText
+                                product.productPrice = productPrice
+                                product.productDesc = productDescText
+                                product.productCondition = productCondition
+                                editProduct(product, imageUri)
+                            } else {
+                                val dialogBuilder = AlertDialog.Builder(requireContext())
+                                dialogBuilder.setTitle("Validation Errors")
 
-                            product.productName = productNameText
-                            product.productPrice = productPrice
-                            product.productDesc = productDescText
-                            product.productCondition = productCondition
+                                val message = StringBuilder()
+                                for ((field, errorMessage) in errorMessages) {
+                                    message.append("$errorMessage\n")
+                                }
+
+                                dialogBuilder.setMessage(message.toString())
+
+                                dialogBuilder.setPositiveButton("OK") { dialog, _ ->
+                                    dialog.dismiss()
+                                }
+
+                                val dialog = dialogBuilder.create()
+                                dialog.show()
+                            }
 
 
-
-
-                            editProduct(product, imageUri)
                         }
 
                     }
