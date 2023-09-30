@@ -1,4 +1,5 @@
 package com.example.resell.database
+
 import android.os.Parcel
 import android.os.Parcelable
 import androidx.room.Entity
@@ -13,14 +14,7 @@ data class Product(
     @PrimaryKey(autoGenerate = false)
     var productID: Int = 0,
 
-    var productName: String? = null,
-    var productPrice: Double? = null,
-    var productDesc: String? = null,
-    var productCondition: String? = null,
-    var productImage: String? = null,
-    var dateUpload: Long? = null,
-    var productAvailability: Boolean? = null
-  
+
     @PropertyName("productName")
     var productName: String? = null,
     @PropertyName("productPrice")
@@ -35,7 +29,7 @@ data class Product(
     var dateUpload: Long? = null,
     @PropertyName("productAvailability")
     var productAvailability: Boolean? = null,
-   
+
 
     ) : Parcelable {
     constructor(parcel: Parcel) : this(
@@ -74,8 +68,8 @@ data class Product(
             return arrayOfNulls(size)
         }
 
-    
-}{
+
+    }
 
     @Exclude
     fun toMap(): Map<String, Any?> {
