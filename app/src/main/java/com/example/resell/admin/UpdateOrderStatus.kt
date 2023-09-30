@@ -20,6 +20,7 @@ import com.example.resell.OrderHistory
 import com.example.resell.OrderHistoryDetails
 import com.example.resell.R
 import com.example.resell.adapter.MyOrderDetailsAdapter
+import com.example.resell.adapter.MyUpdateOrderAdapter
 import com.example.resell.database.Order
 import com.example.resell.database.OrderDetails
 import com.example.resell.database.Product
@@ -195,7 +196,7 @@ class UpdateOrderStatus : Fragment() {
                 // After fetching all products, update the RecyclerView
                 val recyclerView = view?.findViewById<RecyclerView>(R.id.productRecyclerView)
                 recyclerView?.layoutManager = LinearLayoutManager(context)
-                recyclerView?.adapter = MyOrderDetailsAdapter(products)
+                recyclerView?.adapter = MyUpdateOrderAdapter(products)
             }
 
             override fun onCancelled(orderDetailsError: DatabaseError) {

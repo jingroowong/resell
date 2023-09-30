@@ -20,13 +20,6 @@ class MyUpdateOrderStatusAdapter(
     private val productList: MutableList<Product>,
     private val navController: NavController
 ) : RecyclerView.Adapter<MyUpdateOrderStatusAdapter.MyViewHolder>() {
-    // Add this method to clear the data
-    fun clear() {
-        orderList.clear()
-        productList.clear()
-        notifyDataSetChanged()
-    }
-
     class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
         View.OnClickListener {
         var orderID: TextView? = null
