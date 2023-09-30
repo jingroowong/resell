@@ -14,13 +14,13 @@
             <argument
                 android:name="order"
                 app:argType="com.example.resell.database.Order" />
+            <argument
+                android:name="product"
+                app:argType="com.example.resell.database.Product" />
         </action>
     </fragment>
     <fragment
         android:id="@+id/orderHistoryDetails"
         android:name="com.example.resell.OrderHistoryDetails"
         android:label="OrderHistoryDetails" />
-    <argument
-        android:name="product"
-        app:argType="com.example.resell.database.Product" />
 </navigation>

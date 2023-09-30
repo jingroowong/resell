@@ -1,63 +1,34 @@
 package com.example.resell.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.resell.R
-import com.example.resell.database.Order
-import com.example.resell.database.OrderDetails
+import com.example.resell.database.Product
 
-class MyOrderDetailsAdapter(
-    private val orderToDisplay: Order? = null
-) :
-    RecyclerView.Adapter<MyOrderDetailsAdapter.MyViewHolder>() {
+class MyOrderDetailsAdapter(private val products: List<Product>):
+    RecyclerView.Adapter<MyOrderDetailsAdapter.ProductViewHolder>() {
 
-    private val orderDetailsList = ArrayList<OrderDetails>()
-
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(
-            R.layout.order_history_details,
-            parent, false
-        )
-        return MyViewHolder(itemView)
-
+    class ProductViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val productName: TextView = itemView.findViewById(R.id.productName)
+        val productPrice: TextView = itemView.findViewById(R.id.productPrice)
     }
 
-    override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProductViewHolder {
+        val itemView = LayoutInflater.from(parent.context)
+            .inflate(R.layout.order_history_details, parent, false)
+        return ProductViewHolder(itemView)
+    }
 
-        val currentitem = orderDetailsList[position]
-
-        if (orderToDisplay != null && currentitem.orderID == orderToDisplay.orderID) {
-            // Found a matching orderId, populate the views with the order details
-            holder.orderID.text = currentitem.orderID.toString()
-            holder.orderStatus.text = orderToDisplay.orderStatus
-            holder.orderPrice.text = orderToDisplay.orderAmount.toString()
-            holder.orderDate.text = orderToDisplay.orderDate.toString()
-        }
-
-
+    override fun onBindViewHolder(holder: ProductViewHolder, position: Int) {
+        val product = products[position]
+        holder.productName.text = product.productName
+        holder.productPrice.text = "Price: ${product.productPrice}"
     }
 
     override fun getItemCount(): Int {
-        return orderDetailsList.size
-    }
-
-    fun updateOrderList(orderDetailsList: List<OrderDetails>) {
-
-        this.orderDetailsList.clear()
-        this.orderDetailsList.addAll(orderDetailsList)
-        notifyDataSetChanged()
-
-    }
-
-    class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val orderID: TextView = itemView.findViewById(R.id.orderID)
-        val orderStatus: TextView = itemView.findViewById(R.id.orderStatus)
-        val orderPrice: TextView = itemView.findViewById(R.id.orderPrice)
-        val orderDate: TextView = itemView.findViewById(R.id.orderDate)
+        return products.size
     }
 }

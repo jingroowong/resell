@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.resell.adapter.MyOrderAdapter
 import com.example.resell.database.Order
+import com.example.resell.database.Product
 import com.example.resell.listener.IOrderHistoryListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -35,6 +36,7 @@ private lateinit var binding: FragmentOrderHistoryBinding
 private var orderLoadListener: IOrderHistoryListener? = null
 
 val orderModels: MutableList<Order> = ArrayList()
+private val productModels: MutableList<Product> = ArrayList()
 
 class OrderHistory : Fragment(), IOrderHistoryListener {
     override fun onResume() {
@@ -94,7 +96,7 @@ class OrderHistory : Fragment(), IOrderHistoryListener {
     }
 
     override fun onOrderLoadSuccess(orderModelList: MutableList<Order>) {
-        val adapter = MyOrderAdapter(requireContext(), orderModelList, findNavController())
+        val adapter = MyOrderAdapter(requireContext(), orderModelList, productModels, findNavController())
         orderRecyclerView.adapter = adapter
     }
 
@@ -104,6 +106,25 @@ class OrderHistory : Fragment(), IOrderHistoryListener {
 
 
     private fun loadOrderFromFirebase() {
+        // Fetch products
+        FirebaseDatabase.getInstance()
+            .getReference("Products")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(productSnapshot: DataSnapshot) {
+                    if (productSnapshot.exists()) {
+                        for (productDataSnapshot in productSnapshot.children) {
+                            val product = productDataSnapshot.getValue(Product::class.java)
+                            productModels.add(product!!)
+                        }
+                    }
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Handle database query cancellation or errors
+                }
+            })
+
+        // Fetch orders
         FirebaseDatabase.getInstance()
             .getReference("Order")
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -137,7 +158,7 @@ class OrderHistory : Fragment(), IOrderHistoryListener {
         )
 
         binding.frameLayout.setOnClickListener {
-            //Navigate to Cart
+            //Navigate to OrderHistoryDetails
             val navController =
                 this.findNavController().navigate(R.id.action_orderHistory_to_orderHistoryDetails)
         }

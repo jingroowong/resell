@@ -7,232 +7,63 @@
 
     </data>
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/layout_root"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:clickable="true"
-        android:focusable="true"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="8dp">
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-            <LinearLayout
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/orderStatus"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:ellipsize="marquee"
-                        android:singleLine="true"
-                        android:textColor="@android:color/black"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        tools:text="Completed" />
-
-                    <TextView
-                        android:id="@+id/orderTime"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start"
-                        android:textColor="@android:color/tab_indicator_text"
-                        android:textSize="10sp"
-                        tools:text="March 17, 6:20 PM" />
+                android:text="ITEMS"
+                android:textColor="@android:color/tab_indicator_text"
+                android:textSize="10sp" />
 
 
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginStart="16dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:gravity="end"
-                        android:text="ORDER ID"
-                        android:textColor="@android:color/tab_indicator_text"
-                        android:textSize="10sp" />
-
-
-                    <TextView
-                        android:id="@+id/orderID"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:gravity="end"
-                        android:textSize="14sp"
-                        tools:text="#123123" />
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <LinearLayout
+            <TextView
+                android:id="@+id/productName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:orientation="horizontal">
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textSize="12sp"
+                tools:text="1 X Chicken noodles\n2 X Lemon Juice" />
+        </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginStart="16dp"
+            android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="ITEMS"
-                        android:textColor="@android:color/tab_indicator_text"
-                        android:textSize="10sp" />
-
-
-                    <TextView
-                        android:id="@+id/productName"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:ellipsize="end"
-                        android:maxLines="2"
-                        android:textSize="12sp"
-                        tools:text="1 X Chicken noodles\n2 X Lemon Juice" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginStart="16dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="PRICE"
-                        android:textColor="@android:color/tab_indicator_text"
-                        android:textSize="10sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:gravity="end"
-                        android:text="$50"
-                        android:textColor="@android:color/tab_indicator_text"
-                        tools:text="RM 20\n RM 10" />
-
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="20dp"
-                        android:layout_weight="1" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="start"
-                android:layout_marginStart="16dp"
-                android:orientation="horizontal">
+                android:text="PRICE"
+                android:textColor="@android:color/tab_indicator_text"
+                android:textSize="10sp" />
 
-                <View
-                    android:layout_width="0dp"
-                    android:layout_height="1dp"
-                    android:layout_weight="1" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginStart="16dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:gravity="end"
-                        android:text="TOTAL AMOUNT"
-                        android:textColor="@android:color/tab_indicator_text"
-                        android:textSize="10sp" />
-
-                    <TextView
-                        android:id="@+id/orderPrice"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:gravity="end"
-                        android:textSize="14sp"
-                        tools:text="$50" />
-                </LinearLayout>
-            </LinearLayout>
+            <TextView
+                android:id="@+id/productPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:gravity="end"
+                android:textColor="@android:color/tab_indicator_text"
+                tools:text="RM 20\n RM 10" />
 
             <View
                 android:layout_width="0dp"
-                android:layout_height="10dp"
+                android:layout_height="20dp"
                 android:layout_weight="1" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:ellipsize="marquee"
-                        android:singleLine="true"
-                        android:textColor="@android:color/black"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        tools:text="Payment Method" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginStart="16dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/paymentMethod"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:gravity="end"
-                        android:textSize="14sp"
-                        tools:text="TNG E-wallet" />
-                </LinearLayout>
-
-            </LinearLayout>
         </LinearLayout>
-
-    </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
 </layout>

@@ -11,11 +11,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.resell.OrderHistoryDirections
 import com.example.resell.R
 import com.example.resell.database.Order
+import com.example.resell.database.Product
 import com.example.resell.listener.IRecyclerClicklistener
 
 class MyOrderAdapter(
     private val context: Context,
     private val orderList: MutableList<Order>,
+    private val productList: MutableList<Product>,
     private val navController: NavController
 ) : RecyclerView.Adapter<MyOrderAdapter.MyViewHolder>() {
     class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
@@ -33,23 +35,16 @@ class MyOrderAdapter(
         }
 
         init {
-//            orderID = itemView.findViewById(R.id.orderID) as TextView
-//            orderStatus = itemView.findViewById(R.id.orderStatus) as TextView
-//            orderDate = itemView.findViewById(R.id.orderDate) as TextView
-//            orderPrice = itemView.findViewById(R.id.orderPrice) as TextView
-//            orderButton = itemView.findViewById(R.id.orderButton) as Button
-
             orderButton = itemView.findViewById(R.id.orderButton) as Button
 
             itemView.setOnClickListener(this)
-
         }
 
         override fun onClick(v: View?) {
             clickListener!!.onItemClickListener(v, absoluteAdapterPosition)
         }
 
-        fun bind(order: Order, navController: NavController) {
+        fun bind(order: Order, product: Product?, navController: NavController) {
             orderID = itemView.findViewById(R.id.orderID) as TextView
             orderStatus = itemView.findViewById(R.id.orderStatus) as TextView
             orderDate = itemView.findViewById(R.id.orderDate) as TextView
@@ -61,12 +56,14 @@ class MyOrderAdapter(
             orderPrice!!.text = String.format("RM %.2f", order.orderAmount)
 
             orderButton!!.setOnClickListener {
-                showOrderDetails(order, navController)
+                if (product != null) {
+                    showOrderDetails(order, product, navController)
+                }
             }
         }
 
-        private fun showOrderDetails(order: Order, navController: NavController) {
-            val action = OrderHistoryDirections.actionOrderHistoryToOrderHistoryDetails(order)
+        private fun showOrderDetails(order: Order, product: Product, navController: NavController) {
+            val action = OrderHistoryDirections.actionOrderHistoryToOrderHistoryDetails(order, product)
             navController.navigate(action)
         }
 
@@ -84,18 +81,7 @@ class MyOrderAdapter(
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-
-//        holder.orderID!!.text = StringBuilder().append(orderList[position].orderID)
-//        holder.orderStatus!!.text = StringBuilder().append(orderList[position].orderStatus)
-//        holder.orderDate!!.text = StringBuilder().append(orderList[position].orderDate)
-//        holder.orderPrice!!.text = String.format("RM %.2f", orderList[position].orderAmount)
-//
-//        holder.orderButton!!.setOnClickListener {
-//            showOrderDetails(order, navController)
-//        }
-
-        holder.bind(orderList[position], navController)
-
+        holder.bind(orderList[position], productList[position], navController)
     }
 
 
