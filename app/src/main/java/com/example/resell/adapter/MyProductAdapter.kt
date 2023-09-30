@@ -1,6 +1,7 @@
 package com.example.resell.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,9 @@ import com.bumptech.glide.Glide
 import com.example.resell.R
 import com.example.resell.database.Product
 import com.example.resell.listener.IRecyclerClickListener
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
+import com.squareup.picasso.Picasso
 
 class MyProductAdapter(
     private val context: Context,
@@ -55,9 +59,17 @@ class MyProductAdapter(
     }
 
     override fun onBindViewHolder(holder: MyProductViewHolder, position: Int) {
-        Glide.with(context)
-            .load(list[position].productImage)
-            .into(holder.imageView!!)
+        val storage = Firebase.storage.reference
+        val gsReference = storage.child(list[position].productImage!!.toString())
+
+        gsReference.downloadUrl.addOnSuccessListener { uri ->
+            // Load image into ImageView using Picasso
+            Picasso.get()
+                .load(uri)
+                .into(holder.imageView!!)
+        }.addOnFailureListener { exception ->
+            Log.d("FirebaseImage","Load Image from Firebase Failed")
+        }
         holder.txtName!!.text = StringBuilder().append(list[position].productName)
         holder.txtPrice!!.text = String.format("RM %.2f", list[position].productPrice)
         holder.setClickListener(object : IRecyclerClickListener {

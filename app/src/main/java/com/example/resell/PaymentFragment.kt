@@ -32,7 +32,7 @@ class PaymentFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.textViewAmount.text=paymentAmount.toString()
+        binding.textViewAmount.text=String.format("RM %.2f",paymentAmount)
 
         // Set an OnClickListener for the Log In button
         binding.buttonLogIn.setOnClickListener {

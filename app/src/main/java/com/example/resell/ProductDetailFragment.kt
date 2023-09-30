@@ -23,7 +23,11 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import org.greenrobot.eventbus.EventBus
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.nex3z.notificationbadge.NotificationBadge
+import com.squareup.picasso.Picasso
+import java.lang.Boolean.FALSE
 import java.lang.Boolean.TRUE
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -126,9 +130,18 @@ class ProductDetailFragment : Fragment(), ICartLoadListener {
             }
 
             val productImageView = view.findViewById<ImageView>(R.id.product_image)
-            Glide.with(requireContext())
-                .load(it.productImage)
-                .into(productImageView)
+
+            val storage = Firebase.storage.reference
+            val gsReference = storage.child(it.productImage!!)
+
+            gsReference.downloadUrl.addOnSuccessListener { uri ->
+                // Load image into ImageView using Picasso
+                Picasso.get()
+                    .load(uri)
+                    .into(productImageView)
+            }.addOnFailureListener { exception ->
+                Log.d("FirebaseImage","Load Image from Firebase Failed")
+            }
         }
         countCartFromFirebase()
     }
@@ -178,7 +191,7 @@ class ProductDetailFragment : Fragment(), ICartLoadListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for (orderSnapshot in snapshot.children) {
                         val order = orderSnapshot.getValue(Order::class.java)
-                        if (order != null && !order.deal) {
+                        if (order != null && order.deal==FALSE) {
                             // An uncompleted order exists, use its orderID
                             currentOrderID = order.orderID
                             return
@@ -244,8 +257,10 @@ class ProductDetailFragment : Fragment(), ICartLoadListener {
                                                 cartModel.productPrice = product.productPrice
 
                                                 cartModels.add(cartModel)
-                                                cartLoadListener?.onLoadCartSuccess(cartModels)
-
+                                                // Check if we've collected all the cart items
+                                                if (cartModels.size == orderDetailsSnapshot.childrenCount.toInt()) {
+                                                    cartLoadListener?.onLoadCartSuccess(cartModels)
+                                                }
 
                                             }
                                         }

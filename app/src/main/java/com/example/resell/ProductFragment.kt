@@ -8,9 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -34,7 +32,7 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import com.example.resell.databinding.FragmentProductBinding
-import com.google.firebase.database.ktx.getValue
+import java.lang.Boolean.FALSE
 import java.lang.Boolean.TRUE
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -66,6 +64,7 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
     ): View {
         // Retrieve userID from arguments
         currentUserID = arguments?.getInt("userID")
+
         Log.d("Debug", "User ID in Product Fragment ${currentUserID}")
         // Inflate the layout for this fragment using View Binding
         binding = FragmentProductBinding.inflate(inflater, container, false)
@@ -94,6 +93,7 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
 
         productLoadListener = this
         cartLoadListener = this
+
         checkExistingOrder()
 
         recyclerProduct = binding.recyclerProduct
@@ -214,7 +214,7 @@ private fun countCartFromFirebase() {
                 Log.d("Debug", "Number of Orders: ${snapshot.childrenCount}")
                 for (orderSnapshot in snapshot.children) {
                     val order = orderSnapshot.getValue(Order::class.java)
-                    if (order != null && !order.deal) {
+                    if (order != null && order.deal==FALSE) {
                         // An uncompleted order exists, use its orderID
                         orderID = order.orderID
                         break
@@ -251,7 +251,10 @@ private fun countCartFromFirebase() {
                                                         cartModel.productPrice = product.productPrice
 
                                                         cartModels.add(cartModel)
-                                                        cartLoadListener?.onLoadCartSuccess(cartModels)
+                                                        // Check if we've collected all the cart items
+                                                        if (cartModels.size == orderDetailsSnapshot.childrenCount.toInt()) {
+                                                            cartLoadListener?.onLoadCartSuccess(cartModels)
+                                                        }
                                                     }
                                                 }
 
@@ -319,7 +322,7 @@ private fun countCartFromFirebase() {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for (orderSnapshot in snapshot.children) {
                         val order = orderSnapshot.getValue(Order::class.java)
-                        if (order != null && !order.deal) {
+                        if (order != null && order.deal==FALSE) {
                             // An uncompleted order exists, use its orderID
                             currentOrderID = order.orderID
                             return

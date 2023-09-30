@@ -33,7 +33,7 @@ class CartFragment : Fragment(), ICartLoadListener {
     private lateinit var binding: FragmentCartBinding
     private var cartLoadListener: ICartLoadListener? = null
     private lateinit var recyclerCart: RecyclerView
-    private lateinit var cartAdapter: MyCartAdapter
+    //private lateinit var cartAdapter: MyCartAdapter
 
     // Add a variable to store the current orderID
     private var currentOrderID: Int? = 0
@@ -58,18 +58,62 @@ class CartFragment : Fragment(), ICartLoadListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        recyclerCart = binding.recyclerCart
-        // Assign the adapter to the class-level variable
+        cartLoadListener = this
 
         checkExistingOrder()
-        init()
+
+        recyclerCart = binding.recyclerCart
+
+        val layoutManager = LinearLayoutManager(requireContext())
+        recyclerCart.layoutManager = layoutManager
+        recyclerCart.addItemDecoration(
+            DividerItemDecoration(requireContext(), layoutManager.orientation)
+        )
+
+        binding.btnBack.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putInt("userID", currentUserID!!)
+            val navController =
+                this.findNavController().navigate(R.id.action_cartFragment_to_productFragment, bundle)
+        }
+
+        binding.checkOutButton.setOnClickListener {
+            // Create an AlertDialog
+            val dialogBuilder = AlertDialog.Builder(requireContext())
+            dialogBuilder.setTitle("Proceed to Payment ?")
+
+            // Handle "Proceed to Payment" action
+            dialogBuilder.setPositiveButton("Yes") { dialog, _ ->
+                // Handle the proceed to payment action here
+                // Navigate to the payment gateway screen or perform payment processing
+                val bundle = Bundle()
+                bundle.putDouble("paymentAmount", cartSum!!)
+                bundle.putInt("orderID",currentOrderID!!)
+                val navController =
+                    this.findNavController().navigate(R.id.action_cartFragment_to_paymentFragment, bundle)
+                // Dismiss the dialog
+                dialog.dismiss()
+            }
+
+            // Handle "Cancel" action
+            dialogBuilder.setNegativeButton("Back") { dialog, _ ->
+                // Dismiss the dialog
+                dialog.dismiss()
+            }
+
+            // Create and show the AlertDialog
+            val dialog = dialogBuilder.create()
+            dialog.show()
+        }
+
         loadCartFromFirebase()
 
-        val adapter = MyCartAdapter(requireContext(), cartModels, this)
-        recyclerCart.adapter = adapter
 
-        // Assign the adapter to the class-level variable
-        cartAdapter = adapter
+
+//        // Assign the adapter to the class-level variable
+//        cartAdapter = adapter
+
+
     }
 
     override fun onStart() {
@@ -91,9 +135,9 @@ class CartFragment : Fragment(), ICartLoadListener {
 
     private fun loadCartFromFirebase() {
         // Clear the cartModels list only once when initially loading the cart
-        if (cartModels.isNotEmpty()) {
+
             cartModels.clear()
-        }
+
 
         // Step 1: Get the orderID based on userID
         val orderRef = FirebaseDatabase.getInstance().getReference("Orders")
@@ -150,9 +194,11 @@ class CartFragment : Fragment(), ICartLoadListener {
                                                                     product.productPrice
 
                                                                 cartModels.add(cartModel)
-                                                                cartLoadListener?.onLoadCartSuccess(
-                                                                    cartModels
-                                                                )
+
+                                                                // Check if we've collected all the cart items
+                                                                if (cartModels.size == orderDetailsSnapshot.childrenCount.toInt()) {
+                                                                    cartLoadListener?.onLoadCartSuccess(cartModels)
+                                                                }
 
                                                             }
                                                         }
@@ -187,7 +233,7 @@ class CartFragment : Fragment(), ICartLoadListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for (orderSnapshot in snapshot.children) {
                         val order = orderSnapshot.getValue(Order::class.java)
-                        if (order != null && !order.deal) {
+                        if (order != null && order.deal==false) {
                             // An uncompleted order exists, use its orderID
                             currentOrderID = order.orderID
                             return
@@ -244,47 +290,7 @@ class CartFragment : Fragment(), ICartLoadListener {
 
 
     private fun init() {
-        cartLoadListener = this
-        val layoutManager = LinearLayoutManager(requireContext())
-        recyclerCart.layoutManager = layoutManager
-        recyclerCart.addItemDecoration(
-            DividerItemDecoration(requireContext(), layoutManager.orientation)
-        )
 
-        binding.btnBack.setOnClickListener {
-            val bundle = Bundle()
-            bundle.putInt("userID", currentUserID!!)
-            val navController =
-                this.findNavController().navigate(R.id.action_cartFragment_to_productFragment, bundle)
-        }
-
-        binding.checkOutButton.setOnClickListener {
-            // Create an AlertDialog
-            val dialogBuilder = AlertDialog.Builder(requireContext())
-            dialogBuilder.setTitle("Proceed to Payment ?")
-
-            // Handle "Proceed to Payment" action
-            dialogBuilder.setPositiveButton("Yes") { dialog, _ ->
-                // Handle the proceed to payment action here
-                // Navigate to the payment gateway screen or perform payment processing
-                val bundle = Bundle()
-                bundle.putDouble("paymentAmount", cartSum!!)
-                val navController =
-                    this.findNavController().navigate(R.id.action_cartFragment_to_paymentFragment, bundle)
-                // Dismiss the dialog
-                dialog.dismiss()
-            }
-
-            // Handle "Cancel" action
-            dialogBuilder.setNegativeButton("Back") { dialog, _ ->
-                // Dismiss the dialog
-                dialog.dismiss()
-            }
-
-            // Create and show the AlertDialog
-            val dialog = dialogBuilder.create()
-            dialog.show()
-        }
     }
 
     override fun onLoadCartSuccess(cartList: List<Cart>) {
@@ -298,6 +304,7 @@ class CartFragment : Fragment(), ICartLoadListener {
 
         val adapter = MyCartAdapter(requireContext(), cartList,this)
         recyclerCart.adapter = adapter
+
         cartSum = sum
     }
 
@@ -306,17 +313,18 @@ class CartFragment : Fragment(), ICartLoadListener {
     }
 
     override fun onCartItemDeleted(position: Int) {
+        val adapter = MyCartAdapter(requireContext(), cartModels,this)
         if (position >= 0 && position < cartModels.size) {
             // Remove the item from cartModelList if it's a valid position
             cartModels.removeAt(position)
 
             // Notify the adapter of the removal
-            cartAdapter.notifyItemRemoved(position)
-            cartAdapter.notifyItemRangeChanged(position, cartModels.size)
+            adapter.notifyItemRemoved(position)
+            adapter.notifyItemRangeChanged(position, cartModels.size)
 
             // Check if the item being removed is the last item
             if (cartModels.isEmpty()) {
-                cartAdapter.notifyDataSetChanged()
+                adapter.notifyDataSetChanged()
             }
         }
         var sum = 0.0
@@ -325,7 +333,7 @@ class CartFragment : Fragment(), ICartLoadListener {
         }
         val decimalFormat = DecimalFormat("RM #,##0.00")
         binding.txtTotal.text = decimalFormat.format(sum)
-        val adapter = MyCartAdapter(requireContext(), cartModels,this)
+
         recyclerCart.adapter = adapter
     }
 }

@@ -20,6 +20,9 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
+import com.squareup.picasso.Picasso
 import org.greenrobot.eventbus.EventBus
 
 class MyCartAdapter(
@@ -56,9 +59,17 @@ class MyCartAdapter(
     }
 
     override fun onBindViewHolder(holder: MyCartViewHolder, @SuppressLint("RecyclerView") position: Int) {
-        Glide.with(context)
-            .load(cartModelList[position].productImage)
-            .into(holder.imageView!!)
+        val storage = Firebase.storage.reference
+        val gsReference = storage.child(cartModelList[position].productImage!!.toString())
+
+        gsReference.downloadUrl.addOnSuccessListener { uri ->
+            // Load image into ImageView using Picasso
+            Picasso.get()
+                .load(uri)
+                .into(holder.imageView!!)
+        }.addOnFailureListener { exception ->
+            Log.d("FirebaseImage","Load Image from Firebase Failed")
+        }
         holder.txtName!!.text = StringBuilder().append(cartModelList[position].productName)
         holder.txtPrice!!.text = String.format("RM %.2f", cartModelList[position].productPrice)
 
