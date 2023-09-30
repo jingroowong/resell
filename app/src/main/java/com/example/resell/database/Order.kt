@@ -24,6 +24,7 @@ import com.google.firebase.database.Exclude
 
 data class Order(
     //var deal: Boolean? = null,
+    @PrimaryKey
     var orderID: Int? = null,
     var orderDate: String? = null,
     var orderAmount: Double? = null,

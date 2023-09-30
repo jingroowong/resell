@@ -3,6 +3,7 @@ package com.example.resell.database
 import androidx.room.ColumnInfo
 import com.google.firebase.database.PropertyName
 
+
 class Cart {
     var key:String?=null
     @PropertyName("productName")

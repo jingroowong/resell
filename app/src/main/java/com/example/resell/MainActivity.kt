@@ -6,10 +6,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import com.google.firebase.FirebaseApp
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import androidx.navigation.findNavController
-
 
 
 class MainActivity : AppCompatActivity() {

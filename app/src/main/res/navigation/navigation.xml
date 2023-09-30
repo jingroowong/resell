@@ -41,9 +41,9 @@
         <action
             android:id="@+id/action_adminSingleProduct_to_adminViewProduct"
             app:destination="@id/adminViewProduct" />
+    </fragment>
 
-    android:id="@+id/navigation"
-    app:startDestination="@id/chooseOrderToUpdate">
+
 
     <fragment
         android:id="@+id/orderHistory"
