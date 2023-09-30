@@ -109,10 +109,9 @@ class AdminViewProduct : Fragment() {
 
 
     fun readFirebaseProduct(viewModel: ProductViewModel) {
-//        viewModel.clearAll()
         db.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                // Iterate through the children (pID) under the "Products" node
+
                 for (productSnapshot in dataSnapshot.children) {
                     // Convert the Firebase data to a Product object
                     val productData = productSnapshot.getValue(Product::class.java)
