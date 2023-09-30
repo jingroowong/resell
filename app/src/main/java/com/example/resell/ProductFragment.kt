@@ -63,7 +63,7 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
     ): View {
         // Retrieve userID from arguments
         currentUserID = arguments?.getInt("userID")
-
+        Log.d("Debug", "User ID in Product Fragment ${currentUserID}")
         // Inflate the layout for this fragment using View Binding
         binding = FragmentProductBinding.inflate(inflater, container, false)
         return binding.root
@@ -188,8 +188,6 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
 
     private fun countCartFromFirebase() {
         cartModels.clear()
-       // val currentUserID = 123 // Replace with your user ID retrieval logic
-
         // Step 1: Get the orderID based on userID
         val orderRef = FirebaseDatabase.getInstance().getReference("Orders")
         val query = orderRef.orderByChild("userID").equalTo(currentUserID!!.toDouble())
@@ -244,12 +242,7 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
                                                                     product.productPrice
 
                                                                 cartModels.add(cartModel)
-
-
-                                                                    cartLoadListener?.onLoadCartSuccess(
-                                                                        cartModels
-                                                                    )
-
+                                                                cartLoadListener?.onLoadCartSuccess(cartModels)
                                                             }
                                                         }
 
@@ -315,8 +308,7 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
     }
 
     private fun checkExistingOrder() {
-        //val currentUserID = 123 // Replace with your user ID retrieval logic
-        val orderRef = FirebaseDatabase.getInstance().getReference("Orders")
+       val orderRef = FirebaseDatabase.getInstance().getReference("Orders")
         orderRef.orderByChild("userID").equalTo(currentUserID!!.toDouble())
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {

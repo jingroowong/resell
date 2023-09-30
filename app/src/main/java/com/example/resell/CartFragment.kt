@@ -41,6 +41,9 @@ class CartFragment : Fragment(), ICartLoadListener {
     private var currentUserID: Int? = 0
 
     private var cartModels: MutableList<Cart> = ArrayList()
+
+    private var cartSum: Double? = 0.0
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -91,8 +94,6 @@ class CartFragment : Fragment(), ICartLoadListener {
         if (cartModels.isNotEmpty()) {
             cartModels.clear()
         }
-
-        //val currentUserID = 123 // Replace with your user ID retrieval logic
 
         // Step 1: Get the orderID based on userID
         val orderRef = FirebaseDatabase.getInstance().getReference("Orders")
@@ -180,7 +181,6 @@ class CartFragment : Fragment(), ICartLoadListener {
     }
 
     private fun checkExistingOrder() {
-       // val currentUserID = 123 // Replace with your user ID retrieval logic
         val orderRef = FirebaseDatabase.getInstance().getReference("Orders")
         orderRef.orderByChild("userID").equalTo(currentUserID!!.toDouble())
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -266,8 +266,11 @@ class CartFragment : Fragment(), ICartLoadListener {
             // Handle "Proceed to Payment" action
             dialogBuilder.setPositiveButton("Yes") { dialog, _ ->
                 // Handle the proceed to payment action here
-                // You can navigate to the payment gateway screen or perform payment processing
-
+                // Navigate to the payment gateway screen or perform payment processing
+                val bundle = Bundle()
+                bundle.putDouble("paymentAmount", cartSum!!)
+                val navController =
+                    this.findNavController().navigate(R.id.action_cartFragment_to_paymentFragment, bundle)
                 // Dismiss the dialog
                 dialog.dismiss()
             }
@@ -286,7 +289,7 @@ class CartFragment : Fragment(), ICartLoadListener {
 
     override fun onLoadCartSuccess(cartList: List<Cart>) {
 
-        var sum = 0.0
+       var sum = 0.0
         for (cartModel in cartList) {
             sum += cartModel.productPrice ?: 0.0
         }
@@ -295,6 +298,7 @@ class CartFragment : Fragment(), ICartLoadListener {
 
         val adapter = MyCartAdapter(requireContext(), cartList,this)
         recyclerCart.adapter = adapter
+        cartSum = sum
     }
 
     override fun onLoadCartFailed(message: String?) {

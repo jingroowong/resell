@@ -4,7 +4,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -16,9 +15,7 @@ import com.example.resell.database.Cart
 import com.example.resell.database.Order
 import com.example.resell.database.OrderDetail
 import com.example.resell.database.Product
-import com.example.resell.databinding.FragmentProductBinding
 import com.example.resell.databinding.FragmentProductDetailBinding
-import com.example.resell.eventbus.UpdateCartEvent
 import com.example.resell.listener.ICartLoadListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -80,9 +77,12 @@ class ProductDetailFragment : Fragment(), ICartLoadListener {
         badge = binding.badge
 
         binding.btnCart.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putInt("userID", currentUserID!!)
+
             //Navigate to Cart
             val navController =
-                this.findNavController().navigate(R.id.action_productDetailFragment_to_cartFragment)
+                this.findNavController().navigate(R.id.action_productDetailFragment_to_cartFragment,bundle)
         }
 
         binding.btnBack.setOnClickListener {
@@ -173,7 +173,6 @@ class ProductDetailFragment : Fragment(), ICartLoadListener {
     }
 
     private fun checkExistingOrder() {
-     //   val currentUserID = 123 // Replace with your user ID retrieval logic
         val orderRef = FirebaseDatabase.getInstance().getReference("Orders")
         orderRef.orderByChild("userID").equalTo(currentUserID!!.toDouble())
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -199,7 +198,6 @@ class ProductDetailFragment : Fragment(), ICartLoadListener {
 
     private fun countCartFromFirebase() {
         cartModels.clear()
-        //val currentUserID = 123 // Replace with your user ID retrieval logic
 
         // Step 1: Get the orderID based on userID
         val orderRef = FirebaseDatabase.getInstance().getReference("Orders")

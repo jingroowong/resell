@@ -3,5 +3,6 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="colorGood">#4CAF50</color>
+    <color name="touchNGo">#044E88</color>
     <color name="colorModerate">#FF9800</color>
 </resources>
