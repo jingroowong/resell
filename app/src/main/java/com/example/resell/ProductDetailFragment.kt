@@ -40,6 +40,8 @@ class ProductDetailFragment : Fragment(), ICartLoadListener {
     // Add a variable to store the current orderID
     private var currentOrderID: Int? = 0
 
+    // Add a variable to store the current userID
+    private var currentUserID: Int? = 0
     private var cartModels: MutableList<Cart> = ArrayList()
     companion object {
         private const val ARG_PRODUCT = "product"
@@ -61,6 +63,9 @@ class ProductDetailFragment : Fragment(), ICartLoadListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        // Retrieve userID from arguments
+        currentUserID = arguments?.getInt("userID")
+
         // Inflate the layout for this fragment using View Binding
         binding = FragmentProductDetailBinding.inflate(inflater, container, false)
         return binding.root
@@ -168,9 +173,9 @@ class ProductDetailFragment : Fragment(), ICartLoadListener {
     }
 
     private fun checkExistingOrder() {
-        val currentUserID = 123 // Replace with your user ID retrieval logic
+     //   val currentUserID = 123 // Replace with your user ID retrieval logic
         val orderRef = FirebaseDatabase.getInstance().getReference("Orders")
-        orderRef.orderByChild("userID").equalTo(currentUserID.toDouble())
+        orderRef.orderByChild("userID").equalTo(currentUserID!!.toDouble())
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for (orderSnapshot in snapshot.children) {
@@ -182,7 +187,7 @@ class ProductDetailFragment : Fragment(), ICartLoadListener {
                         }
                     }
                     // No uncompleted order found, generate a new order
-                    generateNewOrder(currentUserID) // Implement this function
+                    generateNewOrder(currentUserID!!) // Implement this function
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -194,11 +199,11 @@ class ProductDetailFragment : Fragment(), ICartLoadListener {
 
     private fun countCartFromFirebase() {
         cartModels.clear()
-        val currentUserID = 123 // Replace with your user ID retrieval logic
+        //val currentUserID = 123 // Replace with your user ID retrieval logic
 
         // Step 1: Get the orderID based on userID
         val orderRef = FirebaseDatabase.getInstance().getReference("Orders")
-        val query = orderRef.orderByChild("userID").equalTo(currentUserID.toDouble())
+        val query = orderRef.orderByChild("userID").equalTo(currentUserID!!.toDouble())
             .addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 var orderID: Int? = null
@@ -242,10 +247,8 @@ class ProductDetailFragment : Fragment(), ICartLoadListener {
                                                 cartModel.productPrice = product.productPrice
 
                                                 cartModels.add(cartModel)
-                                                // Check if we've collected all the cart items
-                                                if (cartModels.size == orderDetailsSnapshot.childrenCount.toInt()) {
-                                                    cartLoadListener?.onLoadCartSuccess(cartModels)
-                                                }
+                                                cartLoadListener?.onLoadCartSuccess(cartModels)
+
 
                                             }
                                         }

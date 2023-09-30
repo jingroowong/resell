@@ -37,12 +37,16 @@ class CartFragment : Fragment(), ICartLoadListener {
 
     // Add a variable to store the current orderID
     private var currentOrderID: Int? = 0
+    // Add a variable to store the current userID
+    private var currentUserID: Int? = 0
 
     private var cartModels: MutableList<Cart> = ArrayList()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        // Retrieve userID from arguments
+        currentUserID = arguments?.getInt("userID")
 
         // Inflate the layout for this fragment using View Binding
         binding = FragmentCartBinding.inflate(inflater, container, false)
@@ -88,11 +92,11 @@ class CartFragment : Fragment(), ICartLoadListener {
             cartModels.clear()
         }
 
-        val currentUserID = 123 // Replace with your user ID retrieval logic
+        //val currentUserID = 123 // Replace with your user ID retrieval logic
 
         // Step 1: Get the orderID based on userID
         val orderRef = FirebaseDatabase.getInstance().getReference("Orders")
-        val query = orderRef.orderByChild("userID").equalTo(currentUserID.toDouble())
+        val query = orderRef.orderByChild("userID").equalTo(currentUserID!!.toDouble())
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     var orderID: Int? = null
@@ -176,9 +180,9 @@ class CartFragment : Fragment(), ICartLoadListener {
     }
 
     private fun checkExistingOrder() {
-        val currentUserID = 123 // Replace with your user ID retrieval logic
+       // val currentUserID = 123 // Replace with your user ID retrieval logic
         val orderRef = FirebaseDatabase.getInstance().getReference("Orders")
-        orderRef.orderByChild("userID").equalTo(currentUserID.toDouble())
+        orderRef.orderByChild("userID").equalTo(currentUserID!!.toDouble())
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for (orderSnapshot in snapshot.children) {
@@ -190,7 +194,7 @@ class CartFragment : Fragment(), ICartLoadListener {
                         }
                     }
                     // No uncompleted order found, generate a new order
-                    generateNewOrder(currentUserID) // Implement this function
+                    generateNewOrder(currentUserID!!) // Implement this function
                 }
 
                 override fun onCancelled(error: DatabaseError) {
@@ -248,8 +252,10 @@ class CartFragment : Fragment(), ICartLoadListener {
         )
 
         binding.btnBack.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putInt("userID", currentUserID!!)
             val navController =
-                this.findNavController().navigate(R.id.action_cartFragment_to_productFragment)
+                this.findNavController().navigate(R.id.action_cartFragment_to_productFragment, bundle)
         }
 
         binding.checkOutButton.setOnClickListener {
