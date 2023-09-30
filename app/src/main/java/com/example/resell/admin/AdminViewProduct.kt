@@ -1,14 +1,31 @@
 package com.example.resell.admin
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.resell.R
 import com.example.resell.database.AppDatabase
 import com.example.resell.database.Product
+import com.example.resell.database.ProductViewModel
+import com.example.resell.database.ProductViewModelFactory
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
+import java.text.SimpleDateFormat
+
+
 import java.util.Date
+import java.util.Locale
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -25,37 +42,102 @@ class AdminViewProduct : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private val db = Firebase.database.getReference("Products")
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
+        val rootView = inflater.inflate(R.layout.fragment_admin_view_product, container, false)
 
         val application = requireNotNull(this.activity).application
         val dataSource = AppDatabase.getInstance(application).productDao
-        val date = Date().toString()
-        val product = Product(
-            productName = "product1",
-            productPrice = 11.00,
-            productDesc = "New Product",
-            productCondition = "New",
-            productImage = "Image.jpg",
-            dateUpload =null,
-            productAvailability = true
-        )
-//        val viewModelFactory = SleepTrackerViewModelFactory(dataSource, application)
-
+        val viewModelFactory = ProductViewModelFactory(dataSource, application)
+        val viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
+        viewModel.getAllProducts().observe(viewLifecycleOwner) { products ->
+            if (products.isEmpty()) {
+                readFirebaseProduct(viewModel)
+            }
+        }
 
         return inflater.inflate(R.layout.fragment_admin_view_product, container, false)
     }
+
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+
+        val application = requireNotNull(this.activity).application
+        val dataSource = AppDatabase.getInstance(application).productDao
+        val viewModelFactory = ProductViewModelFactory(dataSource, application)
+        val viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
+
+        val layoutManager = GridLayoutManager(requireContext(), 2)
+        recyclerView.layoutManager = layoutManager
+
+
+
+        viewModel.getAllProducts().observe(viewLifecycleOwner) { products ->
+            if (products != null) {
+                val adapter = ProductAdapter(products)
+                recyclerView.adapter = adapter
+            }
+        }
+
+
+        val addBtn = view.findViewById<Button>(R.id.addBtn)
+        addBtn.setOnClickListener {
+
+            findNavController().navigate(R.id.action_adminViewProduct_to_adminInsertProduct)
+
+        }
+
+
+    }
+
+
+    fun readFirebaseProduct(viewModel: ProductViewModel) {
+        db.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+                for (productSnapshot in dataSnapshot.children) {
+                    // Convert the Firebase data to a Product object
+                    val productData = productSnapshot.getValue(Product::class.java)
+
+                    if (productData != null) {
+                        viewModel.getProductById(productData.productID)
+                            .observe(viewLifecycleOwner, { product ->
+                                if (product == null) {
+                                    viewModel.insertProduct(productData)
+                                }
+
+                            })
+
+
+                    }
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle any errors here
+            }
+        })
+
+
+    }
+
 
     companion object {
         /**
@@ -76,4 +158,6 @@ class AdminViewProduct : Fragment() {
                 }
             }
     }
+
+
 }

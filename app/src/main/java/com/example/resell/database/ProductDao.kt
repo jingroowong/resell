@@ -1,27 +1,31 @@
 package com.example.resell.database
 
+import androidx.lifecycle.LiveData
+import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 
+@Dao
 interface ProductDao {
 
     @Insert
-    suspend fun insert(product: Product)
+    fun insert(product: Product)
 
     @Update
-    suspend fun update(product: Product)
+    fun update(product: Product)
 
     @Query("Delete from product_table Where productId= :key")
-    suspend fun deleteById(key: Int): Product?
+    fun deleteById(key: Int): Int
 
     @Query("Select * from product_table Where productID= :key")
-    suspend fun get(key: Int): Product?
+    fun get(key: Int): LiveData<Product?>
 
     @Query("Select * from product_table")
-    suspend fun getAll(): List<Product>?
+    fun getAll(): LiveData<List<Product>>
 
     @Query("DELETE FROM product_table")
-    suspend  fun clear()
+    fun clear()
 }

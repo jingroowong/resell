@@ -2,8 +2,10 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
     <color name="navHeader">#FF805B</color>
     <color name="navBottom">#FFB574</color>
     <color name="divider">#F7F5F4</color>
     <color name="button_color">#ef473a</color>
+
 </resources>
