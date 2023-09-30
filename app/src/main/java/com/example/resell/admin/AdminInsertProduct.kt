@@ -1,24 +1,43 @@
 package com.example.resell.admin
 
+import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.ContentValues
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.OpenableColumns
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.RadioGroup
+import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.resell.R
+import com.example.resell.database.AppDatabase
 import com.example.resell.database.Product
+import com.example.resell.database.ProductViewModel
+import com.example.resell.database.ProductViewModelFactory
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import java.util.Date
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.ktx.storage
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -36,6 +55,8 @@ class AdminInsertProduct : Fragment() {
     private var param2: String? = null
 
     private val db = Firebase.database.getReference("Products")
+    private var imageUrl = ""
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,11 +75,24 @@ class AdminInsertProduct : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val application = requireNotNull(this.activity).application
+        val dataSource = AppDatabase.getInstance(application).productDao
+        val viewModelFactory = ProductViewModelFactory(dataSource, application)
+        val viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
+
 
         var productCondition = ""
         val productConditionGroup =
             view.findViewById<RadioGroup>(R.id.conditionRadioGroup)
         val insertBtn = view.findViewById<Button>(R.id.insertBtn)
+        val uploadBtn = view.findViewById<Button>(R.id.uploadImageBtn)
+        val imagePreview = view.findViewById<ImageView>(R.id.imagePreview)
+
+
+        var imageUri: Uri? = null
+
+
+
         productConditionGroup.setOnCheckedChangeListener { group, checkedId ->
 
             when (checkedId) {
@@ -76,37 +110,149 @@ class AdminInsertProduct : Fragment() {
 
             }
         }
+        var imagePickerActivityResult: ActivityResultLauncher<Intent> =
+
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result != null) {
+                    // getting URI of selected Image
+                    imageUri = result.data?.data
+                    imagePreview.setImageURI(imageUri)
+
+                }
+            }
+
+
+        uploadBtn.setOnClickListener {
+            val imagePickerIntent = Intent(Intent.ACTION_PICK)
+            imagePickerIntent.type = "image/*"
+            imagePickerActivityResult.launch(imagePickerIntent)
+
+        }
+
         insertBtn.setOnClickListener {
-            val productName = view.findViewById<EditText>(R.id.nameEdit).text.toString().trim()
-            val productPrice =
-                view.findViewById<EditText>(R.id.priceEdit).text.toString().toDouble()
-            val productDesc =
+
+
+            val productNameText = view.findViewById<EditText>(R.id.nameEdit).text.toString().trim()
+            var productPriceText =
+                view.findViewById<EditText>(R.id.priceEdit).text.toString().trim()
+            val productDescText =
                 view.findViewById<EditText>(R.id.descriptionEdit).text.toString().trim()
 
-            val productImage = view.findViewById<EditText>(R.id.imageEdit).text.toString().trim()
             val date = Date().time
+            var productPrice: Double = 0.0
+
+
+            //Input Validation
+            val errorMessages = HashMap<String, String>()
+
+
+            if (productNameText.isEmpty()) {
+                errorMessages["name"] = "Product name is required."
+            } else if (productNameText.length > 50) {
+                errorMessages["name"] = "Product name must not greater than 50 characters."
+            }
 
 
 
+            if (productPriceText.isEmpty()) {
+                errorMessages["price"] = "Product price is required."
+            } else {
+                try {
+                    productPrice = productPriceText.toDouble()
+                    if (productPrice <= 0) {
+                        errorMessages["price"] = "Price must be greater than 0"
+                    }
+                } catch (e: NumberFormatException) {
+                    errorMessages["price"] = "Invalid product price format."
+                }
+            }
 
 
-            if (productCondition.isNotEmpty()) {
-                val product = Product(
-                    productName = productName,
-                    productPrice = productPrice,
-                    productDesc = productDesc,
-                    productCondition = productCondition,
-                    productImage = productImage,
-                    dateUpload = date,
-                    productAvailability = true
-                )
-                writeNewProduct(product)
+            if (productDescText.isEmpty()) {
+                errorMessages["desc"] = "Description is required."
+            } else if (productNameText.length > 200) {
+                errorMessages["desc"] = "Product description must not greater than 200 characters."
+            }
+
+            if (productConditionGroup.checkedRadioButtonId == -1) {
+                errorMessages["condition"] = "Please select a product condition."
+            }
+
+            if (imageUri == null) {
+                errorMessages["image"] = "Please select an image."
+            }
+
+
+            //Insert product if not errors
+            if (errorMessages.isEmpty()) {
+                uploadImageToFirebaseStorage(imageUri)
+
+                if (productCondition.isNotEmpty()) {
+                    val product = Product(
+                        productName = productNameText,
+                        productPrice = productPrice,
+                        productDesc = productDescText,
+                        productCondition = productCondition,
+                        productImage = imageUrl,
+                        dateUpload = date,
+                        productAvailability = true
+                    )
+                    writeNewProduct(product)
+                    viewModel.clearAll()
+                }
+            } else {
+                val dialogBuilder = AlertDialog.Builder(requireContext())
+                dialogBuilder.setTitle("Validation Errors")
+
+                val message = StringBuilder()
+                for ((field, errorMessage) in errorMessages) {
+                    message.append("$errorMessage\n")
+                }
+
+                dialogBuilder.setMessage(message.toString())
+
+                dialogBuilder.setPositiveButton("OK") { dialog, _ ->
+                    dialog.dismiss()
+                }
+
+                val dialog = dialogBuilder.create()
+                dialog.show()
             }
 
 
         }
 
     }
+
+
+    private fun uploadImageToFirebaseStorage(selectedImageUri: Uri?) {
+        Log.d("Product", "ImageURI2:${selectedImageUri}")
+
+        if (selectedImageUri != null) {
+            val storageRef = Firebase.storage.reference
+            imageUrl =
+                "images/${System.currentTimeMillis()}" // Unique file name based on timestamp
+
+            // Create a reference to the image file in Firebase Storage
+            val imageRef = storageRef.child(imageUrl)
+
+            // Upload the image to Firebase Storage
+            val uploadTask = imageRef.putFile(selectedImageUri)
+            uploadTask.addOnSuccessListener { taskSnapshot ->
+                imageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+//                    imageUrl = downloadUri.toString()
+                    Log.d("Image", "URL=$imageUrl")
+                }.addOnFailureListener { error ->
+                    Log.e("Image", "Error getting download URL: ${error.message}")
+                }
+            }.addOnFailureListener { error ->
+                Log.e("Image", "Error uploading image: ${error.message}")
+            }
+
+        }
+
+    }
+
 
     fun writeNewProduct(product: Product) {
         val query = db.orderByKey().limitToLast(1)
@@ -118,9 +264,11 @@ class AdminInsertProduct : Fragment() {
                     val lastProductID = dataSnapshot.children.first().key
                     if (lastProductID != null) {
 
+
                         var lastProductIDInt = lastProductID.toInt()
                         lastProductIDInt += 1
                         product.productID = lastProductIDInt
+
                         db.child(lastProductIDInt.toString()).setValue(product)
                             .addOnSuccessListener {
                                 findNavController().navigate(R.id.action_adminInsertProduct_to_adminViewProduct)
@@ -130,8 +278,6 @@ class AdminInsertProduct : Fragment() {
 
 
                     }
-                } else {
-
                 }
             }
 
@@ -139,20 +285,6 @@ class AdminInsertProduct : Fragment() {
                 // Handle any errors here
             }
         })
-//        db.addListenerForSingleValueEvent(object : ValueEventListener {
-//            override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                var count = dataSnapshot.childrenCount
-//                count += 1
-//                product.productID = count.toInt()
-//                db.child(count.toString()).setValue(product)
-//
-//            }
-//
-//            override fun onCancelled(databaseError: DatabaseError) {
-//                // Handle errors here if necessary
-//
-//            }
-//        })
 
     }
 

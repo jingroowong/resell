@@ -2,7 +2,8 @@ package com.example.resell.admin
 
 import android.app.AlertDialog
 import android.content.ContentValues.TAG
-import android.media.Image
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -14,7 +15,9 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.RadioGroup
 import android.widget.TextView
-import androidx.lifecycle.LiveData
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.resell.R
@@ -24,7 +27,9 @@ import com.example.resell.database.ProductViewModel
 import com.example.resell.database.ProductViewModelFactory
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.squareup.picasso.Picasso
+import org.w3c.dom.Text
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -47,6 +52,8 @@ class AdminSingleProduct : Fragment() {
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
+
+
         }
     }
 
@@ -62,50 +69,92 @@ class AdminSingleProduct : Fragment() {
         val pPrice = view.findViewById<EditText>(R.id.pPriceEdit)
         val pDesc = view.findViewById<EditText>(R.id.pDescEdit)
         val pRadioGroup = view.findViewById<RadioGroup>(R.id.radioGroup)
-        val pImageUrl = view.findViewById<EditText>(R.id.pImageUrlEdit)
         val pImage = view.findViewById<ImageView>(R.id.pImage)
+        val pAvailability=view.findViewById<TextView>(R.id.availabilityTextView)
         val deleteBtn = view.findViewById<Button>(R.id.deleteBtn)
         val updateBtn = view.findViewById<Button>(R.id.updateBtn)
+        val uploadBtn = view.findViewById<Button>(R.id.pUploadBtn)
 
-        var productCondition=""
+        var productCondition = ""
+        var imageUri: Uri? = null
+
 
         val productID = arguments?.getInt(ARG_PRODUCT_ID, -1)
 
+        var imagePickerActivityResult: ActivityResultLauncher<Intent> =
+
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result != null) {
+                    // getting URI of selected Image
+                    imageUri = result.data?.data
+                    pImage.setImageURI(imageUri)
+
+                }
+            }
+
+
         if (productID != -1) {
             if (productID != null) {
-                viewModel.getProductById(productID).observe(viewLifecycleOwner, { product ->
+                viewModel.getProductById(productID).observe(viewLifecycleOwner) { product ->
                     if (product != null) {
 
                         pName.setText(product.productName)
                         pPrice.setText(product.productPrice.toString())
                         pDesc.setText(product.productDesc)
+                        productCondition = product.productCondition.toString()
 
-                        if (product.productCondition == "Moderate") {
+                        if (product.productAvailability == false) {
+                            pAvailability.text = "Sold"
+                            pAvailability.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_red_dark))
+                        } else {
+                            pAvailability.text = "On Sale"
+                            pAvailability.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.holo_green_light))
+                        }
+
+                        if (productCondition == "Moderate") {
                             pRadioGroup.check(R.id.moderateRB)
                         } else {
                             pRadioGroup.check(R.id.goodRB)
                         }
 
-                        pImageUrl.setText(product.productImage)
+                        val storage = Firebase.storage.reference
+                        val gsReference = storage.child(product.productImage.toString())
+
+                        gsReference.downloadUrl.addOnSuccessListener { uri ->
+                            // Load image into ImageView using Picasso
+                            Picasso.get()
+                                .load(uri)
+                                .into(pImage)
+                        }.addOnFailureListener { exception ->
+                            // Handle any errors that occurred during the download
+                        }
+
+//                        Picasso.get()
+//                            .load(product.productImage) // Replace with your product's image URL field
+//                            .placeholder(R.drawable.ic_launcher_foreground) // Optional placeholder while loading
+//                            .error(R.drawable.ic_launcher_background) // Optional error image to display if loading fails
+//                            .into(pImage)
 
 
-
-                        Picasso.get()
-                            .load(product.productImage) // Replace with your product's image URL field
-                            .placeholder(R.drawable.ic_launcher_foreground) // Optional placeholder while loading
-                            .error(R.drawable.ic_launcher_background) // Optional error image to display if loading fails
-                            .into(pImage)
-
-
-                        pRadioGroup.setOnCheckedChangeListener { group, checkedId ->
+                        pRadioGroup.setOnCheckedChangeListener { _, checkedId ->
                             when (checkedId) {
                                 R.id.moderateRB -> {
                                     productCondition = "Moderate"
                                 }
+
                                 R.id.goodRB -> {
                                     productCondition = "Good"
                                 }
                             }
+                        }
+
+
+
+
+                        uploadBtn.setOnClickListener {
+                            val imagePickerIntent = Intent(Intent.ACTION_PICK)
+                            imagePickerIntent.type = "image/*"
+                            imagePickerActivityResult.launch(imagePickerIntent)
                         }
 
                         deleteBtn.setOnClickListener {
@@ -113,16 +162,60 @@ class AdminSingleProduct : Fragment() {
                         }
 
                         updateBtn.setOnClickListener {
-                            product.productName = pName.text.toString()
-                            product.productPrice = pPrice.text.toString().toDouble()
-                            product.productDesc = pDesc.text.toString()
+                            val errorMessages = HashMap<String, String>()
+
+                            val productNameText = pName.text.toString()
+                            val productPriceText = pPrice.text.toString()
+                            var productPrice = 0.0
+                            val productDescText = pDesc.text.toString()
+
+                            if (productNameText.isEmpty()) {
+                                errorMessages["name"] = "Product name is required."
+                            } else if (productNameText.length > 50) {
+                                errorMessages["name"] =
+                                    "Product name must not greater than 50 characters."
+                            }
+
+
+
+                            if (productPriceText.isEmpty()) {
+                                errorMessages["price"] = "Product price is required."
+                            } else {
+                                try {
+                                    productPrice = productPriceText.toDouble()
+                                    if (productPrice <= 0) {
+                                        errorMessages["price"] = "Price must be greater than 0"
+                                    }
+                                } catch (e: NumberFormatException) {
+                                    errorMessages["price"] = "Invalid product price format."
+                                }
+                            }
+
+
+                            if (productDescText.isEmpty()) {
+                                errorMessages["desc"] = "Description is required."
+                            } else if (productNameText.length > 200) {
+                                errorMessages["desc"] =
+                                    "Product description must not greater than 200 characters."
+                            }
+
+                            if (pRadioGroup.checkedRadioButtonId == -1) {
+                                errorMessages["condition"] = "Please select a product condition."
+                            }
+
+                            product.productName = productNameText
+                            product.productPrice = productPrice
+                            product.productDesc = productDescText
                             product.productCondition = productCondition
-                            product.productImage = pImageUrl.text.toString()
-                            editProduct(product)
+
+
+
+
+                            editProduct(product, imageUri)
                         }
 
                     }
-                })
+                }
             }
 
         } else {
@@ -139,16 +232,20 @@ class AdminSingleProduct : Fragment() {
         builder.setMessage("Are you sure you want to delete this product?")
         builder.setPositiveButton("Delete") { _, _ ->
 
-            clearLocal()
-
-
             db.child(product.productID.toString()).removeValue()
                 .addOnSuccessListener {
-                    Log.d("P", "ProductDeleted")
-                    showSuccessDialog(
-                        "Product Deleted",
-                        "The product has been successfully deleted."
-                    )
+                    val storageRef = Firebase.storage.reference
+                    val desertRef = storageRef.child(product.productImage.toString())
+
+                    desertRef.delete().addOnSuccessListener {
+                        showSuccessDialog(
+                            "Product Deleted",
+                            "The product has been successfully deleted."
+                        )
+                    }.addOnFailureListener {
+                        Log.d("Delete", "Delete Image Failed")
+                    }
+
 
                 }
                 .addOnFailureListener { error ->
@@ -164,7 +261,7 @@ class AdminSingleProduct : Fragment() {
 
     }
 
-    fun editProduct(product: Product) {
+    fun editProduct(product: Product, imageUri: Uri?) {
 
         val updateValue = product.toMap()
         val productIDToUpdate = product.productID
@@ -175,7 +272,9 @@ class AdminSingleProduct : Fragment() {
         builder.setMessage("Are you sure you want to update this product's detail?")
         builder.setPositiveButton("Update") { _, _ ->
 
-            clearLocal()
+            if (imageUri != null) {
+                uploadImageToFirebaseStorage(product.productImage.toString(), imageUri)
+            }
 
             db.updateChildren(updateData)
                 .addOnSuccessListener {
@@ -198,6 +297,30 @@ class AdminSingleProduct : Fragment() {
 
     }
 
+    private fun uploadImageToFirebaseStorage(path: String, selectedImageUri: Uri?) {
+
+        if (selectedImageUri != null) {
+            val storageRef = Firebase.storage.reference
+
+            val imageRef = storageRef.child(path)
+
+            // Upload the image to Firebase Storage
+            val uploadTask = imageRef.putFile(selectedImageUri)
+            uploadTask.addOnSuccessListener { taskSnapshot ->
+                imageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                    val imageUrl = downloadUri.toString()
+                    Log.d("Image", "URL=$imageUrl")
+                }.addOnFailureListener { error ->
+                    Log.e("Image", "Error getting download URL: ${error.message}")
+                }
+            }.addOnFailureListener { error ->
+                Log.e("Image", "Error uploading image: ${error.message}")
+            }
+
+        }
+
+    }
+
     fun clearLocal() {
         val application = requireNotNull(this.activity).application
         val dataSource = AppDatabase.getInstance(application).productDao
@@ -208,10 +331,13 @@ class AdminSingleProduct : Fragment() {
     }
 
     fun showSuccessDialog(title: String, message: String) {
+
         val builder = AlertDialog.Builder(requireContext())
         builder.setTitle(title)
         builder.setMessage(message)
         builder.setPositiveButton("OK") { _, _ ->
+            clearLocal()
+
             findNavController().navigate(R.id.action_adminSingleProduct_to_adminViewProduct)
         }
         val dialog = builder.create()

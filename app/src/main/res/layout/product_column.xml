@@ -31,39 +31,53 @@
             android:id="@+id/product_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:text="TextView"
             android:textAlignment="textStart"
+            android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/product_date"
+            app:layout_constraintStart_toStartOf="@+id/product_availability"
             app:layout_constraintTop_toBottomOf="@+id/product_price"
-            app:layout_constraintVertical_bias="0.073" />
+            app:layout_constraintVertical_bias="0.046" />
 
         <TextView
             android:id="@+id/product_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:text="TextView"
             android:textAlignment="textStart"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/product_name"
             app:layout_constraintTop_toBottomOf="@+id/product_image"
-            app:layout_constraintVertical_bias="0.060000002" />
+            app:layout_constraintVertical_bias="0.04" />
 
         <Button
             android:id="@+id/editBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:text="Edit"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/product_availability"
+            app:layout_constraintTop_toBottomOf="@+id/product_date"
             app:layout_constraintVertical_bias="0.106" />
+
+        <TextView
+            android:id="@+id/product_availability"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="TextView"
+            android:textAlignment="textStart"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/product_date"
+            app:layout_constraintTop_toBottomOf="@+id/product_name"
+            app:layout_constraintVertical_bias="0.047" />
 
         <TextView
             android:id="@+id/product_date"
@@ -71,22 +85,13 @@
             android:layout_height="wrap_content"
             android:text="TextView"
             android:textAlignment="textStart"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/product_availability"
-            app:layout_constraintTop_toBottomOf="@+id/product_name"
-            app:layout_constraintVertical_bias="0.081" />
-
-        <TextView
-            android:id="@+id/product_availability"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TextView"
-            android:textAlignment="textStart"
+            android:textColor="#737272"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.303"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/product_date"
-            app:layout_constraintVertical_bias="0.109" />
+            app:layout_constraintTop_toBottomOf="@+id/product_availability"
+            app:layout_constraintVertical_bias="0.049"
+            android:layout_marginTop="2dp" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
