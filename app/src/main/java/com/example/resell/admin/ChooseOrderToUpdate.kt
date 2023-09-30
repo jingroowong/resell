@@ -13,12 +13,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.resell.adapter.MyUpdateOrderStatusAdapter
 import com.example.resell.database.Order
 import com.example.resell.database.Product
-import com.example.resell.listener.IOrderHistoryListener
+import com.example.resell.databinding.FragmentChooseOrderToUpdateBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import com.example.resell.databinding.FragmentOrderHistoryBinding
+import com.example.resell.listener.IUpdateOrderStatusListener
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -31,19 +31,14 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 
-private lateinit var orderRecyclerView: RecyclerView
-private lateinit var binding: FragmentOrderHistoryBinding
-private var orderLoadListener: IOrderHistoryListener? = null
+private lateinit var updateStatusRecyclerView: RecyclerView
+private lateinit var binding: FragmentChooseOrderToUpdateBinding
+private var orderLoadListener: IUpdateOrderStatusListener? = null
 
-val orderModels: MutableList<Order> = ArrayList()
+private val UpdateOrderStatusModels: MutableList<Order> = ArrayList()
 private val productModels: MutableList<Product> = ArrayList()
 
-class OrderHistory : Fragment(), IOrderHistoryListener {
-    override fun onResume() {
-        super.onResume()
-        // Clear the orderDetailModels list when the fragment is resumed
-        orderModels.clear()
-    }
+class ChooseOrderToUpdate : Fragment(), IUpdateOrderStatusListener {
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -61,8 +56,9 @@ class OrderHistory : Fragment(), IOrderHistoryListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        Log.d("ChooseOrderToUpdate", "onCreateView called")
         // Inflate the layout for this fragment using View Binding
-        binding = FragmentOrderHistoryBinding.inflate(inflater, container, false)
+        binding = FragmentChooseOrderToUpdateBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -78,7 +74,7 @@ class OrderHistory : Fragment(), IOrderHistoryListener {
         // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            OrderHistory().apply {
+            ChooseOrderToUpdate().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)
@@ -89,15 +85,20 @@ class OrderHistory : Fragment(), IOrderHistoryListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        orderRecyclerView = binding.recyclerView
-
+        updateStatusRecyclerView = binding.chooseOrderToUpdateRecyclerView
         init()
         loadOrderFromFirebase()
     }
 
-    override fun onOrderLoadSuccess(orderModelList: MutableList<Order>) {
-        val adapter = MyUpdateOrderStatusAdapter(requireContext(), orderModelList, productModels, findNavController())
-        orderRecyclerView.adapter = adapter
+    override fun onOrderLoadSuccess(UpdateOrderStatusModels: MutableList<Order>) {
+        val adapter = MyUpdateOrderStatusAdapter(
+            requireContext(),
+            UpdateOrderStatusModels,
+            productModels,
+            findNavController()
+        )
+        updateStatusRecyclerView.adapter = adapter
+
     }
 
     override fun onOrderLoadFailed(message: String?) {
@@ -129,6 +130,9 @@ class OrderHistory : Fragment(), IOrderHistoryListener {
             .getReference("Order")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
+                    // Clear the list before adding new data
+                    UpdateOrderStatusModels.clear()
+
                     if (snapshot.exists()) {
                         for (orderSnapshot in snapshot.children) {
                             val orderModel = orderSnapshot.getValue(Order::class.java)
@@ -152,15 +156,16 @@ class OrderHistory : Fragment(), IOrderHistoryListener {
         orderLoadListener = this
         val layoutManager = LinearLayoutManager(requireContext())
 
-        orderRecyclerView.layoutManager = layoutManager
-        orderRecyclerView.addItemDecoration(
+        updateStatusRecyclerView.layoutManager = layoutManager
+        updateStatusRecyclerView.addItemDecoration(
             DividerItemDecoration(requireContext(), layoutManager.orientation)
         )
 
         binding.frameLayout.setOnClickListener {
             //Navigate to OrderHistoryDetails
             val navController =
-                this.findNavController().navigate(R.id.action_orderHistory_to_orderHistoryDetails)
+                this.findNavController()
+                    .navigate(R.id.action_chooseOrderToUpdate_to_updateOrderStatus)
         }
     }
 }

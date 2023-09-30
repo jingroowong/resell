@@ -30,10 +30,10 @@ android {
     buildFeatures {
         dataBinding true
     }
+
     viewBinding {
         enabled = true
     }
-
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8

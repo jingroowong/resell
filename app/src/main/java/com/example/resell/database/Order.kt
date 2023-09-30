@@ -6,6 +6,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import com.google.firebase.database.Exclude
 
 @Entity(
     tableName = "order_table", foreignKeys = [ForeignKey(
@@ -64,5 +65,17 @@ data class Order(
         override fun newArray(size: Int): Array<Order?> {
             return arrayOfNulls(size)
         }
+    }
+    @Exclude
+    fun toMap(): Map<String, Any?> {
+        return mapOf(
+            "orderID" to orderID,
+            "orderStatus" to orderStatus,
+            "orderDate" to orderDate,
+            "orderAmount" to orderAmount,
+            "orderStatus" to orderStatus,
+            "userID" to userID,
+            "paymentID" to paymentID
+        )
     }
 }

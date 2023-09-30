@@ -1,47 +1,52 @@
-package com.example.resell
+package com.example.resell.admin
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.RadioGroup
 import android.widget.TextView
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.resell.Model.OrderDetailsModel
+import com.example.resell.ChooseOrderToUpdateDirections
+import com.example.resell.OrderHistory
+import com.example.resell.OrderHistoryDetails
+import com.example.resell.R
 import com.example.resell.adapter.MyOrderDetailsAdapter
-import com.example.resell.database.Cart
 import com.example.resell.database.Order
 import com.example.resell.database.OrderDetails
 import com.example.resell.database.Product
-import com.example.resell.databinding.FragmentOrderHistoryDetailsBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
+private val db = Firebase.database.getReference("Order")
 
 /**
  * A simple [Fragment] subclass.
- * Use the [OrderHistoryDetails.newInstance] factory method to
+ * Use the [UpdateOrderStatus.newInstance] factory method to
  * create an instance of this fragment.
  */
-
-//private lateinit var viewModel: OrderDetailsModel
-
-private lateinit var binding: FragmentOrderHistoryDetailsBinding
-
-class OrderHistoryDetails : Fragment() {
+class UpdateOrderStatus : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private var isUpdating = false
 
-    private var orderDetailModels: MutableList<Cart> = ArrayList()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -50,17 +55,9 @@ class OrderHistoryDetails : Fragment() {
         }
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment using View Binding
-        binding = FragmentOrderHistoryDetailsBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
     companion object {
         const val ARG_ORDER = "order"
-        const val ARG_PRODUCT = "product"
+        private const val ARG_PRODUCT = "product"
 
         @JvmStatic
         fun newInstance(order: Order) = OrderHistory().apply {
@@ -78,13 +75,16 @@ class OrderHistoryDetails : Fragment() {
             }
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        var orderStatus = ""
+        val oRadioGroup = view.findViewById<RadioGroup>(R.id.radioGroup)
+        val updateBtn = view.findViewById<Button>(R.id.updateBtn)
+
         // Get the order data from arguments
-        val order = arguments?.getParcelable(ARG_ORDER) as Order?
-        val product = arguments?.getParcelable(ARG_PRODUCT) as Product?
+        val order = arguments?.getParcelable(OrderHistoryDetails.ARG_ORDER) as Order?
+        val product = arguments?.getParcelable(OrderHistoryDetails.ARG_PRODUCT) as Product?
 
         // Update UI with order details
         order?.let {
@@ -99,11 +99,75 @@ class OrderHistoryDetails : Fragment() {
             orderAmount.text = getString(R.string.price_format, it.orderAmount)
             Log.d("FirebaseData", "Show Order")
         }
+
         // Fetch and display product data based on order details
         val orderID = order?.orderID ?: 0
         fetchOrderDetailsAndProductData(orderID)
+
+        order?.let {
+            if (it.orderStatus == "Processing") {
+                oRadioGroup.check(R.id.processingRB)
+            } else if (it.orderStatus == "Shipping") {
+                oRadioGroup.check(R.id.shippingRB)
+            } else if (it.orderStatus == "Delivered") {
+                oRadioGroup.check(R.id.deliveredRB)
+            }
+
+            oRadioGroup.setOnCheckedChangeListener { group, checkedId ->
+                Log.d("FirebaseData", "2Get Order ID Data $orderID")
+                when (checkedId) {
+                    R.id.processingRB -> {
+                        orderStatus = "Processing"
+                    }
+
+                    R.id.shippingRB -> {
+                        orderStatus = "Shipping"
+                    }
+
+                    R.id.deliveredRB -> {
+                        orderStatus = "Delivered"
+                    }
+                }
+                Log.d("FirebaseData", "Change Data $orderStatus")
+                Log.d("FirebaseData", "3Get Order ID Data $orderID")
+            }
+            updateBtn.setOnClickListener {
+                Log.d("Update", "Button Clicked") // Add this line
+                if (!isUpdating) {
+                    isUpdating = true
+                    updateOrder(orderID!!, orderStatus)
+                    Log.d("FirebaseData", "Get Data $orderStatus")
+                }
+                Log.e("Update", "Update data")
+
+            }
+        }
     }
 
+    private fun updateOrder(orderID: Int, newOrderStatus: String) {
+        // Check if the orderID is valid (not equal to -1)
+        if (orderID != -1) {
+            val ordersRef = db.child(orderID.toString())
+            val updateData = mapOf("orderStatus" to newOrderStatus)
+            ordersRef.updateChildren(updateData)
+                .addOnSuccessListener {
+                    Log.d("Update", "Order Status Updated")
+                    showSuccessDialog(
+                        "Order Status Updated",
+                        "The order has been successfully updated."
+                    )
+                    isUpdating = false
+                }
+                .addOnFailureListener { error ->
+                    Log.e("Update", "Error updating data: ${error.message}")
+                    isUpdating = false
+                }
+        } else {
+            // Handle the case where orderID is invalid
+            Log.e("Update", "Invalid orderID: $orderID")
+            isUpdating = false
+        }
+    }
     private fun fetchOrderDetailsAndProductData(orderID: Int) {
         // Fetch order details for the specified orderID
         val orderDetailsRef = FirebaseDatabase.getInstance().getReference("OrderDetail")
@@ -164,4 +228,25 @@ class OrderHistoryDetails : Fragment() {
             }
         })
     }
+
+    fun showSuccessDialog(title: String, message: String) {
+        val builder = AlertDialog.Builder(requireContext())
+        builder.setTitle(title)
+        builder.setMessage(message)
+        builder.setPositiveButton("OK") { _, _ ->
+            findNavController().navigate(R.id.action_updateOrderStatus_to_chooseOrderToUpdate)
+        }
+        val dialog = builder.create()
+        dialog.show()
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_update_order_status, container, false)
+    }
+
+
 }

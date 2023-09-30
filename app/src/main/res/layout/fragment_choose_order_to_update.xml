@@ -31,7 +31,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/navHeader"
             app:menu="@menu/nav_header"
-            app:title="Order History"
+            app:title="Choose Order To Update Order Status"
             app:titleTextColor="@color/white">
 
         </com.google.android.material.appbar.MaterialToolbar>
@@ -39,7 +39,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+        android:id="@+id/chooseOrderToUpdateRecyclerView"
         android:layout_width="382dp"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
