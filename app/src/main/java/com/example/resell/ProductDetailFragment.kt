@@ -81,8 +81,7 @@ class ProductDetailFragment : Fragment(), ICartLoadListener {
             bundle.putInt("userID", currentUserID!!)
 
             //Navigate to Cart
-            val navController =
-                this.findNavController().navigate(R.id.action_productDetailFragment_to_cartFragment,bundle)
+            this.findNavController().navigate(R.id.action_productDetailFragment_to_cartFragment,bundle)
         }
 
         binding.btnBack.setOnClickListener {

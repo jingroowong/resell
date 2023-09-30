@@ -10,32 +10,44 @@
         android:id="@+id/textViewTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Payment to ReSell"
-        android:textSize="18sp"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"
-        android:textStyle="bold"/>
+        android:text="Payment to ReSell"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <!-- Payment Amount -->
     <TextView
         android:id="@+id/textViewAmount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="RM 15.00"
-        android:textSize="24sp"
-        android:layout_centerHorizontal="true"
         android:layout_below="@id/textViewTitle"
-        android:layout_marginTop="16dp"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="RM 15.00"
+        android:textSize="24sp" />
 
     <!-- Touch 'N Go Logo -->
     <ImageView
         android:id="@+id/imageViewTouchNGoLogo"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:src="@drawable/touch_n_go_logo"
-        android:layout_centerHorizontal="true"
         android:layout_below="@id/textViewAmount"
-        android:layout_marginTop="32dp"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="32dp"
+        android:src="@drawable/touch_n_go_logo" />
+
+    <!-- Country Code TextView -->
+    <TextView
+        android:id="@+id/countryCodeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/imageViewTouchNGoLogo"
+        android:layout_marginTop="18dp"
+        android:text="+60 "
+        android:textColor="@android:color/black"
+        android:textSize="18sp" />
 
     <!-- Mobile Phone Number -->
     <EditText
@@ -43,19 +55,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/imageViewTouchNGoLogo"
-        android:layout_marginTop="32dp"
+        android:layout_toRightOf="@id/countryCodeTextView"
+
         android:hint="Mobile Phone Number"
-        android:inputType="phone"/>
+        android:inputType="phone" />
 
     <!-- PIN Number -->
     <EditText
         android:id="@+id/editTextPIN"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/editTextMobileNumber"
+        android:layout_below="@id/countryCodeTextView"
         android:layout_marginTop="16dp"
         android:hint="6-digit PIN"
-        android:inputType="numberPassword"/>
+        android:inputType="numberPassword" />
 
     <!-- Log In Button -->
     <Button

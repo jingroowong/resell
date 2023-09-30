@@ -1,59 +1,89 @@
-package com.example.resell
-
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.example.resell.R
+import com.example.resell.database.Payment
+import com.example.resell.databinding.FragmentPaymentConfirmBinding
+import com.google.firebase.database.FirebaseDatabase
+import java.text.SimpleDateFormat
+import java.util.Date
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [PaymentConfirmFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class PaymentConfirmFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-    }
-
+    private lateinit var binding: FragmentPaymentConfirmBinding
+    private var paymentAmount: Double? = 0.0
+    private var phoneNum: String? = null
+    // Add a variable to store the current userID
+    private var currentUserID: Int? = 0
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_payment_confirm, container, false)
+        // Retrieve userID from arguments
+        currentUserID = arguments?.getInt("userID")
+        // Retrieve payment from arguments
+        paymentAmount = arguments?.getDouble("paymentAmount")
+        phoneNum = arguments?.getString("phoneNum")
+        // Inflate the layout for this fragment using View Binding
+        binding = FragmentPaymentConfirmBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment PaymentConfirmFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            PaymentConfirmFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val paymentID = System.currentTimeMillis()
+        // Create a Payment object
+        val payment = Payment(
+            paymentID = paymentID.toInt(),
+            paymentDate = getCurrentTimestampAsString(),
+            paymentAmount = paymentAmount!!,
+            paymentType = "Touch 'N Go"
+        )
+
+
+
+
+        // Define the country code
+        val countryCode = "+60"
+
+        // Extract the last four characters of the user input
+        val lastFourDigits = phoneNum!!.takeLast(4)
+
+        // Create the formatted phone number
+        val formattedPhoneNumber = "$countryCode*****$lastFourDigits"
+
+        // Populate UI with payment details
+        binding.phoneNumberTextView.text = formattedPhoneNumber
+        binding.paymentAmountTextView.text = "RM ${payment.paymentAmount}"
+        binding.paymentIdTextView.text = "${payment.paymentID}"
+        binding.paymentDateTextView.text = "${payment.paymentDate}"
+
+        binding.payButton.setOnClickListener {
+            // Save the payment to Firebase Realtime Database
+            savePaymentToFirebase(payment)
+            // TODO: Update your database with payment details, set order.DEAL to true, and product.productAvailability to false
+            val bundle = Bundle()
+            bundle.putInt("userID", currentUserID!!)
+            // Navigate to a payment success or confirmation screen
+            this.findNavController().navigate(R.id.action_paymentConfirmFragment_to_paymentSuccessFragment,bundle)
+        }
+    }
+
+    private fun savePaymentToFirebase(payment: Payment) {
+        // Push the payment object to Firebase
+        val paymentRef = FirebaseDatabase.getInstance().getReference("Payments")
+            .child(payment.paymentID.toString())
+        paymentRef.setValue(payment)
+
+    }
+
+    private fun getCurrentTimestampAsString(): String {
+        val currentTimeMillis = System.currentTimeMillis()
+        val date = Date(currentTimeMillis)
+        val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+        return sdf.format(date)
     }
 }

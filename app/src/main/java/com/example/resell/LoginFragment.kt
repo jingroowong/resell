@@ -26,7 +26,7 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val userID = 928
+        val userID = 888
         val loginBtn = binding.button
 
         loginBtn.setOnClickListener {

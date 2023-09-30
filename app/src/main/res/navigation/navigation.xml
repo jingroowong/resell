@@ -55,5 +55,25 @@
     <fragment
         android:id="@+id/paymentFragment"
         android:name="PaymentFragment"
-        android:label="PaymentFragment" />
+        android:label="PaymentFragment" >
+        <action
+            android:id="@+id/action_paymentFragment_to_paymentConfirmFragment"
+            app:destination="@id/paymentConfirmFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/paymentConfirmFragment"
+        android:name="PaymentConfirmFragment"
+        android:label="PaymentConfirmFragment" >
+        <action
+            android:id="@+id/action_paymentConfirmFragment_to_paymentSuccessFragment"
+            app:destination="@id/paymentSuccessFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/paymentSuccessFragment"
+        android:name="PaymentSuccessFragment"
+        android:label="PaymentSuccessFragment" >
+        <action
+            android:id="@+id/action_paymentSuccessFragment_to_productFragment"
+            app:destination="@id/productFragment" />
+    </fragment>
 </navigation>
