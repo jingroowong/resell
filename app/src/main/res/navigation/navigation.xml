@@ -1,6 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/navigation">
+    android:id="@+id/navigation"
+    app:startDestination="@id/chooseOrderToUpdate">
 
+    <fragment
+        android:id="@+id/orderHistory"
+        android:name="com.example.resell.OrderHistory"
+        android:label="OrderHistory">
+        <action
+            android:id="@+id/action_orderHistory_to_orderHistoryDetails"
+            app:destination="@id/orderHistoryDetails">
+            <argument
+                android:name="order"
+                app:argType="com.example.resell.database.Order" />
+            <argument
+                android:name="product"
+                app:argType="com.example.resell.database.Product" />
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/orderHistoryDetails"
+        android:name="com.example.resell.OrderHistoryDetails"
+        android:label="OrderHistoryDetails" />
+
+    <!-- Admin Part-->
+    <fragment
+        android:id="@+id/chooseOrderToUpdate"
+        android:name="com.example.resell.ChooseOrderToUpdate"
+        android:label="ChooseOrderToUpdate">
+        <action
+            android:id="@+id/action_chooseOrderToUpdate_to_updateOrderStatus"
+            app:destination="@id/updateOrderStatus">
+            <argument
+                android:name="order"
+                app:argType="com.example.resell.database.Order" />
+            <argument
+                android:name="product"
+                app:argType="com.example.resell.database.Product" />
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/updateOrderStatus"
+        android:name="com.example.resell.admin.UpdateOrderStatus"
+        android:label="UpdateOrderStatus" >
+        <action
+            android:id="@+id/action_updateOrderStatus_to_chooseOrderToUpdate"
+            app:destination="@id/chooseOrderToUpdate" />
+    </fragment>
 </navigation>
