@@ -66,6 +66,8 @@ class AdminInsertProduct : Fragment() {
         }
     }
 
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -73,6 +75,8 @@ class AdminInsertProduct : Fragment() {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_admin_insert_product, container, false)
     }
+
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val application = requireNotNull(this.activity).application
@@ -97,15 +101,11 @@ class AdminInsertProduct : Fragment() {
 
             when (checkedId) {
                 R.id.moderateRadioBtn -> {
-
                     productCondition = "Moderate"
-
                 }
 
                 R.id.goodRadioBtn -> {
-
                     productCondition = "Good"
-
                 }
 
             }
@@ -142,7 +142,7 @@ class AdminInsertProduct : Fragment() {
             var productPrice: Double = 0.0
 
 
-            //Input Validation
+                //Input Validation
             val errorMessages = HashMap<String, String>()
 
 
@@ -197,8 +197,9 @@ class AdminInsertProduct : Fragment() {
                         dateUpload = date,
                         productAvailability = true
                     )
-                    writeNewProduct(product)
                     viewModel.clearAll()
+                    writeNewProduct(product)
+
                 }
             } else {
                 val dialogBuilder = AlertDialog.Builder(requireContext())
