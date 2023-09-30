@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.resell.adapter.MyOrderAdapter
 import com.example.resell.adapter.MyUpdateOrderStatusAdapter
 import com.example.resell.database.Order
 import com.example.resell.database.Product
@@ -96,7 +97,7 @@ class OrderHistory : Fragment(), IOrderHistoryListener {
     }
 
     override fun onOrderLoadSuccess(orderModelList: MutableList<Order>) {
-        val adapter = MyUpdateOrderStatusAdapter(requireContext(), orderModelList, productModels, findNavController())
+        val adapter = MyOrderAdapter(requireContext(), orderModelList, productModels, findNavController())
         orderRecyclerView.adapter = adapter
     }
 

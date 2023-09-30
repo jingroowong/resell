@@ -39,6 +39,11 @@ private val UpdateOrderStatusModels: MutableList<Order> = ArrayList()
 private val productModels: MutableList<Product> = ArrayList()
 
 class ChooseOrderToUpdate : Fragment(), IUpdateOrderStatusListener {
+    override fun onResume() {
+        super.onResume()
+        // Clear the orderDetailModels list when the fragment is resumed
+        orderModels.clear()
+    }
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
