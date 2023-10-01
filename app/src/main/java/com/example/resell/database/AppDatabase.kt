@@ -1,11 +1,9 @@
 package com.example.resell.database
 
-import LocalDateConverter
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
 
 @Database(
     entities = [Feedback::class, Order::class, OrderDetail::class, Payment::class, Product::class, User::class],
