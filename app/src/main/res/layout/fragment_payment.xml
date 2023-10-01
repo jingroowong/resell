@@ -24,7 +24,8 @@
         android:layout_below="@id/textViewTitle"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
-        android:text="RM 15.00"
+        android:textColor="@color/touchNGo"
+        android:text="RM 0.00"
         android:textSize="24sp" />
 
     <!-- Touch 'N Go Logo -->

@@ -7,33 +7,31 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class OrderDetailViewModel(
+class CartViewModel(
     application: Application
 ) : AndroidViewModel(application) {
 
     // Initialize the OrderDetailDao from your database
-    private val orderDetailDao: OrderDetailDao = AppDatabase.getInstance(application).orderDetailDao
+    private val cartDao: CartDao = AppDatabase.getInstance(application).cartDao
 
     // Insert an order detail into the database using coroutines
-    fun insertOrderDetail(orderDetail: OrderDetail) {
+    fun insertCart(cart: Cart) {
         viewModelScope.launch(Dispatchers.IO) {
-            orderDetailDao.insert(orderDetail)
+            cartDao.insert(cart)
         }
     }
 
     // Get a single order detail by order ID and product ID
-    fun getOrderDetailById(orderId: Int, productId: Int): LiveData<OrderDetail?> {
-        return orderDetailDao.get(orderId, productId)
+    fun getCartById(orderId: Int, productId: Int): LiveData<Cart?> {
+        return cartDao.get(orderId, productId)
     }
 
     // Clear all order details using coroutines
-    fun clearAllOrderDetails() {
+    fun clearAllCarts() {
         viewModelScope.launch(Dispatchers.IO) {
-            orderDetailDao.clear()
+            cartDao.clear()
         }
     }
 
-    // LiveData to observe local product data
-    val localOrderDetails: LiveData<List<OrderDetail>> = orderDetailDao.getAllOrderDetails()
 
 }

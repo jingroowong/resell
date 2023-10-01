@@ -9,8 +9,8 @@ class OrderViewModelFactory (
 
     @Suppress("unchecked_cast")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(OrderViewModel::class.java)) {
-            return OrderViewModel(application) as T
+        if (modelClass.isAssignableFrom(OrdersViewModel::class.java)) {
+            return OrdersViewModel(application) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

@@ -4,10 +4,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.resell.R
+import com.example.resell.database.Order
 import com.example.resell.database.OrderDetail
+import com.example.resell.database.OrderViewModel
 import com.example.resell.database.Payment
+import com.example.resell.database.Product
 import com.example.resell.databinding.FragmentPaymentConfirmBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -21,20 +25,19 @@ class PaymentConfirmFragment : Fragment() {
     private lateinit var binding: FragmentPaymentConfirmBinding
     private var paymentAmount: Double? = 0.0
     private var phoneNum: String? = null
-    // Add a variable to store the current userID
-    private var currentUserID: Int? = 0
     private var currentOrderID: Int? = 0
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Retrieve userID from arguments
-        currentUserID = arguments?.getInt("userID")
-        // Retrieve orderID from arguments
-        currentOrderID = arguments?.getInt("orderID")
+
+        val orderViewModel = ViewModelProvider(requireActivity()).get(OrderViewModel::class.java)
+        currentOrderID = orderViewModel.orderID
+        Log.d("Debug", "Order ID in Payment Confirm Fragment ${currentOrderID}")
         // Retrieve payment from arguments
         paymentAmount = arguments?.getDouble("paymentAmount")
         phoneNum = arguments?.getString("phoneNum")
+
         // Inflate the layout for this fragment using View Binding
         binding = FragmentPaymentConfirmBinding.inflate(inflater, container, false)
         return binding.root
@@ -50,9 +53,6 @@ class PaymentConfirmFragment : Fragment() {
             paymentAmount = paymentAmount!!,
             paymentType = "Touch 'N Go"
         )
-
-
-
 
         // Define the country code
         val countryCode = "+60"
@@ -73,52 +73,90 @@ class PaymentConfirmFragment : Fragment() {
         binding.payButton.setOnClickListener {
             // Save the payment to Firebase Realtime Database
             savePaymentToFirebase(payment)
-            // TODO: Update your database with payment details, set order.DEAL to true, and product.productAvailability to false
-            // Create a reference to the Firebase Realtime Database for orders
-            val orderRef = FirebaseDatabase.getInstance().getReference("Orders")
 
-// Update the order.DEAL value to true for the current order
-            orderRef.child(currentOrderID.toString()).child("deal").setValue(true)
-            Log.d("Firebase","Order ID : "+currentOrderID.toString())
+            //Update the order ti Firebase
+            updateOrderToFirebase(payment)
 
-            val orderDetailsRef = FirebaseDatabase.getInstance().getReference("OrderDetail")
-            val orderDetailQuery = orderDetailsRef.orderByChild("orderID").equalTo(currentOrderID!!.toDouble())
+            //Update the product to Firebase
+            updateProductToFirebase()
 
-            orderDetailQuery.addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(orderDetailsSnapshot: DataSnapshot) {
-                    for (orderDetailData in orderDetailsSnapshot.children) {
-                        val orderDetail = orderDetailData.getValue(OrderDetail::class.java)
-                        if (orderDetail != null) {
+            // Navigate to a payment success or confirmation screen
+            findNavController().navigate(R.id.action_paymentConfirmFragment_to_paymentSuccessFragment)
+        }
+    }
 
-                            val productID = orderDetail.productID.toString()
-                            Log.d("Firebase", "Product ID" + productID)
-                            // Proceed to update the product's availability.
+    private fun updateProductToFirebase() {
+        val orderDetailsRef = FirebaseDatabase.getInstance().getReference("OrderDetail")
+        val orderDetailsQuery = orderDetailsRef.orderByChild("orderID").equalTo(currentOrderID!!.toDouble())
 
-                            // Assuming you already have a reference to the database
-                            val productsRef =
-                                FirebaseDatabase.getInstance().getReference("Products")
+        orderDetailsQuery.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(orderDetailsSnapshot: DataSnapshot) {
+                for (orderDetailDataSnapshot in orderDetailsSnapshot.children) {
+                    val orderDetail = orderDetailDataSnapshot.getValue(OrderDetail::class.java)
+                    if (orderDetail != null) {
+                        val productID = orderDetail.productID.toString()
 
-// Replace 'productID' with the actual product ID you obtained from step 1
-                            val productRef = productsRef.child(productID)
+                        val productRef = FirebaseDatabase.getInstance().getReference("Products").child(productID)
 
-// Set 'productAvailability' to 'true' (assuming 'true' indicates availability)
-                            productRef.child("productAvailability").setValue(false)
-                        }
+                        productRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                            override fun onDataChange(productSnapshot: DataSnapshot) {
+                                val product = productSnapshot.getValue(Product::class.java)
+                                if (product != null) {
+                                    // 3. Set product.productAvailability to false
+                                    product.productAvailability = false
+
+                                    // Update the product in Firebase
+                                    productRef.setValue(product)
+                                }
+                            }
+
+                            override fun onCancelled(productError: DatabaseError) {
+                                // Handle errors if necessary
+                            }
+                        })
                     }
                 }
+            }
 
-                override fun onCancelled(orderDetailsError: DatabaseError) {
-                    // Handle the error
+            override fun onCancelled(orderDetailsError: DatabaseError) {
+                // Handle errors if necessary
+            }
+        })
+
+    }
+
+    private fun updateOrderToFirebase(payment:Payment) {
+        val orderRef = FirebaseDatabase.getInstance().getReference("Orders")
+        val orderQuery = orderRef.orderByChild("orderID").equalTo(currentOrderID!!.toDouble())
+
+        orderQuery.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(orderSnapshot: DataSnapshot) {
+                for (orderDataSnapshot in orderSnapshot.children) {
+                    val order = orderDataSnapshot.getValue(Order::class.java)
+                    if (order != null) {
+                        // 2.1. Set order.DEAL to true
+                        order.deal = true
+
+                        // 2.2. Set order.DATE to today (you can use your date formatting logic)
+                        order.orderDate = getCurrentTimestampAsString()
+
+                        // 2.3. Set order.paymentID to payment.paymentID
+                        order.paymentID = payment.paymentID
+
+                        // 2.4. Set order.orderAmount to payment.paymentAmount
+                        order.orderAmount = payment.paymentAmount
+
+                        // Update the order in Firebase
+                        orderRef.child(order.orderID.toString()).setValue(order)
+                    }
                 }
-            })
+            }
 
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle errors if necessary
+            }
+        })
 
-
-            val bundle = Bundle()
-            bundle.putInt("userID", currentUserID!!)
-            // Navigate to a payment success or confirmation screen
-            this.findNavController().navigate(R.id.action_paymentConfirmFragment_to_paymentSuccessFragment,bundle)
-        }
     }
 
     private fun savePaymentToFirebase(payment: Payment) {

@@ -1,5 +1,4 @@
-import android.annotation.SuppressLint
-import android.content.Intent
+
 import android.os.Bundle
 import android.os.Parcel
 import android.util.Log
@@ -18,9 +17,11 @@ import com.example.resell.database.AppDatabase
 import com.example.resell.database.Cart
 import com.example.resell.database.Order
 import com.example.resell.database.OrderDetail
+import com.example.resell.database.OrderViewModel
 import com.example.resell.database.Product
 import com.example.resell.database.ProductViewModel
 import com.example.resell.database.ProductViewModelFactory
+import com.example.resell.database.UserViewModel
 import com.example.resell.eventbus.UpdateCartEvent
 import com.example.resell.listener.ICartLoadListener
 import com.example.resell.listener.IProductLoadListener
@@ -36,6 +37,10 @@ import java.lang.Boolean.FALSE
 import java.lang.Boolean.TRUE
 import java.text.SimpleDateFormat
 import java.util.Date
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 
 
 class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
@@ -48,22 +53,23 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
     private var originalProductList: List<Product> = ArrayList()
     private var filteredProductList: List<Product> = ArrayList()
 
-    // Add a variable to store the current orderID
-    private var currentOrderID: Int? = 0
-
     // Add a variable to store the current userID
     private var currentUserID: Int? = 0
+    // Declare the OrderViewModel property
+    private lateinit var orderViewModel: OrderViewModel
 
     private var cartModels: MutableList<Cart> = ArrayList()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Retrieve userID from arguments
-        currentUserID = arguments?.getInt("userID")
+        val userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
+        // Retrieve userID
+        currentUserID = userViewModel.userID
 
         Log.d("Debug", "User ID in Product Fragment ${currentUserID}")
         // Inflate the layout for this fragment using View Binding
@@ -73,23 +79,32 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // Initialize the OrderViewModel
+        orderViewModel = ViewModelProvider(requireActivity()).get(OrderViewModel::class.java)
 
-        val application = requireNotNull(this.activity).application
-        val dataSource = AppDatabase.getInstance(application).productDao
-        val viewModelFactory = ProductViewModelFactory(dataSource, application)
-        val viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
+            // There is no internet connection
+            val application = requireNotNull(this.activity).application
+            val dataSource = AppDatabase.getInstance(application).productDao
+            val viewModelFactory = ProductViewModelFactory(dataSource, application)
+            val viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
 
+
+        if (isInternetAvailable(requireContext())) {
+            viewModel.clearAll()
+
+        }
         readFirebaseProduct(viewModel)
+            viewModel.getAllProducts().observe(viewLifecycleOwner, { products ->
+                if (products != null) {
+                    originalProductList = products ?: emptyList()
+                    filteredProductList = originalProductList
+                    val adapter =
+                        MyProductAdapter(requireContext(), filteredProductList, findNavController())
+                    recyclerProduct.adapter = adapter
+                }
+            })
 
-        viewModel.getAllProducts().observe(viewLifecycleOwner, { products ->
-            if (products != null) {
-                originalProductList = products ?: emptyList()
-                filteredProductList = originalProductList
-                val adapter =
-                    MyProductAdapter(requireContext(), filteredProductList, findNavController())
-                recyclerProduct.adapter = adapter
-            }
-        })
+
 
         productLoadListener = this
         cartLoadListener = this
@@ -105,12 +120,10 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
         recyclerProduct.layoutManager = gridLayoutManager
 
         binding.btnCart.setOnClickListener {
-            val bundle = Bundle()
-            bundle.putInt("userID", currentUserID!!)
-
             //Navigate to Cart
-            this.findNavController().navigate(R.id.action_productFragment_to_cartFragment,bundle)
+            findNavController().navigate(R.id.action_productFragment_to_cartFragment)
         }
+
 
         loadProductFromFirebase()
 
@@ -147,10 +160,10 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
             }
         })
         countCartFromFirebase()
+
     }
 
     fun readFirebaseProduct(viewModel: ProductViewModel) {
-
         FirebaseDatabase.getInstance()
             .getReference("Products")
             .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -170,8 +183,6 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
                                             }
 
                                         })
-
-
                                 }
                             }
                         }
@@ -199,84 +210,74 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = true)
-    public fun onUpdateCartEvent(event: UpdateCartEvent) { countCartFromFirebase()
+    public fun onUpdateCartEvent(event: UpdateCartEvent) {
+        countCartFromFirebase()
     }
 
-private fun countCartFromFirebase() {
-    cartModels.clear()
+    private fun countCartFromFirebase() {
+        cartModels.clear()
 
-    // Step 1: Get the orderID based on userID
-    val orderRef = FirebaseDatabase.getInstance().getReference("Orders")
-    val query = orderRef.orderByChild("userID").equalTo(currentUserID!!.toDouble())
-        .addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                var orderID: Int? = null
-                Log.d("Debug", "Number of Orders: ${snapshot.childrenCount}")
-                for (orderSnapshot in snapshot.children) {
-                    val order = orderSnapshot.getValue(Order::class.java)
-                    if (order != null && order.deal==FALSE) {
-                        // An uncompleted order exists, use its orderID
-                        orderID = order.orderID
-                        break
+        // Get the order ID from the ViewModel
+        val orderID = orderViewModel.orderID
+
+        if (orderID != null) {
+            // Fetch orderDetails using the obtained orderID
+            val orderDetailsRef = FirebaseDatabase.getInstance().getReference("OrderDetail")
+            val orderDetailQuery = orderDetailsRef.orderByChild("orderID").equalTo(orderID.toDouble())
+
+            orderDetailQuery.addListenerForSingleValueEvent(object : ValueEventListener {
+
+                override fun onDataChange(orderDetailsSnapshot: DataSnapshot) {
+                    Log.d(
+                        "Debug",
+                        "Number of Order Detail in Product Fragment: ${orderDetailsSnapshot.childrenCount}"
+                    )
+                    for (orderDetailData in orderDetailsSnapshot.children) {
+                        val orderDetail = orderDetailData.getValue(OrderDetail::class.java)
+                        if (orderDetail != null) {
+                            val productID = orderDetail.productID.toString()
+
+                            // Retrieve product information from Product table
+                            val productRef = FirebaseDatabase.getInstance()
+                                .getReference("Products")
+                                .child(productID)
+
+                            productRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                                override fun onDataChange(productSnapshot: DataSnapshot) {
+                                    val product = productSnapshot.getValue(Product::class.java)
+                                    if (product != null && product.productAvailability == TRUE) {
+                                        // Convert OrderDetail to Cart
+                                        val cartModel = Cart()
+                                        cartModel.productID = product.productID
+                                        cartModel.orderID = orderID
+                                        cartModel.productName = product.productName
+                                        cartModel.productImage = product.productImage
+                                        cartModel.productPrice = product.productPrice
+
+                                        cartModels.add(cartModel)
+
+                                        // Check if we've collected all the cart items
+                                        if (cartModels.size == orderDetailsSnapshot.childrenCount.toInt()) {
+                                            cartLoadListener?.onLoadCartSuccess(cartModels)
+                                        }
+                                    }
+                                }
+
+                                override fun onCancelled(productError: DatabaseError) {
+                                    cartLoadListener?.onLoadCartFailed(productError.message)
+                                }
+                            })
+                        }
                     }
                 }
 
-                if (orderID != null) {
-                    // Step 2: Fetch orderDetails using the obtained orderID
-                    val orderDetailsRef = FirebaseDatabase.getInstance().getReference("OrderDetail")
-                    val orderDetailQuery = orderDetailsRef.orderByChild("orderID").equalTo(orderID.toDouble())
-                        .addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onDataChange(orderDetailsSnapshot: DataSnapshot) {
-                                for (orderDetailData in orderDetailsSnapshot.children) {
-                                    val orderDetail =
-                                        orderDetailData.getValue(OrderDetail::class.java)
-                                    if (orderDetail != null) {
-                                        val productID = orderDetail.productID.toString()
+                override fun onCancelled(orderDetailsError: DatabaseError) {
+                    cartLoadListener?.onLoadCartFailed(orderDetailsError.message)
+                }
+            })
+        }
+    }
 
-                                        // Retrieve product information from Product table
-                                        val productRef = FirebaseDatabase.getInstance()
-                                            .getReference("Products")
-                                            .child(productID).addListenerForSingleValueEvent(object :
-                                                ValueEventListener {
-                                                override fun onDataChange(productSnapshot: DataSnapshot) {
-                                                    val product =
-                                                        productSnapshot.getValue(Product::class.java)
-                                                    if (product != null && product.productAvailability == TRUE) {
-                                                        // Convert OrderDetail to Cart
-                                                        val cartModel = Cart()
-                                                        cartModel.productID = product.productID
-                                                        cartModel.orderID = orderID
-                                                        cartModel.productName = product.productName
-                                                        cartModel.productImage = product.productImage
-                                                        cartModel.productPrice = product.productPrice
-
-                                                        cartModels.add(cartModel)
-                                                        // Check if we've collected all the cart items
-                                                        if (cartModels.size == orderDetailsSnapshot.childrenCount.toInt()) {
-                                                            cartLoadListener?.onLoadCartSuccess(cartModels)
-                                                        }
-                                                    }
-                                                }
-
-                                                override fun onCancelled(productError: DatabaseError) {
-                                                    cartLoadListener?.onLoadCartFailed(productError.message)
-                                                }
-                                            })
-                                    }
-                                }
-                            }
-
-                            override fun onCancelled(orderDetailsError: DatabaseError) {
-                                cartLoadListener?.onLoadCartFailed(orderDetailsError.message)
-                            }
-                        })
-                }             }
-
-            override fun onCancelled(error: DatabaseError) {
-                cartLoadListener?.onLoadCartFailed(error.message)
-            }
-        })
-}
     private fun generateNewOrder(currentUserID: Int) {
         val orderRef = FirebaseDatabase.getInstance().getReference("Orders")
 
@@ -291,14 +292,15 @@ private fun countCartFromFirebase() {
             deal = false,
             orderStatus = "In Progress",
             userID = currentUserID,
-            paymentID = 0 // Replace with the actual payment ID
+            paymentID = 0
         )
 
         // Set the value with the new order ID
         orderRef.child(newOrderID.toString()).setValue(newOrder)
 
         // Update the currentOrderID
-        currentOrderID = newOrderID
+
+        orderViewModel.orderID = newOrderID
     }
 
     private fun getCurrentTimestampAsInt(): Int {
@@ -316,15 +318,16 @@ private fun countCartFromFirebase() {
     }
 
     private fun checkExistingOrder() {
-       val orderRef = FirebaseDatabase.getInstance().getReference("Orders")
+        val orderRef = FirebaseDatabase.getInstance().getReference("Orders")
         orderRef.orderByChild("userID").equalTo(currentUserID!!.toDouble())
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for (orderSnapshot in snapshot.children) {
                         val order = orderSnapshot.getValue(Order::class.java)
-                        if (order != null && order.deal==FALSE) {
+                        if (order != null && order.deal == FALSE) {
                             // An uncompleted order exists, use its orderID
-                            currentOrderID = order.orderID
+
+                            orderViewModel.orderID = order.orderID
                             return
                         }
                     }
@@ -365,7 +368,6 @@ private fun countCartFromFirebase() {
             })
     }
 
-
     override fun onProductLoadSuccess(productModelList: List<Product>?) {
         originalProductList = productModelList ?: emptyList()
         filteredProductList = originalProductList
@@ -404,6 +406,21 @@ private fun countCartFromFirebase() {
 
     override fun onCartItemDeleted(position: Int) {
         TODO("Not yet implemented")
+    }
+
+    fun isInternetAvailable(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val network = connectivityManager.activeNetwork
+            val capabilities = connectivityManager.getNetworkCapabilities(network)
+            return capabilities != null && (capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) || capabilities.hasTransport(
+                NetworkCapabilities.TRANSPORT_CELLULAR))
+        } else {
+            val activeNetworkInfo = connectivityManager.activeNetworkInfo
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected
+        }
     }
 
 }

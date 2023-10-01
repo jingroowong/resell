@@ -7,8 +7,8 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(
-    entities = [Feedback::class, Order::class, OrderDetail::class, Payment::class, Product::class, User::class],
-    version = 2,
+    entities = [Feedback::class, Order::class, OrderDetail::class, Payment::class, Product::class, User::class,Cart::class],
+    version = 3,
     exportSchema = false
 )
 
@@ -19,6 +19,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract val paymentDao:PaymentDao
     abstract val productDao: ProductDao
     abstract val userDao:UserDao
+    abstract val cartDao:CartDao
 
     companion object {
         @Volatile

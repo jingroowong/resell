@@ -2,6 +2,6 @@ package com.example.resell.database
 
 import androidx.lifecycle.ViewModel
 
-class OrderViewModel : ViewModel() {
-    var orderID : Int = 0
+class UserViewModel : ViewModel(){
+var userID : Int = 0
 }
