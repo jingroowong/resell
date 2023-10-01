@@ -38,4 +38,9 @@ class ProductViewModel(
         }
 
     }
+
+
+    fun searchByName(productName:String):LiveData<List<Product>>{
+        return database.searchByName(productName)
+    }
 }

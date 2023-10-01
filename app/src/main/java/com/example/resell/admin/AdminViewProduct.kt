@@ -7,6 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -90,9 +92,11 @@ class AdminViewProduct : Fragment() {
 
 
         viewModel.getAllProducts().observe(viewLifecycleOwner) { products ->
-            if (products != null) {
+            if (products.isNotEmpty()) {
                 val adapter = ProductAdapter(products)
                 recyclerView.adapter = adapter
+            }else{
+                Toast.makeText(requireContext(),"No product(s) inside database...",Toast.LENGTH_LONG).show()
             }
         }
 
@@ -102,6 +106,21 @@ class AdminViewProduct : Fragment() {
 
             findNavController().navigate(R.id.action_adminViewProduct_to_adminInsertProduct)
 
+        }
+
+        val searchBtn = view.findViewById<Button>(R.id.searchBtn)
+
+        searchBtn.setOnClickListener {
+            val searchText = view.findViewById<EditText>(R.id.searchEditText).text.toString().trim()
+            viewModel.searchByName(searchText).observe(viewLifecycleOwner){
+                products->
+                if(products.isNotEmpty()){
+                    val adapter = ProductAdapter(products)
+                    recyclerView.adapter = adapter
+                }else{
+                    Toast.makeText(requireContext(),"No product(s) found!",Toast.LENGTH_LONG).show()
+                }
+            }
         }
 
 
