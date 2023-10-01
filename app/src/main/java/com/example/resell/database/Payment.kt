@@ -11,7 +11,7 @@ data class Payment(
     var paymentID: Int= 0,
 
     @ColumnInfo(name = "paymentDate")
-    var paymentDate: Long,
+    var paymentDate: String,
 
     @ColumnInfo(name = "paymentAmount")
     var paymentAmount: Double,

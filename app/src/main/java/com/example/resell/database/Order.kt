@@ -24,34 +24,60 @@ import com.google.firebase.database.Exclude
 
 data class Order(
     //var deal: Boolean? = null,
-    @PrimaryKey
-    var orderID: Int? = null,
-    var orderDate: String? = null,
-    var orderAmount: Double? = null,
-    var orderStatus: String? = null,
-    var userID: Int? = null,
-    var paymentID: Int? = null
+    @PrimaryKey(autoGenerate = false)
+    @ColumnInfo(name = "orderID")
+    var orderID: Int = 0,
 
-) : Parcelable {
+    @ColumnInfo(name = "orderDate")
+    var orderDate: String?,
+
+    @ColumnInfo(name = "orderAmount")
+    var orderAmount: Double,
+
+    @ColumnInfo(name = "orderStatus")
+    var orderStatus: String?,
+
+    @ColumnInfo(name = "orderDeal")
+    var deal: Boolean,
+
+    @ColumnInfo(name = "userID")
+    var userID: Int,
+
+    @ColumnInfo(name = "paymentID")
+    var paymentID: Int
+
+) :Parcelable {
+
     constructor(parcel: Parcel) : this(
-        //parcel.readValue(Boolean::class.java.classLoader) as? Boolean,
-        parcel.readValue(Int::class.java.classLoader) as? Int,
+        parcel.readInt(),
         parcel.readString(),
-        parcel.readValue(Double::class.java.classLoader) as? Double,
+        parcel.readDouble(),
         parcel.readString(),
-        parcel.readValue(Int::class.java.classLoader) as? Int,
-        parcel.readValue(Int::class.java.classLoader) as? Int,
-    ) {
+        parcel.readByte() != 0.toByte(),
+        parcel.readInt(),
+        parcel.readInt()
+    )
+    @Exclude
+    fun toMap(): Map<String, Any?> {
+        return mapOf(
+            "orderID" to orderID,
+            "orderStatus" to orderStatus,
+            "orderDate" to orderDate,
+            "orderAmount" to orderAmount,
+            "orderStatus" to orderStatus,
+            "userID" to userID,
+            "paymentID" to paymentID
+        )
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-       // parcel.writeValue(deal)
-        parcel.writeValue(orderID)
+        parcel.writeInt(orderID)
         parcel.writeString(orderDate)
-        parcel.writeValue(orderAmount)
+        parcel.writeDouble(orderAmount)
         parcel.writeString(orderStatus)
-        parcel.writeValue(userID)
-        parcel.writeValue(paymentID)
+        parcel.writeByte(if (deal) 1 else 0)
+        parcel.writeInt(userID)
+        parcel.writeInt(paymentID)
     }
 
     override fun describeContents(): Int {
@@ -67,16 +93,7 @@ data class Order(
             return arrayOfNulls(size)
         }
     }
-    @Exclude
-    fun toMap(): Map<String, Any?> {
-        return mapOf(
-            "orderID" to orderID,
-            "orderStatus" to orderStatus,
-            "orderDate" to orderDate,
-            "orderAmount" to orderAmount,
-            "orderStatus" to orderStatus,
-            "userID" to userID,
-            "paymentID" to paymentID
-        )
-    }
+
+
+    constructor() : this(0, "", 0.0, "", false, 0, 0)
 }

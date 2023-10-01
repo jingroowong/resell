@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- payment_success_fragment.xml -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="16dp"
+    tools:context=".PaymentSuccessFragment">
+
+    <!-- Success Icon -->
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/success"
+    android:contentDescription="Success Icon"
+    android:layout_gravity="center"/>
+
+    <!-- Success Message -->
+    <TextView
+        android:id="@+id/textViewSuccessMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Payment Successful!"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"/>
+
+    <!-- Button to Return to Main Screen -->
+    <Button
+        android:id="@+id/buttonReturnToMain"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Return to Main Screen"
+        android:layout_gravity="center"
+        android:layout_marginTop="24dp"/>
+
+</LinearLayout>

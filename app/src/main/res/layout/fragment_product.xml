@@ -5,7 +5,8 @@
     android:id="@+id/productLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ProductActivity">
+
+    >
 
     <LinearLayout
         android:id="@+id/panel"
@@ -15,6 +16,23 @@
         android:orientation="horizontal"
         android:weightSum="16">
 
+        <SearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:iconifiedByDefault="false"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/searchButton"
+            android:layout_width="0dp"
+            android:layout_weight="2"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:src="@drawable/baseline_search_24"
+            android:contentDescription="Search"
+            android:clickable="true"
+            android:focusable="true" />
 
         <TextView
             android:id="@+id/titleText"
@@ -49,7 +67,6 @@
                 android:layout_marginLeft="10dp"
                 app:nbMaxTextLength="2"
                 >
-
             </com.nex3z.notificationbadge.NotificationBadge>
         </FrameLayout>
 
@@ -59,7 +76,7 @@
         android:id="@+id/recycler_product"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/panel"
+        android:layout_below="@+id/panel"
         android:padding="8dp" />
 
 </RelativeLayout>

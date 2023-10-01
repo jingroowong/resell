@@ -12,7 +12,7 @@ import com.example.resell.ChooseOrderToUpdateDirections
 import com.example.resell.R
 import com.example.resell.database.Order
 import com.example.resell.database.Product
-import com.example.resell.listener.IRecyclerClicklistener
+import com.example.resell.listener.IRecyclerClickListener
 
 class MyUpdateOrderStatusAdapter(
     private val context: Context,
@@ -28,7 +28,7 @@ class MyUpdateOrderStatusAdapter(
         var orderPrice: TextView? = null
         var updateBtn: Button? = null
 
-        private var clickListener: IRecyclerClicklistener? = null
+        private var clickListener: IRecyclerClickListener? = null
 
 
         init {
@@ -37,7 +37,7 @@ class MyUpdateOrderStatusAdapter(
             itemView.setOnClickListener(this)
         }
 
-        fun setClickListener(clickListener: IRecyclerClicklistener) {
+        fun setClickListener(clickListener: IRecyclerClickListener) {
             this.clickListener = clickListener
         }
 

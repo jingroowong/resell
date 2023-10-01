@@ -12,7 +12,7 @@ import com.example.resell.OrderHistoryDirections
 import com.example.resell.R
 import com.example.resell.database.Order
 import com.example.resell.database.Product
-import com.example.resell.listener.IRecyclerClicklistener
+import com.example.resell.listener.IRecyclerClickListener
 
 class MyOrderAdapter(
     private val context: Context,
@@ -28,9 +28,9 @@ class MyOrderAdapter(
         var orderPrice: TextView? = null
         var orderButton: Button? = null
 
-        private var clickListener: IRecyclerClicklistener? = null
+        private var clickListener: IRecyclerClickListener? = null
 
-        fun setClickListener(clickListener: IRecyclerClicklistener) {
+        fun setClickListener(clickListener: IRecyclerClickListener) {
             this.clickListener = clickListener
         }
 

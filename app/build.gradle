@@ -29,7 +29,15 @@ android {
     viewBinding {
         enabled = true
     }
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+        kotlinOptions {
+            jvmTarget = "1.8"
+        }
+    }
 
+    dataBinding {
+        enabled = true
+    }
     kotlinOptions {
         jvmTarget = "1.8"
     }
@@ -83,6 +91,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-database-ktx:20.2.2'
     implementation 'com.google.firebase:firebase-database:20.1.0'
     implementation 'com.google.firebase:firebase-storage-ktx:20.1.0'
+    annotationProcessor "androidx.room:room-compiler:2.5.2"
     kapt "androidx.room:room-compiler:2.5.2"
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
@@ -122,4 +131,6 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:2.3.5"
     implementation "androidx.navigation:navigation-ui-ktx:2.3.5"
 
+    implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'com.google.firebase:firebase-storage:20.2.1'
 }

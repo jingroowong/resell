@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/logoImageView"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/touch_n_go_logo"
+        android:contentDescription="Touch 'N Go Logo"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/phoneNumberTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/logoImageView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:text="+60*****1189"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/paymentAmountTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/phoneNumberTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:text="RM 15.00"
+        android:textColor="@color/colorModerate"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/paymentIdLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/paymentAmountTextView"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="8dp"
+        android:text="Payment ID: "
+        android:textColor="@android:color/black"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/paymentIdTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/paymentAmountTextView"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="8dp"
+        android:text="13214982"
+        android:textColor="@android:color/black"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/paymentDateLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/paymentIdTextView"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="8dp"
+        android:text="Payment Date: "
+        android:textColor="@android:color/black"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/paymentDateTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/paymentIdTextView"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="8dp"
+        android:text="Date"
+        android:textColor="@android:color/black"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/merchantNameLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/paymentDateLabel"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="8dp"
+        android:text="Merchant Name:"
+        android:textColor="@android:color/black"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/merchantNameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/paymentDateLabel"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="8dp"
+        android:text="ReSell"
+        android:textColor="@android:color/black"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/payButton"
+        style="@style/MyButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/merchantNameTextView"
+        android:layout_marginTop="32dp"
+        android:background="@color/touchNGo"
+        android:text="Pay"
+        android:textColor="@android:color/white"
+        android:textSize="18sp" />
+
+</RelativeLayout>
