@@ -26,6 +26,9 @@ interface ProductDao {
     @Query("Select * from product_table")
     fun getAll(): LiveData<List<Product>>
 
+    @Query("SELECT * FROM product_table WHERE productName LIKE '%' || :key || '%'")
+    fun searchByName(key:String): LiveData<List<Product>>
+
     @Query("DELETE FROM product_table")
     fun clear()
 }
