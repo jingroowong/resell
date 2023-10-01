@@ -42,7 +42,6 @@ class TwitterActivity : AppCompatActivity() {
                     reference = FirebaseDatabase.getInstance().getReference("Users")
                     val user = FirebaseAuth.getInstance().currentUser
                     val userId = user?.uid
-                    val username = user?.displayName.toString()
                     val signIn = "TWITTER"
                     if (userId != null) {
                         if (userId == user?.uid) {

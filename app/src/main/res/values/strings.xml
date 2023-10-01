@@ -3,9 +3,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="price_format">RM %.2f</string>
-    <string name="default_web_client_id">1900010</string>
-
-
+    <string name="default_web_client_id" translatable="false">987148842563-rk9og6vllbqi14t55dq17mt3r6nm2c38.apps.googleusercontent.com</string>
     <!--    <string name="facebook_app_id">1735071067007881</string>-->
 <!--    <string name="fb_login_protocol_scheme">fb1735071067007881</string>-->
 <!--    <string name="facebook_client_token">70d0a714541a082cff8b44c526cd425e</string>-->

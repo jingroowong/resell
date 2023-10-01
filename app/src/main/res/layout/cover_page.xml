@@ -74,7 +74,7 @@
         android:layout_marginTop="48dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="@+id/signIn"
-        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintHorizontal_bias="0.485"
         app:layout_constraintStart_toStartOf="@+id/signIn"
         app:layout_constraintTop_toBottomOf="@+id/signIn">
 
@@ -159,12 +159,6 @@
 
         </LinearLayout>
 
-        <Button
-            android:id="@+id/editProfile"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="edit" />
-
     </LinearLayout>
 
     <Button
@@ -192,6 +186,14 @@
         app:layout_constraintHorizontal_bias="0.486"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/profile_picture_image_view" />
+
+    <Button
+        android:id="@+id/editProfile"
+        android:layout_width="196dp"
+        android:layout_height="62dp"
+        android:text="edit"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
+        tools:layout_editor_absoluteX="55dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

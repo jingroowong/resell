@@ -3,6 +3,7 @@ package com.example.resell
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -21,12 +22,12 @@ class ForgotPassword : AppCompatActivity() {
         binding = ActivityForgotPasswordBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         firebaseAuth = FirebaseAuth.getInstance()
-         val strEmail = findViewById<EditText>(R.id.forgotEMAIL).text.toString().trim()
+
+        val strEmail = binding.forgotEmail.text.toString().trim()
 
         binding.resetBtn.setOnClickListener{
-            if(!TextUtils.isEmpty(strEmail)){
+            if(strEmail.isEmpty()){
                 resetPassword()
             }else{
                 Toast.makeText(this,"Field cannot be empty",Toast.LENGTH_SHORT).show()
@@ -37,10 +38,11 @@ class ForgotPassword : AppCompatActivity() {
 
 
 
+
     }
 
     private fun resetPassword(){
-        val strEmail = findViewById<EditText>(R.id.loginEmail).text.toString().trim()
+        val strEmail = binding.forgotEmail.text.toString().trim()
         firebaseAuth.sendPasswordResetEmail(strEmail).addOnCompleteListener {
             Toast.makeText(this,"Reset Password link has been sent to your registered Email",Toast.LENGTH_SHORT).show()
             val intent = Intent(this, LoginActivity::class.java)

@@ -68,19 +68,14 @@ class GoogleActivity : AppCompatActivity() {
                     reference = FirebaseDatabase.getInstance().getReference("Users")
                     val user = FirebaseAuth.getInstance().currentUser
                     val userId = user?.uid
-                    val email = user?.email
                     val username = user?.displayName.toString()
                     val signIn = "GOOGLE"
 
-
-                    val users = Users(username)
                     if (userId != null) {
                         if (userId == user?.uid) {
                             if(username != null){
 
                             reference.child(userId).child("signIn").setValue(signIn)
-
-
 
                             }else{
                                 reference.child(userId).child("signIn").setValue(signIn)
