@@ -4,8 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.resell.Repository.OrderDetailsRepository
-import com.example.resell.database.Order
-import com.example.resell.database.OrderDetail
 import com.example.resell.database.OrderDetails
 
 class OrderDetailsModel : ViewModel() {

@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.resell.Model.OrderDetailsModel
 import com.example.resell.adapter.MyOrderDetailsAdapter
 import com.example.resell.database.Cart
 import com.example.resell.database.Order

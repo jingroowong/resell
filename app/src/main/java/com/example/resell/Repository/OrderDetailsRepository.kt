@@ -2,8 +2,6 @@ package com.example.resell.Repository
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
-import com.example.resell.database.Order
-import com.example.resell.database.OrderDetail
 import com.example.resell.database.OrderDetails
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError

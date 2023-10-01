@@ -10,16 +10,12 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.RadioGroup
 import android.widget.TextView
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.navigation.Navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.resell.ChooseOrderToUpdateDirections
 import com.example.resell.OrderHistory
 import com.example.resell.OrderHistoryDetails
 import com.example.resell.R
-import com.example.resell.adapter.MyOrderDetailsAdapter
 import com.example.resell.adapter.MyUpdateOrderAdapter
 import com.example.resell.database.Order
 import com.example.resell.database.OrderDetails
