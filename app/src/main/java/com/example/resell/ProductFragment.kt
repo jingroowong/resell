@@ -41,11 +41,14 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import androidx.navigation.NavController
 import com.example.resell.MainActivity
 
 
 class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
     private lateinit var binding: FragmentProductBinding
+    private lateinit var navController: NavController
+
     private lateinit var productLoadListener: IProductLoadListener
     private lateinit var cartLoadListener: ICartLoadListener
     private lateinit var badge: NotificationBadge
@@ -80,6 +83,24 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Initialize the NavController
+        navController = findNavController()
+
+        binding.bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.cart -> {
+                    navController.navigate(R.id.action_productFragment_to_cartFragment)
+                }
+                R.id.history -> {
+                    navController.navigate(R.id.action_productFragment_to_orderHistory)
+                }
+                else -> {
+                }
+            }
+            true
+        }
+
         // Initialize the OrderViewModel
         orderViewModel = ViewModelProvider(requireActivity()).get(OrderViewModel::class.java)
 
@@ -130,8 +151,10 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
             // Toggle the visibility of the SearchView
             if (searchView.visibility == View.VISIBLE) {
                 searchView.visibility = View.GONE
+                binding.topAppBar.title=""
             } else {
                 searchView.visibility = View.VISIBLE
+                binding.topAppBar.title="Item List"
             }
         }
 

@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.resell.adapter.MyUpdateOrderStatusAdapter
 import com.example.resell.database.Order
 import com.example.resell.database.Product
+import com.example.resell.databinding.FragmentAdminViewProductBinding
 import com.example.resell.databinding.FragmentChooseOrderToUpdateBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -34,6 +36,7 @@ private const val ARG_PARAM2 = "param2"
 private lateinit var updateStatusRecyclerView: RecyclerView
 private lateinit var binding: FragmentChooseOrderToUpdateBinding
 private var orderLoadListener: IUpdateOrderStatusListener? = null
+private lateinit var navController: NavController
 
 private val UpdateOrderStatusModels: MutableList<Order> = ArrayList()
 private val productModels: MutableList<Product> = ArrayList()
@@ -89,6 +92,23 @@ class ChooseOrderToUpdate : Fragment(), IUpdateOrderStatusListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Initialize the NavController
+        navController = findNavController()
+
+        binding.bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.home -> {
+                    navController.navigate(R.id.action_chooseOrderToUpdate_to_adminViewProduct)
+                }
+//                R.id.user -> {
+//                    navController.navigate(R.id.action)
+//                }
+                else -> {
+                }
+            }
+            true
+        }
 
         updateStatusRecyclerView = binding.chooseOrderToUpdateRecyclerView
         init()

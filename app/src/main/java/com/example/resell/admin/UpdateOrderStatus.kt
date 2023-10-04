@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.navigation.fragment.findNavController
@@ -75,6 +76,7 @@ class UpdateOrderStatus : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val backBtn = view.findViewById<ImageView>(R.id.btnBack)
         var orderStatus = ""
         val oRadioGroup = view.findViewById<RadioGroup>(R.id.radioGroup)
         val updateBtn = view.findViewById<Button>(R.id.updateBtn)
@@ -137,6 +139,12 @@ class UpdateOrderStatus : Fragment() {
                 }
                 Log.e("Update", "Update data")
 
+            }
+
+            backBtn.setOnClickListener {
+//                findNavController().navigate(R.id.action_updateOrderStatus_to_chooseOrderToUpdate)
+                // Use the FragmentManager to pop the current fragment from the back stack
+                fragmentManager?.popBackStack()
             }
         }
     }

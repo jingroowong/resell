@@ -9,6 +9,8 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,6 +18,8 @@ import com.example.resell.MainActivity
 import com.example.resell.R
 import com.example.resell.database.Product
 import com.example.resell.database.ProductViewModel
+import com.example.resell.databinding.FragmentAdminViewProductBinding
+import com.example.resell.databinding.FragmentCartBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -37,40 +41,54 @@ class AdminViewProduct : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    private lateinit var binding: FragmentAdminViewProductBinding
+    private lateinit var navController: NavController
+
     private val db = Firebase.database.getReference("Products")
     private lateinit var viewModel: ProductViewModel
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val rootView = inflater.inflate(R.layout.fragment_admin_view_product, container, false)
+        // val rootView = inflater.inflate(R.layout.fragment_admin_view_product, container, false)
+        // Inflate the layout for this fragment using View Binding
+        binding = FragmentAdminViewProductBinding.inflate(inflater, container, false)
 
-//        val viewModel = (requireActivity() as MainActivity).productViewModel
+        val viewModel = (requireActivity() as MainActivity).productViewModel
+
+        viewModel.getAllProducts().observe(viewLifecycleOwner) { products ->
+            if (products.isEmpty()) {
+                readFirebaseProduct(viewModel)
+            }
+        }
 //
-//        viewModel.getAllProducts().observe(viewLifecycleOwner) { products ->
-//            if (products.isEmpty()) {
-//                readFirebaseProduct(viewModel)
-//            }
-//        }
+//        return inflater.inflate(R.layout.fragment_admin_view_product, container, false)
+        // Inflate the layout for this fragment using View Binding
 
-        return inflater.inflate(R.layout.fragment_admin_view_product, container, false)
+        return binding.root
     }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // Initialize the NavController
+        navController = findNavController()
+
+        binding.bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.order -> {
+                    navController.navigate(R.id.action_adminViewProduct_to_chooseOrderToUpdate)
+                }
+//                R.id.user -> {
+//                    navController.navigate(R.id.action)
+//                }
+                else -> {
+                }
+            }
+            true
+        }
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
 
@@ -78,15 +96,11 @@ class AdminViewProduct : Fragment() {
         recyclerView.layoutManager = layoutManager
 
         // Access the productViewModel from the MainActivity
-       viewModel = (requireActivity() as MainActivity).productViewModel
+        viewModel = (requireActivity() as MainActivity).productViewModel
 
 
         viewModel.getAllProducts().observe(viewLifecycleOwner) { products ->
             if (products.isNotEmpty()) {
-                val adapter = ProductAdapter(products)
-                recyclerView.adapter = adapter
-            }else{
-                readFirebaseProduct(viewModel)
                 val adapter = ProductAdapter(products)
                 recyclerView.adapter = adapter
             }
@@ -104,17 +118,28 @@ class AdminViewProduct : Fragment() {
 
         searchBtn.setOnClickListener {
             val searchText = view.findViewById<EditText>(R.id.searchEditText).text.toString().trim()
-            viewModel.searchByName(searchText).observe(viewLifecycleOwner){
-                    products->
-                if(products.isNotEmpty()){
+            viewModel.searchByName(searchText).observe(viewLifecycleOwner) { products ->
+                if (products.isNotEmpty()) {
                     val adapter = ProductAdapter(products)
                     recyclerView.adapter = adapter
-                }else{
-                    Toast.makeText(requireContext(),"No product(s) found!",Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(requireContext(), "No product(s) found!", Toast.LENGTH_LONG)
+                        .show()
                 }
             }
         }
 
+
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+
+        arguments?.let {
+            param1 = it.getString(ARG_PARAM1)
+            param2 = it.getString(ARG_PARAM2)
+        }
 
     }
 

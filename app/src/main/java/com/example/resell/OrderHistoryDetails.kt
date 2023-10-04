@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -84,6 +85,7 @@ class OrderHistoryDetails : Fragment() {
         // Get the order data from arguments
         val order = arguments?.getParcelable(ARG_ORDER) as Order?
         val product = arguments?.getParcelable(ARG_PRODUCT) as Product?
+        val backBtn = view.findViewById<ImageView>(R.id.btnBack)
 
         // Update UI with order details
         order?.let {
@@ -97,6 +99,10 @@ class OrderHistoryDetails : Fragment() {
             orderID.text = it.orderID.toString()
             orderAmount.text = getString(R.string.price_format, it.orderAmount)
             Log.d("FirebaseData", "Show Order")
+
+            backBtn.setOnClickListener {
+                fragmentManager?.popBackStack()
+            }
         }
         // Fetch and display product data based on order details
         val orderID = order?.orderID ?: 0

@@ -19,7 +19,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/navHeader"
             app:menu="@menu/nav_header"
-            app:title="Order History"
+            app:title=""
             app:titleTextColor="@color/white">
 
         </com.google.android.material.appbar.MaterialToolbar>
@@ -34,6 +34,23 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"></FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/panel"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:orientation="horizontal"
+        android:weightSum="16"
+        tools:ignore="MissingConstraints">
+
+        <ImageView
+            android:id="@+id/btnBack"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:layout_weight="2"
+            android:src="@drawable/baseline_navigate_before_24" />
+    </LinearLayout>
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/layout_root"
@@ -212,5 +229,19 @@
         </LinearLayout>
 
     </com.google.android.material.card.MaterialCardView>
+
+    <!-- Title TextView centered horizontally within the AppBarLayout -->
+    <TextView
+        android:id="@+id/title_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Order History Details"
+        android:textColor="@color/white"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/panel"
+        app:layout_constraintEnd_toEndOf="@+id/appBarLayout"
+        app:layout_constraintStart_toStartOf="@+id/appBarLayout"
+        app:layout_constraintTop_toTopOf="@+id/appBarLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
