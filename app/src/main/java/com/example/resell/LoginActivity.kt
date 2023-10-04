@@ -6,7 +6,11 @@ import android.os.Bundle
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import com.example.resell.R
+import com.example.resell.database.AppDatabase
+import com.example.resell.database.ProductViewModel
+import com.example.resell.database.ProductViewModelFactory
 import com.example.resell.databinding.ActivityLoginBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.OAuthProvider
@@ -19,11 +23,17 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var  reference: DatabaseReference
-
+//    lateinit var productViewModel: ProductViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+//
+//        val application = requireNotNull(this).application
+//        val dataSource = AppDatabase.getInstance(application).productDao
+//        val viewModelFactory = ProductViewModelFactory(dataSource, application)
+//        productViewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
 
 
         binding = ActivityLoginBinding.inflate(layoutInflater)

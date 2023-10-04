@@ -20,6 +20,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.resell.MainActivity
 import com.example.resell.R
 import com.example.resell.database.AppDatabase
 import com.example.resell.database.Product
@@ -59,10 +60,7 @@ class AdminSingleProduct : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val application = requireNotNull(this.activity).application
-        val dataSource = AppDatabase.getInstance(application).productDao
-        val viewModelFactory = ProductViewModelFactory(dataSource, application)
-        val viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
+        val viewModel = (requireActivity() as MainActivity).productViewModel
 
 
         val pName = view.findViewById<EditText>(R.id.pNameEdit)
@@ -348,10 +346,7 @@ class AdminSingleProduct : Fragment() {
     }
 
     fun clearLocal() {
-        val application = requireNotNull(this.activity).application
-        val dataSource = AppDatabase.getInstance(application).productDao
-        val viewModelFactory = ProductViewModelFactory(dataSource, application)
-        val viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
+        val viewModel = (requireActivity() as MainActivity).productViewModel
 
         viewModel.clearAll()
     }

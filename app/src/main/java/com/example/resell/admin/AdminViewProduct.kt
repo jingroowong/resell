@@ -1,33 +1,26 @@
 package com.example.resell.admin
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.resell.MainActivity
 import com.example.resell.R
-import com.example.resell.database.AppDatabase
 import com.example.resell.database.Product
 import com.example.resell.database.ProductViewModel
-import com.example.resell.database.ProductViewModelFactory
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import java.text.SimpleDateFormat
-
-
-import java.util.Date
-import java.util.Locale
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -45,6 +38,7 @@ class AdminViewProduct : Fragment() {
     private var param2: String? = null
 
     private val db = Firebase.database.getReference("Products")
+    private lateinit var viewModel: ProductViewModel
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,15 +56,13 @@ class AdminViewProduct : Fragment() {
     ): View? {
         val rootView = inflater.inflate(R.layout.fragment_admin_view_product, container, false)
 
-        val application = requireNotNull(this.activity).application
-        val dataSource = AppDatabase.getInstance(application).productDao
-        val viewModelFactory = ProductViewModelFactory(dataSource, application)
-        val viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
-        viewModel.getAllProducts().observe(viewLifecycleOwner) { products ->
-            if (products.isEmpty()) {
-                readFirebaseProduct(viewModel)
-            }
-        }
+//        val viewModel = (requireActivity() as MainActivity).productViewModel
+//
+//        viewModel.getAllProducts().observe(viewLifecycleOwner) { products ->
+//            if (products.isEmpty()) {
+//                readFirebaseProduct(viewModel)
+//            }
+//        }
 
         return inflater.inflate(R.layout.fragment_admin_view_product, container, false)
     }
@@ -80,19 +72,21 @@ class AdminViewProduct : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-        val application = requireNotNull(this.activity).application
-        val dataSource = AppDatabase.getInstance(application).productDao
-        val viewModelFactory = ProductViewModelFactory(dataSource, application)
-        val viewModel = ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
 
         val layoutManager = GridLayoutManager(requireContext(), 2)
         recyclerView.layoutManager = layoutManager
 
+        // Access the productViewModel from the MainActivity
+       viewModel = (requireActivity() as MainActivity).productViewModel
 
 
         viewModel.getAllProducts().observe(viewLifecycleOwner) { products ->
             if (products.isNotEmpty()) {
+                val adapter = ProductAdapter(products)
+                recyclerView.adapter = adapter
+            }else{
+                readFirebaseProduct(viewModel)
                 val adapter = ProductAdapter(products)
                 recyclerView.adapter = adapter
             }

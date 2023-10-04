@@ -65,16 +65,10 @@ class ProductAdapter(private val productList: List<Product>) :
             }
 
 
-//            val spannableString = SpannableString("Your Text Here")
-//            val icon = ContextCompat.getDrawable(context, R.drawable.baseline_circle_24) // Replace with your icon drawable
-//            icon?.setBounds(0, 0, icon.intrinsicWidth, icon.intrinsicHeight)
-//            val imageSpan = ImageSpan(icon, ImageSpan.ALIGN_BOTTOM)
-//            spannableString.setSpan(imageSpan, 0, 1, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
-
-
 
             if (product.productAvailability == false) {
                 productAvailability.text = "Sold"
+
             } else {
                 productAvailability.text = "On Sale"
 //                productAvailability.setTextColor(ContextCompat.getColor(context, android.R.color.holo_green_light))
