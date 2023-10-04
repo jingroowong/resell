@@ -5,7 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.loginpage.models.Users
+import com.example.resell.models.Users
 
 class MyAdapter(private val usersList: ArrayList<Users>) : RecyclerView.Adapter<MyAdapter.MyViewHolder>() {
 

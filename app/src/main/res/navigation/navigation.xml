@@ -9,13 +9,13 @@
         android:id="@+id/adminViewProduct"
         android:name="com.example.resell.admin.AdminViewProduct"
         android:label="fragment_admin_view_product"
-        tools:layout="@layout/fragment_admin_view_product" >
+        tools:layout="@layout/fragment_admin_view_product">
         <action
             android:id="@+id/action_adminViewProduct_to_adminInsertProduct"
             app:destination="@id/adminInsertProduct" />
         <action
             android:id="@+id/action_adminViewProduct_to_adminSingleProduct"
-            app:destination="@id/adminSingleProduct" >
+            app:destination="@id/adminSingleProduct">
 
             <argument
                 android:name="productID"
@@ -31,7 +31,7 @@
         android:id="@+id/adminInsertProduct"
         android:name="com.example.resell.admin.AdminInsertProduct"
         android:label="fragment_admin_insert_product"
-        tools:layout="@layout/fragment_admin_insert_product" >
+        tools:layout="@layout/fragment_admin_insert_product">
         <action
             android:id="@+id/action_adminInsertProduct_to_adminViewProduct"
             app:destination="@id/adminViewProduct" />
@@ -40,12 +40,11 @@
         android:id="@+id/adminSingleProduct"
         android:name="com.example.resell.admin.AdminSingleProduct"
         android:label="fragment_admin_single_product"
-        tools:layout="@layout/fragment_admin_single_product" >
+        tools:layout="@layout/fragment_admin_single_product">
         <action
             android:id="@+id/action_adminSingleProduct_to_adminViewProduct"
             app:destination="@id/adminViewProduct" />
     </fragment>
-
 
 
     <fragment
@@ -68,6 +67,9 @@
         <action
             android:id="@+id/action_orderHistory_to_cartFragment"
             app:destination="@id/cartFragment" />
+<!--        <action-->
+<!--            android:id="@+id/action_orderHistory_to_coverPage"-->
+<!--            app:destination="@id/coverPage" />-->
     </fragment>
     <fragment
         android:id="@+id/orderHistoryDetails"
@@ -96,7 +98,7 @@
     <fragment
         android:id="@+id/updateOrderStatus"
         android:name="com.example.resell.admin.UpdateOrderStatus"
-        android:label="UpdateOrderStatus" >
+        android:label="UpdateOrderStatus">
         <action
             android:id="@+id/action_updateOrderStatus_to_chooseOrderToUpdate"
             app:destination="@id/chooseOrderToUpdate" />
@@ -106,7 +108,7 @@
     <fragment
         android:id="@+id/productFragment"
         android:name="ProductFragment"
-        android:label="ProductFragment" >
+        android:label="ProductFragment">
         <action
             android:id="@+id/action_productFragment_to_cartFragment"
             app:destination="@id/cartFragment" />
@@ -120,12 +122,18 @@
         <action
             android:id="@+id/action_productFragment_to_orderHistory"
             app:destination="@id/orderHistory" />
+<!--        <action-->
+<!--            android:id="@+id/action_productFragment_to_coverPage"-->
+<!--            app:destination="@id/coverPage" />-->
+        <!--        <action-->
+        <!--            android:id="@+id/action_productFragment_to_coverPage"-->
+        <!--            app:destination="@id/coverPage" />-->
 
     </fragment>
     <fragment
         android:id="@+id/cartFragment"
         android:name="CartFragment"
-        android:label="CartFragment" >
+        android:label="CartFragment">
         <action
             android:id="@+id/action_cartFragment_to_productFragment"
             app:destination="@id/productFragment" />
@@ -136,7 +144,7 @@
     <fragment
         android:id="@+id/productDetailFragment"
         android:name="ProductDetailFragment"
-        android:label="ProductDetailFragment" >
+        android:label="ProductDetailFragment">
         <action
             android:id="@+id/action_productDetailFragment_to_cartFragment"
             app:destination="@id/cartFragment" />
@@ -148,7 +156,7 @@
         android:id="@+id/loginFragment"
         android:name="com.example.resell.LoginFragment"
         android:label="fragment_login"
-        tools:layout="@layout/fragment_login" >
+        tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_loginFragment_to_productFragment"
             app:destination="@id/productFragment" />
@@ -156,7 +164,7 @@
     <fragment
         android:id="@+id/paymentFragment"
         android:name="PaymentFragment"
-        android:label="PaymentFragment" >
+        android:label="PaymentFragment">
         <action
             android:id="@+id/action_paymentFragment_to_paymentConfirmFragment"
             app:destination="@id/paymentConfirmFragment" />
@@ -164,17 +172,33 @@
     <fragment
         android:id="@+id/paymentConfirmFragment"
         android:name="PaymentConfirmFragment"
-        android:label="PaymentConfirmFragment" >
+        android:label="PaymentConfirmFragment">
         <action
             android:id="@+id/action_paymentConfirmFragment_to_paymentSuccessFragment"
             app:destination="@id/paymentSuccessFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/paymentSuccessFragment"
         android:name="PaymentSuccessFragment"
-        android:label="PaymentSuccessFragment" >
+        android:label="PaymentSuccessFragment">
         <action
             android:id="@+id/action_paymentSuccessFragment_to_productFragment"
             app:destination="@id/productFragment" />
     </fragment>
+
+<!--    <activity-->
+<!--        android:id="@+id/coverPage"-->
+<!--        android:name="com.example.resell.CoverPage"-->
+<!--        android:label="CoverPage">-->
+<!--        <action-->
+<!--            android:id="@+id/action_coverPage_to_productFragment"-->
+<!--            app:destination="@id/productFragment" />-->
+<!--        <action-->
+<!--            android:id="@+id/action_coverPage_to_cartFragment"-->
+<!--            app:destination="@id/cartFragment" />-->
+<!--        <action-->
+<!--            android:id="@+id/action_coverPage_to_orderHistory"-->
+<!--            app:destination="@id/orderHistory" />-->
+<!--    </activity>-->
 </navigation>

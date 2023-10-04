@@ -38,10 +38,12 @@ import java.lang.Boolean.TRUE
 import java.text.SimpleDateFormat
 import java.util.Date
 import android.content.Context
+import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
 import androidx.navigation.NavController
+import com.example.resell.CoverPage
 import com.example.resell.MainActivity
 
 
@@ -94,6 +96,10 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
                 }
                 R.id.history -> {
                     navController.navigate(R.id.action_productFragment_to_orderHistory)
+                }
+                R.id.profile -> {
+                    val intent = Intent(requireContext(), CoverPage::class.java)
+                    startActivity(intent)
                 }
                 else -> {
                 }

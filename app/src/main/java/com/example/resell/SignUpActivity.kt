@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.loginpage.models.Users
+import com.example.resell.models.Users
 import com.example.resell.databinding.RegisterBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.OAuthProvider

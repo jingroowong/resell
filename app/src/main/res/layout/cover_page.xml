@@ -3,21 +3,37 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:id="@+id/profileNav">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints">
 
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="274dp"
-        android:layout_height="46dp"
-        android:fontFamily="@font/calligraffitti"
-        android:text="Personal Profile"
-        android:textAlignment="center"
-        android:textSize="34sp"
-        app:layout_constraintEnd_toEndOf="@+id/crop"
-        app:layout_constraintStart_toStartOf="@+id/crop"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteY="16dp" />
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/topAppBar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/navHeader"
+            app:title="Profile"
+            app:titleTextColor="@color/white"></com.google.android.material.appbar.MaterialToolbar>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+<!--    <TextView-->
+<!--        android:id="@+id/textView4"-->
+<!--        android:layout_width="274dp"-->
+<!--        android:layout_height="46dp"-->
+<!--        android:fontFamily="@font/calligraffitti"-->
+<!--        android:text="Personal Profile"-->
+<!--        android:textAlignment="center"-->
+<!--        android:textSize="34sp"-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/crop"-->
+<!--        app:layout_constraintStart_toStartOf="@+id/crop"-->
+<!--        tools:ignore="MissingConstraints"-->
+<!--        tools:layout_editor_absoluteY="16dp" />-->
 
     <FrameLayout
         android:layout_width="wrap_content"
@@ -33,9 +49,8 @@
         android:layout_width="198dp"
         android:layout_height="47dp"
         android:layout_marginStart="56dp"
-        android:layout_marginBottom="16dp"
-        android:text="log out"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="Log out"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.318"
         app:layout_constraintStart_toStartOf="parent"
@@ -64,7 +79,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/profile_picture_image_view" />
+        app:layout_constraintTop_toBottomOf="@+id/appBarLayout" />
 
     <LinearLayout
         android:id="@+id/linearLayout3"
@@ -163,13 +178,13 @@
 
     <Button
         android:id="@+id/feedbackBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="feedback"
+        android:layout_width="198dp"
+        android:layout_height="47dp"
+        android:text="Feedback"
         app:layout_constraintBottom_toTopOf="@+id/logout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
+        app:layout_constraintTop_toBottomOf="@+id/editProfile"
         app:layout_constraintVertical_bias="0.775"
         tools:ignore="NotSibling" />
 
@@ -189,11 +204,33 @@
 
     <Button
         android:id="@+id/editProfile"
-        android:layout_width="196dp"
-        android:layout_height="62dp"
-        android:text="edit"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
-        tools:layout_editor_absoluteX="55dp" />
+        android:layout_width="198dp"
+        android:layout_height="47dp"
+        android:text="Edit"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:backgroundTint="@color/navBottom"
+        app:itemIconTint="@color/white"
+        app:itemTextColor="@color/white"
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_nav"></com.google.android.material.bottomnavigation.BottomNavigationView>
+
+<!--    <fragment-->
+<!--        android:id="@+id/myNavHostFragment"-->
+<!--        android:name="androidx.navigation.fragment.NavHostFragment"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        app:defaultNavHost="true"-->
+<!--        app:navGraph="@navigation/navigation" />-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

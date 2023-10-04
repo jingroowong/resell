@@ -7,8 +7,12 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.example.loginpage.models.Users
+import com.example.resell.models.Users
 import com.example.resell.databinding.CoverPageBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -38,10 +42,37 @@ class CoverPage :AppCompatActivity () {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Initialize the NavController
+        setContentView(R.layout.activity_main) // Make sure you set the content view to activity_main.xml
 
         binding = CoverPageBinding.inflate(layoutInflater)
 
        firebase = FirebaseAuth.getInstance()
+
+
+        val navController = findNavController(R.id.myNavHostFragment)
+
+        // Initialize the NavController
+     //   val navHostFragment = supportFragmentManager.findFragmentById(R.id.myNavHostFragment) as NavHostFragment
+        //val navController = navHostFragment.navController
+
+        binding.bottomNavigationView.setOnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.home -> {
+                    navController.navigate(R.id.productFragment)
+                }
+                R.id.cart -> {
+                     navController.navigate(R.id.cartFragment)
+                }
+                R.id.history -> {
+                   // navController.navigate(R.id.action_coverPage_to_orderHistory)
+                    navController.navigate(R.id.orderHistory)
+                }
+                else -> {
+                }
+            }
+            true
+        }
 
 
         setContentView(binding.root)
