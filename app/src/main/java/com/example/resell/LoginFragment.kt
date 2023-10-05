@@ -32,8 +32,8 @@ class LoginFragment : Fragment() {
         val loginBtn = binding.button
 
         loginBtn.setOnClickListener {
-            val userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
-            userViewModel.userID = userID
+//            val userViewModel = ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
+//            userViewModel.userID = userID
 
             // Navigate to Main Page
             this.findNavController().navigate(R.id.action_loginFragment_to_productFragment)

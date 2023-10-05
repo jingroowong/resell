@@ -81,9 +81,12 @@ class AdminViewProduct : Fragment() {
                 R.id.order -> {
                     navController.navigate(R.id.action_adminViewProduct_to_chooseOrderToUpdate)
                 }
-//                R.id.user -> {
-//                    navController.navigate(R.id.action)
-//                }
+                R.id.feedback -> {
+                    navController.navigate(R.id.action_adminViewProduct_to_adminFeedbackFragment2)
+                }
+                R.id.user -> {
+                    navController.navigate(R.id.action_adminViewProduct_to_adminCrudFragment)
+                }
                 else -> {
                 }
             }

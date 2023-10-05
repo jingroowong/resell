@@ -43,7 +43,7 @@ class CartFragment : Fragment(), ICartLoadListener {
     // Add a variable to store the current orderID
     private var currentOrderID: Int? = 0
     // Add a variable to store the current userID
-    private var currentUserID: Int? = 0
+    private var currentUserID: String? = ""
 
     private var cartModels: MutableList<Cart> = ArrayList()
 

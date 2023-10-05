@@ -127,9 +127,10 @@ class EditProfile : Activity() {
 
         val back = findViewById<Button>(R.id.backBtn)
         back.setOnClickListener {
-            val intent = Intent(this, CoverPage::class.java)
-            startActivity(intent)
-            finish()
+//            val intent = Intent(this, CoverPage::class.java)
+//            startActivity(intent)
+//            finish()
+            onBackPressed()
         }
 
         val editBtn = findViewById<Button>(R.id.updateBtn)
@@ -151,10 +152,9 @@ class EditProfile : Activity() {
                         reference.child(userId).child("address").setValue(address)
                         reference.child(userId).child("phone").setValue(phone)
 
+
                         Toast.makeText(this, "Updated Successfully", Toast.LENGTH_SHORT).show()
-                        val intent = Intent(this, CoverPage::class.java)
-                        startActivity(intent)
-                        finish()
+                        onBackPressed()
 
 
                     } else {

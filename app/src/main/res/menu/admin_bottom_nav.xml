@@ -8,9 +8,9 @@
         android:icon="@drawable/baseline_home_24"
         android:title="Home" />
 
-<!--    <item android:title="Item"-->
-<!--        android:id="@+id/item"-->
-<!--        android:icon="@drawable/baseline_shopping_bag_24"/>-->
+    <item android:title="FeedBack"
+        android:id="@+id/feedback"
+        android:icon="@drawable/baseline_feedback_24"/>
 
     <item android:title="Order"
         android:id="@+id/order"

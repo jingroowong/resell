@@ -4,7 +4,7 @@
 
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/loginFragment">
+    app:startDestination="@id/mainPageFragment">
     <fragment
         android:id="@+id/adminViewProduct"
         android:name="com.example.resell.admin.AdminViewProduct"
@@ -24,6 +24,12 @@
         <action
             android:id="@+id/action_adminViewProduct_to_chooseOrderToUpdate"
             app:destination="@id/chooseOrderToUpdate" />
+        <action
+            android:id="@+id/action_adminViewProduct_to_adminFeedbackFragment2"
+            app:destination="@id/adminFeedbackFragment2" />
+        <action
+            android:id="@+id/action_adminViewProduct_to_adminCrudFragment"
+            app:destination="@id/adminCrudFragment" />
 
 
     </fragment>
@@ -67,9 +73,9 @@
         <action
             android:id="@+id/action_orderHistory_to_cartFragment"
             app:destination="@id/cartFragment" />
-<!--        <action-->
-<!--            android:id="@+id/action_orderHistory_to_coverPage"-->
-<!--            app:destination="@id/coverPage" />-->
+        <action
+            android:id="@+id/action_orderHistory_to_coverPageFragment"
+            app:destination="@id/coverPageFragment" />
     </fragment>
     <fragment
         android:id="@+id/orderHistoryDetails"
@@ -94,6 +100,12 @@
         <action
             android:id="@+id/action_chooseOrderToUpdate_to_adminViewProduct"
             app:destination="@id/adminViewProduct" />
+        <action
+            android:id="@+id/action_chooseOrderToUpdate_to_adminFeedbackFragment2"
+            app:destination="@id/adminFeedbackFragment2" />
+        <action
+            android:id="@+id/action_chooseOrderToUpdate_to_adminCrudFragment"
+            app:destination="@id/adminCrudFragment" />
     </fragment>
     <fragment
         android:id="@+id/updateOrderStatus"
@@ -122,12 +134,9 @@
         <action
             android:id="@+id/action_productFragment_to_orderHistory"
             app:destination="@id/orderHistory" />
-<!--        <action-->
-<!--            android:id="@+id/action_productFragment_to_coverPage"-->
-<!--            app:destination="@id/coverPage" />-->
-        <!--        <action-->
-        <!--            android:id="@+id/action_productFragment_to_coverPage"-->
-        <!--            app:destination="@id/coverPage" />-->
+        <action
+            android:id="@+id/action_productFragment_to_coverPageFragment"
+            app:destination="@id/coverPageFragment" />
 
     </fragment>
     <fragment
@@ -186,19 +195,93 @@
             android:id="@+id/action_paymentSuccessFragment_to_productFragment"
             app:destination="@id/productFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/coverPageFragment"
+        android:name="com.example.resell.CoverPageFragment"
+        android:label="CoverPageFragment" >
+        <action
+            android:id="@+id/action_coverPageFragment_to_orderHistory"
+            app:destination="@id/orderHistory" />
+        <action
+            android:id="@+id/action_coverPageFragment_to_productFragment"
+            app:destination="@id/productFragment" />
+        <action
+            android:id="@+id/action_coverPageFragment_to_cartFragment"
+            app:destination="@id/cartFragment" />
+        <action
+            android:id="@+id/action_coverPageFragment_to_loginMainFragment"
+            app:destination="@id/loginMainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mainPageFragment"
+        android:name="com.example.resell.MainPageFragment"
+        android:label="MainPageFragment" >
+        <action
+            android:id="@+id/action_mainPageFragment_to_loginMainFragment"
+            app:destination="@id/loginMainFragment" />
+        <action
+            android:id="@+id/action_mainPageFragment_to_adminLoginFragment"
+            app:destination="@id/adminLoginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginMainFragment"
+        android:name="com.example.resell.LoginMainFragment"
+        android:label="LoginMainFragment" >
+        <action
+            android:id="@+id/action_loginMainFragment_to_coverPageFragment"
+            app:destination="@id/coverPageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/adminLoginFragment"
+        android:name="com.example.resell.admin.AdminLoginFragment"
+        android:label="AdminLoginFragment" >
+        <action
+            android:id="@+id/action_adminLoginFragment_to_adminViewProduct"
+            app:destination="@id/adminViewProduct" />
+    </fragment>
+    <fragment
+        android:id="@+id/adminFeedbackFragment2"
+        android:name="com.example.resell.AdminFeedbackFragment"
+        android:label="fragment_admin_feedback"
+        tools:layout="@layout/fragment_admin_feedback" >
+        <action
+            android:id="@+id/action_adminFeedbackFragment2_to_adminViewProduct"
+            app:destination="@id/adminViewProduct" />
+        <action
+            android:id="@+id/action_adminFeedbackFragment2_to_chooseOrderToUpdate"
+            app:destination="@id/chooseOrderToUpdate" />
+        <action
+            android:id="@+id/action_adminFeedbackFragment2_to_adminCrudFragment"
+            app:destination="@id/adminCrudFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/adminCrudFragment"
+        android:name="com.example.resell.admin.AdminCrudFragment"
+        android:label="fragment_admin_crud"
+        tools:layout="@layout/fragment_admin_crud" >
+        <action
+            android:id="@+id/action_adminCrudFragment_to_chooseOrderToUpdate"
+            app:destination="@id/chooseOrderToUpdate" />
+        <action
+            android:id="@+id/action_adminCrudFragment_to_adminViewProduct"
+            app:destination="@id/adminViewProduct" />
+        <action
+            android:id="@+id/action_adminCrudFragment_to_adminFeedbackFragment2"
+            app:destination="@id/adminFeedbackFragment2" />
+    </fragment>
 
-<!--    <activity-->
-<!--        android:id="@+id/coverPage"-->
-<!--        android:name="com.example.resell.CoverPage"-->
-<!--        android:label="CoverPage">-->
+    <!--    <fragment-->
+<!--        android:id="@+id/coverPageFragment"-->
+<!--        android:name="com.example.resell.CoverPageFragment"-->
+<!--        android:label="CoverPageFragment">-->
 <!--        <action-->
-<!--            android:id="@+id/action_coverPage_to_productFragment"-->
+<!--            android:id="@+id/action_coverPageFragment_to_productFragment"-->
 <!--            app:destination="@id/productFragment" />-->
 <!--        <action-->
-<!--            android:id="@+id/action_coverPage_to_cartFragment"-->
+<!--            android:id="@+id/action_coverPageFragment_to_cartFragment"-->
 <!--            app:destination="@id/cartFragment" />-->
 <!--        <action-->
-<!--            android:id="@+id/action_coverPage_to_orderHistory"-->
+<!--            android:id="@+id/action_coverPageFragment_to_orderHistory"-->
 <!--            app:destination="@id/orderHistory" />-->
-<!--    </activity>-->
+<!--    </fragment>-->
 </navigation>

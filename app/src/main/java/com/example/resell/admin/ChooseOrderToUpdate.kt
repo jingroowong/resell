@@ -101,9 +101,12 @@ class ChooseOrderToUpdate : Fragment(), IUpdateOrderStatusListener {
                 R.id.home -> {
                     navController.navigate(R.id.action_chooseOrderToUpdate_to_adminViewProduct)
                 }
-//                R.id.user -> {
-//                    navController.navigate(R.id.action)
-//                }
+                R.id.feedback -> {
+                    navController.navigate(R.id.action_chooseOrderToUpdate_to_adminFeedbackFragment2)
+                }
+                R.id.user -> {
+                    navController.navigate(R.id.action_chooseOrderToUpdate_to_adminCrudFragment)
+                }
                 else -> {
                 }
             }
@@ -152,7 +155,7 @@ class ChooseOrderToUpdate : Fragment(), IUpdateOrderStatusListener {
 
         // Fetch orders
         FirebaseDatabase.getInstance()
-            .getReference("Order")
+            .getReference("Orders")
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     // Clear the list before adding new data

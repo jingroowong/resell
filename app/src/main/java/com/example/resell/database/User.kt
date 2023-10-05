@@ -6,8 +6,8 @@ import java.util.Date
 
 @Entity(tableName = "user_table")
 data class User(
-    @PrimaryKey(autoGenerate = true)
-    var userID: Int = 0,
+    @PrimaryKey(autoGenerate = false)
+    var userID: String,
     var userName: String,
     var userEmail: String,
     var userDOB: Long,

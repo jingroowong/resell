@@ -1,4 +1,4 @@
-package com.example.resell
+package com.example.resell.admin
 
 import android.os.Bundle
 import android.util.Log
@@ -6,6 +6,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.resell.MyAdapter
+import com.example.resell.R
 import com.example.resell.databinding.ActivityAdminCoverPageBinding
 import com.example.resell.models.Users
 import com.google.firebase.auth.FirebaseAuth

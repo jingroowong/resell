@@ -2,20 +2,24 @@ package com.example.resell
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.loginpage.models.Orders
+import com.example.resell.models.Orders
 import com.example.resell.databinding.ActivityFeedbackBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class Feedback : AppCompatActivity() {
 
     private lateinit var binding: ActivityFeedbackBinding
     private lateinit var dbref: DatabaseReference
-    private lateinit var userRecyclerview: RecyclerView
+    private lateinit var recyclerview: RecyclerView
     private lateinit var orderArrayList: ArrayList<Orders>
     private lateinit var orders : Orders
     private lateinit var firebase: FirebaseAuth
@@ -25,80 +29,67 @@ class Feedback : AppCompatActivity() {
         binding = ActivityFeedbackBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         binding.backBT.setOnClickListener {
+//            val intent = Intent(this, CoverPage::class.java)
+//            startActivity(intent)
+            onBackPressed()
+        }
+
+        val user = FirebaseAuth.getInstance().currentUser
+        val userId = user?.uid
+        if (userId != null) {
+            Log.d("Order Id ","Order ID $userId" )
+        } else {
+            // Handle the case where the user is not authenticated
+        }
+
+        val databaseReference = FirebaseDatabase.getInstance().reference.child("Orders")
+
+        databaseReference.orderByChild("userID").equalTo(userId).addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+
+                val orderArrayList = ArrayList<Orders>() // Initialize the list here
+
+                for (orderSnapshot in dataSnapshot.children) {
+                    val orderId = orderSnapshot.key // This is the orderId
+                    if (orderId != null) {
+
+                    }
+                    if (orderId != null) {
+                        val order = orderSnapshot.getValue(Orders::class.java)
+                        order?.orderId = orderId.toInt().toLong() // Set the orderId in the Order object
+                        if (order != null) {
+
+                        }
+
+                        order?.let {
+                            orderArrayList.add(it)
+
+                        }
+                    }
+                }
+
+                // Set up RecyclerView adapter after retrieving data
+                val recyclerview = findViewById<RecyclerView>(R.id.orderRecycler)
+                recyclerview.layoutManager = LinearLayoutManager(this@Feedback)
+                recyclerview.adapter = MyFeedbackAdapter(this@Feedback,orderArrayList)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                // Handle errors
+                println("Error: ${databaseError.message}")
+            }
+        })
+
+        binding.button2.setOnClickListener {
             val intent = Intent(this, CoverPage::class.java)
             startActivity(intent)
         }
-
-
-
-
-        val user = FirebaseAuth.getInstance().currentUser
-        val userId = user?.uid.toString()
-        dbref = FirebaseDatabase.getInstance().getReference("Users")
-        dbref.child(userId).child("orderId").get().addOnSuccessListener {
-            if(it.exists()){
-                val orderId = it.value.toString()
-                getData(orderId)
-            }
-
-        }
-
-
-
-
-        }
-
-
-
-
-
-    private fun getData(orderId: String){
-
-
-        dbref = FirebaseDatabase.getInstance().getReference("Orders")
-        dbref.child(orderId.toString()).get().addOnSuccessListener {
-            if(it.exists()){
-                val orderId = it.child("orderID").value
-                val orderAmount = it.child("orderAmount").value
-                val orderDate = it.child("orderDate").value
-                val orderStatus = it.child("orderStatus").value
-                val rating = it.child("rating").value
-                val feedback = it.child("feedback").value
-
-
-                if(rating == null && feedback == null) {
-                    binding.orderId.text = orderId.toString()
-                    binding.orderAmount.text = orderAmount.toString()
-                    binding.orderDate.text = orderDate.toString()
-                    binding.orderStatus.text = orderStatus.toString()
-
-                    binding.addFeedback.setOnClickListener {
-                        val intent = Intent(this, AddFeedbackActivity::class.java)
-                        startActivity(intent)
-                    }
-                }
-                if(rating != null && feedback != null) {
-                    binding.zeroPending.text = "There are no feedback to be updated"
-                    binding.addFeedback.setOnClickListener {
-
-                        Toast.makeText(this,"No Order to Be updated now",Toast.LENGTH_SHORT).show()
-                    }
-
-                }
-
-
-
-
-            }else{
-                Toast.makeText(this,"INVALID USER", Toast.LENGTH_SHORT).show()
-            }
-        }.addOnFailureListener{
-            Toast.makeText(this,"Failed", Toast.LENGTH_SHORT).show()
-        }
-
     }
+
+
+
 }
+
 
 

@@ -81,6 +81,7 @@ class MyOrderAdapter(
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+
         holder.bind(orderList[position], productList[position], navController)
     }
 }

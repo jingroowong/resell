@@ -12,12 +12,12 @@ import androidx.room.RoomDatabase
 )
 
 abstract class AppDatabase : RoomDatabase() {
-    abstract val feedbackDao: FeedbackDao
+
     abstract val orderDao:OrderDao
     abstract val orderDetailDao:OrderDetailDao
     abstract val paymentDao:PaymentDao
     abstract val productDao: ProductDao
-    abstract val userDao:UserDao
+
     abstract val cartDao:CartDao
 
     companion object {

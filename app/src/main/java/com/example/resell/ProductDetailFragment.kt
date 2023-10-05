@@ -39,7 +39,7 @@ class ProductDetailFragment : Fragment(), ICartLoadListener {
     private var currentOrderID: Int? = 0
 
     // Add a variable to store the current userID
-    private var currentUserID: Int? = 0
+    private var currentUserID: String? = ""
     private var cartModels: MutableList<Cart> = ArrayList()
     companion object {
         private const val ARG_PRODUCT = "product"

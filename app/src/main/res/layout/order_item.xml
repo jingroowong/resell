@@ -23,13 +23,13 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="User Id : "
+                android:text="Order Id : "
                 android:textColor="@color/black"
                 android:textSize="26sp"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/rcUserId"
+                android:id="@+id/feedOrder"
                 android:layout_width="254dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -49,13 +49,13 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Username "
+                android:text="Order Amount : "
                 android:textColor="@color/black"
                 android:textSize="26sp"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/rCusername"
+                android:id="@+id/feedbackAmount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -74,13 +74,13 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Phone Number: "
+                android:text="Order Date : "
                 android:textColor="@color/black"
                 android:textSize="26sp"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/rCphone"
+                android:id="@+id/feedbackDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -99,13 +99,13 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Sign In Method:  "
+                android:text="Order Status :  "
                 android:textColor="@color/black"
                 android:textSize="26sp"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/rCsignIn"
+                android:id="@+id/feedbackStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -115,30 +115,6 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Address :  "
-                android:textColor="@color/black"
-                android:textSize="26sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/rcAddress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:text="52100 ksakdsda kasdka "
-                android:textColor="@color/black"
-                android:textSize="20sp" />
-
-        </LinearLayout>
 
         <LinearLayout
             android:layout_width="259dp"
@@ -146,12 +122,12 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/edit"
+                android:id="@+id/feedback"
                 android:layout_width="226dp"
                 android:layout_height="36dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="16dp"
-                android:text="Edit" />
+                android:text="Feedback" />
 
 
         </LinearLayout>

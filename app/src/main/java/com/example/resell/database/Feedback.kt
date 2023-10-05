@@ -19,6 +19,6 @@ data class Feedback(
     var feedbackDate: Long,
     var content: String,
     var reply: String,
-    var userID: Int
+    var userID: String
 
 )

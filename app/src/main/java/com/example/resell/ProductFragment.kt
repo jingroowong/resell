@@ -60,7 +60,7 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
     private var filteredProductList: List<Product> = ArrayList()
 
     // Add a variable to store the current userID
-    private var currentUserID: Int? = 0
+    private var currentUserID: String? = ""
     // Declare the OrderViewModel property
     private lateinit var orderViewModel: OrderViewModel
 
@@ -98,8 +98,7 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
                     navController.navigate(R.id.action_productFragment_to_orderHistory)
                 }
                 R.id.profile -> {
-                    val intent = Intent(requireContext(), CoverPage::class.java)
-                    startActivity(intent)
+                   navController.navigate(R.id.action_productFragment_to_coverPageFragment)
                 }
                 else -> {
                 }
@@ -305,7 +304,7 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
         }
     }
 
-    private fun generateNewOrder(currentUserID: Int) {
+    private fun generateNewOrder(currentUserID: String) {
         val orderRef = FirebaseDatabase.getInstance().getReference("Orders")
 
         // Get the current timestamp as a unique identifier (assuming it's an int)
@@ -317,7 +316,7 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
             orderDate = getCurrentTimestampAsString(),
             orderAmount = 0.0, // Initial amount
             deal = false,
-            orderStatus = "In Progress",
+            orderStatus = "Processing",
             userID = currentUserID,
             paymentID = 0
         )
@@ -346,7 +345,7 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
 
     private fun checkExistingOrder() {
         val orderRef = FirebaseDatabase.getInstance().getReference("Orders")
-        orderRef.orderByChild("userID").equalTo(currentUserID!!.toDouble())
+        orderRef.orderByChild("userID").equalTo(currentUserID!!)
             .addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     for (orderSnapshot in snapshot.children) {

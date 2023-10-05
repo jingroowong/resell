@@ -41,7 +41,7 @@ data class Order(
     var deal: Boolean,
 
     @ColumnInfo(name = "userID")
-    var userID: Int,
+    var userID: String?,
 
     @ColumnInfo(name = "paymentID")
     var paymentID: Int
@@ -54,7 +54,7 @@ data class Order(
         parcel.readDouble(),
         parcel.readString(),
         parcel.readByte() != 0.toByte(),
-        parcel.readInt(),
+        parcel.readString(),
         parcel.readInt()
     )
     @Exclude
@@ -76,7 +76,7 @@ data class Order(
         parcel.writeDouble(orderAmount)
         parcel.writeString(orderStatus)
         parcel.writeByte(if (deal) 1 else 0)
-        parcel.writeInt(userID)
+        parcel.writeString(userID)
         parcel.writeInt(paymentID)
     }
 
@@ -95,5 +95,5 @@ data class Order(
     }
 
 
-    constructor() : this(0, "", 0.0, "", false, 0, 0)
+    constructor() : this(0, "", 0.0, "", false, "", 0)
 }
