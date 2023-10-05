@@ -1,6 +1,7 @@
 package com.example.resell.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -81,6 +82,10 @@ class MyUpdateOrderStatusAdapter(
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.bind(orderList[position], productList[position], navController)
+        if (position < orderList.size && position < productList.size) {
+            holder.bind(orderList[position], productList[position], navController)
+        } else {
+            Log.e("MyOrderAdapter", "onBindViewHolder: Invalid position or data missing.")
+        }
     }
 }

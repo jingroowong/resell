@@ -1,6 +1,7 @@
 package com.example.resell.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -58,6 +59,8 @@ class MyOrderAdapter(
             orderButton!!.setOnClickListener {
                 if (product != null) {
                     showOrderDetails(order, product, navController)
+                } else {
+                    Log.e("MyViewHolder", "bind: Product is null")
                 }
             }
         }
@@ -81,7 +84,11 @@ class MyOrderAdapter(
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-
-        holder.bind(orderList[position], productList[position], navController)
+//        holder.bind(orderList[position], productList[position], navController)
+        if (position < orderList.size && position < productList.size) {
+            holder.bind(orderList[position], productList[position], navController)
+        } else {
+            Log.e("MyOrderAdapter", "onBindViewHolder: Invalid position or data missing.")
+        }
     }
 }

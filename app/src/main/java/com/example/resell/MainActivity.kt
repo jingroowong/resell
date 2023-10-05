@@ -32,30 +32,8 @@ class MainActivity : AppCompatActivity() {
         productViewModel =
             ViewModelProvider(this, viewModelFactory).get(ProductViewModel::class.java)
 
-
-        // Set up the bottom navigation view here
-//        binding.bottomNavigationView.setOnItemSelectedListener { item ->
-//            when (item.itemId) {
-//                R.id.history -> findNavController(R.id.myNavHostFragment).navigate(R.id.orderHistory)
-//                R.id.home -> findNavController(R.id.myNavHostFragment).navigate(R.id.adminViewProduct)
-////                R.id.profile->findNavController(R.id.myNavHostFragment).navigate(R.id.adminViewProduct)
-//                // Add other navigation items as needed
-//                else -> {
-//                }
-//            }
-//            true
-//        }
-
-
         // Set up navigation controller for fragments
         navController = findNavController(R.id.myNavHostFragment)
     }
-
-//    private fun replaceFragment(fragment: Fragment) {
-//        val fragmentManager = supportFragmentManager
-//        val fragmentTransaction = fragmentManager.beginTransaction()
-//        fragmentTransaction.replace(R.id.frameLayout, fragment)
-//        fragmentTransaction.commit()
-//    }
 
 }
