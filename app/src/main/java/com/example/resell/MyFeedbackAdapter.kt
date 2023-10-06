@@ -47,8 +47,7 @@ class MyFeedbackAdapter(private val context: Context, private val ordersList:Arr
 
             if (!ordersList[position].orderStatus.equals("Delivered")) {
                 Toast.makeText(context, "Only submit feedback while order status is DELIVERED", Toast.LENGTH_SHORT).show()
-                val intent = Intent(context, Feedback::class.java)
-                holder.itemView.context.startActivity(intent)
+
 
             }
             else{
