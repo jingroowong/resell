@@ -190,6 +190,7 @@ class ProductFragment : Fragment(), IProductLoadListener, ICartLoadListener {
     }
 
     fun readFirebaseProduct(viewModel: ProductViewModel) {
+        viewModel.clearAll()
         FirebaseDatabase.getInstance()
             .getReference("Products")
             .addListenerForSingleValueEvent(object : ValueEventListener {

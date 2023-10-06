@@ -163,7 +163,9 @@ class OrderHistory : Fragment(), IOrderHistoryListener {
                     if (snapshot.exists()) {
                         for (orderSnapshot in snapshot.children) {
                             val orderModel = orderSnapshot.getValue(Order::class.java)
-                            orderModels.add(orderModel!!)
+                            if(orderModel!!.deal) {
+                                orderModels.add(orderModel!!)
+                            }
                         }
                         orderLoadListener?.onOrderLoadSuccess(orderModels)
                         Log.d("FirebaseData", "Data retrieved successfully")

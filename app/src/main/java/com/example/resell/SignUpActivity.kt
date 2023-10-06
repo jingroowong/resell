@@ -52,20 +52,21 @@ class SignUpActivity : AppCompatActivity() {
                     firebaseAuth.createUserWithEmailAndPassword(email,pass).addOnCompleteListener {
                         if(it.isSuccessful){
 
-                            val intent = Intent(this, LoginActivity::class.java)
-                            startActivity(intent)
-                            Toast.makeText(this,  "Sign Up Successfully", Toast.LENGTH_SHORT).show()
 
                             reference = FirebaseDatabase.getInstance().getReference("Users")
                             val user = FirebaseAuth.getInstance().currentUser
                             val userId = user?.uid
                             val signIn = "Email and Password"
-                            val users = Users(username)
+                            val users = Users(username,email,address)
                             if (userId != null) {
-                                reference.child(userId).setValue(users)
+                                reference.child(userId).child("username").setValue(username)
                                 reference.child(userId).child("address").setValue(address)
                                 reference.child(userId).child("signIn").setValue(signIn)
+
                             }
+                         onBackPressed()
+                            Toast.makeText(this,  "Sign Up Successfully", Toast.LENGTH_SHORT).show()
+
                         }
                     }
 

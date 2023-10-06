@@ -77,6 +77,9 @@
         <activity
             android:name=".EditProfile"
             android:exported="true" />
+        <activity
+            android:name=".UpdateUserActivity"
+            android:exported="true" />
 
         <meta-data
             android:name="preloaded_fonts"

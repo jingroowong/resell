@@ -6,13 +6,50 @@
     android:layout_height="match_parent"
     tools:context=".admin.AdminCrudFragment">
 
+    <pl.droidsonroids.gif.GifImageView
+        android:id="@+id/gifgif"
+        android:layout_width="412dp"
+        android:layout_height="154dp"
+        android:layout_marginTop="4dp"
+        android:background="@color/white"
+        android:backgroundTint="@color/white"
+        android:src="@drawable/users"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycleView"
-        android:layout_width="417dp"
-        android:layout_height="729dp"
-        tools:layout_editor_absoluteX="-6dp"
-        tools:listitem="@layout/user_item"
-        tools:ignore="MissingConstraints" />
+        android:layout_width="356dp"
+        android:layout_height="526dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4"
+        tools:ignore="MissingConstraints"
+        tools:listitem="@layout/user_item" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/calligraffitti"
+        android:text="CRUD Users"
+        android:textAlignment="center"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gifgif" />
+
+    <Button
+        android:id="@+id/adminLogOut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Log Out"
+        app:layout_constraintBottom_toTopOf="@+id/recycleView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView4"
+        app:layout_constraintTop_toBottomOf="@+id/gifgif" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"

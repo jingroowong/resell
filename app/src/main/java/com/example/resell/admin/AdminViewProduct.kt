@@ -56,6 +56,7 @@ class AdminViewProduct : Fragment() {
         binding = FragmentAdminViewProductBinding.inflate(inflater, container, false)
 
         val viewModel = (requireActivity() as MainActivity).productViewModel
+        viewModel.clearAll()
 
         viewModel.getAllProducts().observe(viewLifecycleOwner) { products ->
             if (products.isEmpty()) {

@@ -230,6 +230,9 @@
         <action
             android:id="@+id/action_loginMainFragment_to_coverPageFragment"
             app:destination="@id/coverPageFragment" />
+        <action
+            android:id="@+id/action_loginMainFragment_to_googleFragment"
+            app:destination="@id/googleFragment" />
     </fragment>
     <fragment
         android:id="@+id/adminLoginFragment"
@@ -268,6 +271,18 @@
         <action
             android:id="@+id/action_adminCrudFragment_to_adminFeedbackFragment2"
             app:destination="@id/adminFeedbackFragment2" />
+        <action
+            android:id="@+id/action_adminCrudFragment_to_mainPageFragment"
+            app:destination="@id/mainPageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/googleFragment"
+        android:name="com.example.resell.GoogleFragment"
+        android:label="fragment_google"
+        tools:layout="@layout/fragment_google" >
+        <action
+            android:id="@+id/action_googleFragment_to_coverPageFragment"
+            app:destination="@id/coverPageFragment" />
     </fragment>
 
     <!--    <fragment-->

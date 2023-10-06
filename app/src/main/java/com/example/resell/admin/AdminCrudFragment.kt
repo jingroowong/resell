@@ -92,5 +92,10 @@ class AdminCrudFragment : Fragment() {
                 Toast.makeText(requireContext(), error.toString(), Toast.LENGTH_SHORT).show()
             }
         })
+
+       binding.adminLogOut.setOnClickListener {
+           navController.navigate(R.id.action_adminCrudFragment_to_mainPageFragment)
+           Toast.makeText(this.requireContext(),"Log Out Successfully",Toast.LENGTH_SHORT).show()
+       }
     }
 }

@@ -33,8 +33,7 @@ class LoginMainFragment : Fragment() {
         firebaseAuth = FirebaseAuth.getInstance()
 
         binding.googleBtn.setOnClickListener {
-            val intent = Intent(requireContext(), GoogleActivity::class.java)
-            startActivity(intent)
+           this.findNavController().navigate(R.id.action_loginMainFragment_to_googleFragment)
         }
 
         binding.logBtn.setOnClickListener {
