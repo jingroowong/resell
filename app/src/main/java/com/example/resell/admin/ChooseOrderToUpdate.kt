@@ -21,6 +21,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.example.resell.listener.IUpdateOrderStatusListener
+import java.lang.Boolean.TRUE
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -163,8 +164,11 @@ class ChooseOrderToUpdate : Fragment(), IUpdateOrderStatusListener {
 
                     if (snapshot.exists()) {
                         for (orderSnapshot in snapshot.children) {
-                            val orderModel = orderSnapshot.getValue(Order::class.java)
-                            orderModels.add(orderModel!!)
+
+                                val orderModel = orderSnapshot.getValue(Order::class.java)
+                            if(orderModel!!.deal==TRUE) {
+                                orderModels.add(orderModel!!)
+                            }
                         }
                         orderLoadListener?.onOrderLoadSuccess(orderModels)
                         Log.d("FirebaseData", "Data retrieved successfully")

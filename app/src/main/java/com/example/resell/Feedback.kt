@@ -29,11 +29,6 @@ class Feedback : AppCompatActivity() {
         binding = ActivityFeedbackBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.backBT.setOnClickListener {
-//            val intent = Intent(this, CoverPage::class.java)
-//            startActivity(intent)
-            onBackPressed()
-        }
 
         val user = FirebaseAuth.getInstance().currentUser
         val userId = user?.uid
@@ -82,8 +77,9 @@ class Feedback : AppCompatActivity() {
         })
 
         binding.button2.setOnClickListener {
-            val intent = Intent(this, CoverPage::class.java)
-            startActivity(intent)
+//            val intent = Intent(this, CoverPage::class.java)
+//            startActivity(intent)
+            onBackPressed()
         }
     }
 
