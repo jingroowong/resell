@@ -211,6 +211,9 @@
         <action
             android:id="@+id/action_coverPageFragment_to_loginMainFragment"
             app:destination="@id/loginMainFragment" />
+        <action
+            android:id="@+id/action_coverPageFragment_to_mainPageFragment"
+            app:destination="@id/mainPageFragment" />
     </fragment>
     <fragment
         android:id="@+id/mainPageFragment"

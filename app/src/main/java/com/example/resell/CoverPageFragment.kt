@@ -154,13 +154,10 @@ class CoverPageFragment : Fragment() {
 
         binding.logout.setOnClickListener {
 
-         val signout = FirebaseAuth.getInstance()
-            signout.signOut()
-
-
+        firebase.signOut()
 //            val intent = Intent(requireContext(), LoginActivity::class.java)
 //            startActivity(intent)
-            this.findNavController().navigate(R.id.action_coverPageFragment_to_loginMainFragment)
+            this.findNavController().navigate(R.id.action_coverPageFragment_to_mainPageFragment)
             Toast.makeText(requireContext(), "LOG OUT SUCCESSFULLY", Toast.LENGTH_SHORT).show()
         }
 
